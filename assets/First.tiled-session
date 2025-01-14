@@ -1,0 +1,46 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "map_part1.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "Tileset.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "map_part1.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 224.5,
+                "y": 301.75
+            }
+        }
+    },
+    "last.imagePath": "/home/nikolas/Dokumente/Working/Projects/Raylib Projects/Future/assets",
+    "map.height": 90,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 35,
+    "openFiles": [
+        "Tileset.tsx",
+        "map_part1.tmx"
+    ],
+    "project": "First.tiled-project",
+    "recentFiles": [
+        "Tileset.tsx",
+        "map_part1.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 1,
+    "tileset.spacing": 2,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
