@@ -14,10 +14,10 @@
         },
         "map_part1.tmx": {
             "scale": 2,
-            "selectedLayer": 0,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 224.5,
-                "y": 301.75
+                "x": 228,
+                "y": 297.25
             }
         }
     },
