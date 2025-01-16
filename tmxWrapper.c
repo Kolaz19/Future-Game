@@ -1,4 +1,4 @@
-#include "include/raytmx/raytmx.h"
+#include "include/tmxWrapper.h"
 #include <string.h>
 
 /**
