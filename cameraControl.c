@@ -1,6 +1,6 @@
 #include "include/cameraControl.h"
 
-void initializeCamera(Camera2D *cam, int screenWidth, int screenHeight, int mapWidth, int startHeight) {
+void cam_initializeCamera(Camera2D *cam, int screenWidth, int screenHeight, int mapWidth, int startHeight) {
     cam->zoom = (float)screenWidth / mapWidth;
     cam->target.x = mapWidth / 2.0f;
     cam->target.y = startHeight;

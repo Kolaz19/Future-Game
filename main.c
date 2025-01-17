@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "include/raylib/raylib.h"
 #define RAYTMX_IMPLEMENTATION
 #include "include/cameraControl.h"
@@ -18,8 +20,9 @@ int main(void) {
     }
 
     Camera2D camera;
-    initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, map->width * map->tileWidth, 330);
-
+	Rectangle colRectangles[3];
+    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, map->width * map->tileWidth, 330);
+	//int amountOfRectangles = map_getRectanglesFromObjectLayer(map, "Platforms", colRectangles);
 
     while (!WindowShouldClose()) {
 
@@ -27,6 +30,9 @@ int main(void) {
         ClearBackground(BLACK);
         BeginMode2D(camera);
         DrawTMX(map, &camera, 0, 0, WHITE);
+
+
+
         EndMode2D();
         EndDrawing();
     }

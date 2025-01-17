@@ -1,14 +1,15 @@
 #include "include/tmxWrapper.h"
+#include "include/raytmx/raytmx.h"
 #include <string.h>
 
 /**
  * Convert all objects on specific object layer to rectangles
  */
-int GetRectanglesFromObjectLayer(const TmxMap *map, const char *layerName, Rectangle *rectangles) {
+int map_getRectanglesFromObjectLayer(const TmxMap *map, const char *layerName, Rectangle *rectangles) {
     TmxLayer *matchingLayer = NULL;
 
     for (int i = 0; i < map->layersLength; i++) {
-        if (strcmp(map->layers[i].name, layerName)) {
+        if (strcmp(map->layers[i].name, layerName) == 0) {
             matchingLayer = map->layers + i;
         }
     }
@@ -19,7 +20,7 @@ int GetRectanglesFromObjectLayer(const TmxMap *map, const char *layerName, Recta
     }
 
     if (matchingLayer->type != LAYER_TYPE_OBJECT_GROUP) {
-        TraceLog(LOG_ERROR, "Layer %s not object group layer", layerName);
+        TraceLog(LOG_ERROR, "Layer %s not object group layer, but %d", layerName, matchingLayer->type);
 		return 0;
     }
 

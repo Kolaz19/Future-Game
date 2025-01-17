@@ -3,6 +3,6 @@
 
 #include "raytmx/raytmx.h"
 
-int GetRectanglesFromObjectLayer(const TmxMap *map, const char *layerName, Rectangle *rectangles);
+int map_getRectanglesFromObjectLayer(const TmxMap *map, const char *layerName, Rectangle *rectangles);
 
 #endif
