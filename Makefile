@@ -7,8 +7,8 @@ DEBUG_FLAG = -g
 
 LIB_DIR = -L ./lib
 
-LINKERS = $(LIB_DIR) -lraylib /usr/lib/x86_64-linux-gnu/libGL.so -lm -lpthread -ldl -lrt
-LINKERS_WIN = $(LIB_DIR) -lraylibwin -lopengl32 -lgdi32 -lwinmm 
+LINKERS = $(LIB_DIR) -lraylib -lbox2d /usr/lib/x86_64-linux-gnu/libGL.so -lm -lpthread -ldl -lrt
+LINKERS_WIN = $(LIB_DIR) -lraylibwin -lbox2dwin -lopengl32 -lgdi32 -lwinmm 
 #-lraylibdll
 
 C_FILES = $(wildcard *.c)

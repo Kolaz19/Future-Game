@@ -13,11 +13,11 @@
             "scaleInEditor": 1
         },
         "map_part1.tmx": {
-            "scale": 2,
+            "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 228,
-                "y": 297.25
+                "x": 26.333333333333343,
+                "y": 327.8333333333333
             }
         }
     },
@@ -28,13 +28,12 @@
     "map.tileWidth": 16,
     "map.width": 35,
     "openFiles": [
-        "Tileset.tsx",
         "map_part1.tmx"
     ],
     "project": "First.tiled-project",
     "recentFiles": [
-        "Tileset.tsx",
-        "map_part1.tmx"
+        "map_part1.tmx",
+        "Tileset.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.margin": 1,

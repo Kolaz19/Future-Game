@@ -5,6 +5,7 @@
 #include "include/cameraControl.h"
 #include "include/raytmx/raytmx.h"
 #include "include/tmxWrapper.h"
+#include "include/box2dWrapper.h"
 #include <stdio.h>
 
 #define SCREEN_WIDTH (1920 * 0.8)
@@ -19,10 +20,17 @@ int main(void) {
         TraceLog(LOG_ERROR, "Failed to load TMX");
     }
 
-    Camera2D camera;
+
 	Rectangle colRectangles[3];
+	ObjectBag platformBag;
+	phy_initBag(&platformBag, STATIC_PLATFORM);
+	int amountOfRectangles = map_getRectanglesFromObjectLayer(map, "Platforms", colRectangles);
+	b2WorldId world = phy_createWorld();
+
+
+
+    Camera2D camera;
     cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, map->width * map->tileWidth, 330);
-	//int amountOfRectangles = map_getRectanglesFromObjectLayer(map, "Platforms", colRectangles);
 
     while (!WindowShouldClose()) {
 
