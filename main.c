@@ -2,10 +2,10 @@
 
 #include "include/raylib/raylib.h"
 #define RAYTMX_IMPLEMENTATION
+#include "include/box2dWrapper.h"
 #include "include/cameraControl.h"
 #include "include/raytmx/raytmx.h"
 #include "include/tmxWrapper.h"
-#include "include/box2dWrapper.h"
 #include <stdio.h>
 
 #define SCREEN_WIDTH (1920 * 0.8)
@@ -20,13 +20,16 @@ int main(void) {
         TraceLog(LOG_ERROR, "Failed to load TMX");
     }
 
+    Rectangle colRectangles[3];
+    int amountOfRectangles = map_getRectanglesFromObjectLayer(map, "Platforms", colRectangles);
+    WorldHandle worldHandle = phy_createWorld();
 
-	Rectangle colRectangles[3];
-	ObjectBag platformBag;
-	phy_initBag(&platformBag, STATIC_PLATFORM);
-	int amountOfRectangles = map_getRectanglesFromObjectLayer(map, "Platforms", colRectangles);
-	b2WorldId world = phy_createWorld();
+    for (int i = 0; i < amountOfRectangles; i++) {
+        phy_addPlatform(worldHandle, colRectangles[i]);
+    }
 
+	Rectangle *platforms[BAG_SIZE];
+	int amountPlatforms = phy_getRectangles(worldHandle, platforms, STATIC_PLATFORM);
 
 
     Camera2D camera;
@@ -39,13 +42,16 @@ int main(void) {
         BeginMode2D(camera);
         DrawTMX(map, &camera, 0, 0, WHITE);
 
-
+		for (int i = 0; i < amountPlatforms; i++) {
+			DrawRectangle(platforms[i]->x, platforms[i]->y, platforms[i]->width, platforms[i]->height, GREEN);
+		}
 
         EndMode2D();
         EndDrawing();
     }
 
     UnloadTMX(map);
+    phy_free(worldHandle);
     CloseWindow();
 
     return 0;

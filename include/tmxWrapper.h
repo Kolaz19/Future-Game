@@ -1,5 +1,5 @@
-#ifndef TMW_WRAPPER
-#define TMW_WRAPPER
+#ifndef TMW_WRAPPER_H
+#define TMW_WRAPPER_H
 
 #include "raytmx/raytmx.h"
 

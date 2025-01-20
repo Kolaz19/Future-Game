@@ -1,29 +1,20 @@
-#ifndef BOX2DWRAPPER
-#define BOX2DWRAPPER
+#ifndef BOX2DWRAPPER_H
+#define BOX2DWRAPPER_H
 
-#include "box2d/box2d.h"
-
+#include "raylib/rectangle.h"
 #define BAG_SIZE 50
 
 typedef enum BodyType {
-	STATIC_PLATFORM
-}BodyType;
+    STATIC_PLATFORM,
+    CHARACTER
+} BodyType;
 
-typedef struct ObjectBag {
-	b2BodyId bodies[BAG_SIZE];
-	int currentEmptyIndex;
-	BodyType type;
-}ObjectBag;
+typedef struct World *WorldHandle;
 
-typedef struct Platform {
-    float x;
-    float y;
-    float width;
-    float height;
-} Platform;
-
-b2WorldId phy_createWorld(void);
-void phy_initBag(ObjectBag *bag, BodyType type);
-void phy_addPlatform(b2WorldId *world, ObjectBag *bag, Platform plat);
+WorldHandle phy_createWorld(void);
+void updateWorld(WorldHandle handle);
+void phy_free(WorldHandle handle);
+void phy_addPlatform(WorldHandle world, Rectangle plat);
+int phy_getRectangles(WorldHandle handle, Rectangle **rectangles, BodyType type);
 
 #endif
