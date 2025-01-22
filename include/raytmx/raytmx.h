@@ -1,3 +1,9 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wold-style-declaration"
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 /*
 Copyright (c) 2024 Luke Philipsen
 
@@ -3914,3 +3920,4 @@ void StringConcatenate(char* destination, const char* source) {
 #endif /* RAYTMX_IMPLEMENTATION */
 
 #endif /* RAYTMX_H */
+#pragma GCC diagnostic pop

@@ -1,14 +1,10 @@
 #include "include/tmxWrapper.h"
-#include "include/raytmx/raytmx.h"
 #include <string.h>
 
-/**
- * Convert all objects on specific object layer to rectangles
- */
 int map_getRectanglesFromObjectLayer(const TmxMap *map, const char *layerName, Rectangle *rectangles) {
     TmxLayer *matchingLayer = NULL;
 
-    for (int i = 0; i < map->layersLength; i++) {
+    for (uint32_t i = 0; i < map->layersLength; i++) {
         if (strcmp(map->layers[i].name, layerName) == 0) {
             matchingLayer = map->layers + i;
         }
@@ -24,12 +20,12 @@ int map_getRectanglesFromObjectLayer(const TmxMap *map, const char *layerName, R
 		return 0;
     }
 
-	for (int i = 0; i < matchingLayer->exact.objectGroup.objectsLength; i++) {
-		rectangles[i].x = matchingLayer->exact.objectGroup.objects[i].x;
-		rectangles[i].y = matchingLayer->exact.objectGroup.objects[i].y;
-		rectangles[i].width = matchingLayer->exact.objectGroup.objects[i].width;
-		rectangles[i].height = matchingLayer->exact.objectGroup.objects[i].height;
+	for (uint32_t i = 0; i < matchingLayer->exact.objectGroup.objectsLength; i++) {
+		rectangles[i].x = (float)matchingLayer->exact.objectGroup.objects[i].x;
+		rectangles[i].y = (float)matchingLayer->exact.objectGroup.objects[i].y;
+		rectangles[i].width = (float)matchingLayer->exact.objectGroup.objects[i].width;
+		rectangles[i].height = (float)matchingLayer->exact.objectGroup.objects[i].height;
 	}
 
-	return matchingLayer->exact.objectGroup.objectsLength;
+	return (int)matchingLayer->exact.objectGroup.objectsLength;
 }

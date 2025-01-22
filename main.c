@@ -4,7 +4,6 @@
 #define RAYTMX_IMPLEMENTATION
 #include "include/box2dWrapper.h"
 #include "include/cameraControl.h"
-#include "include/raytmx/raytmx.h"
 #include "include/tmxWrapper.h"
 #include <stdio.h>
 
@@ -28,12 +27,12 @@ int main(void) {
         phy_addPlatform(worldHandle, colRectangles[i]);
     }
 
-	Rectangle *platforms[BAG_SIZE];
-	int amountPlatforms = phy_getRectangles(worldHandle, platforms, STATIC_PLATFORM);
+	BodyReference platforms[BAG_SIZE];
+	int amountPlatforms = phy_getBodyReferences(worldHandle, platforms, STATIC_PLATFORM);
 
 
     Camera2D camera;
-    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, map->width * map->tileWidth, 330);
+    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map->width * map->tileWidth), 330);
 
     while (!WindowShouldClose()) {
 
@@ -43,7 +42,7 @@ int main(void) {
         DrawTMX(map, &camera, 0, 0, WHITE);
 
 		for (int i = 0; i < amountPlatforms; i++) {
-			DrawRectangle(platforms[i]->x, platforms[i]->y, platforms[i]->width, platforms[i]->height, GREEN);
+			DrawRectangle((int)platforms[i].rectangle->x, (int)platforms[i].rectangle->y, (int)platforms[i].rectangle->width, (int)platforms[i].rectangle->height, GREEN);
 		}
 
         EndMode2D();

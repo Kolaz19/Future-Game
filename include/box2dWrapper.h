@@ -4,17 +4,37 @@
 #include "raylib/rectangle.h"
 #define BAG_SIZE 50
 
+typedef struct World *WorldHandle;
+
 typedef enum BodyType {
     STATIC_PLATFORM,
     CHARACTER
 } BodyType;
 
-typedef struct World *WorldHandle;
+typedef struct BodyReference {
+	Rectangle *rectangle;
+	float *rotation;
+} BodyReference;
 
 WorldHandle phy_createWorld(void);
-void updateWorld(WorldHandle handle);
 void phy_free(WorldHandle handle);
+
+/*
+ * Advance physics world and update body references
+ */
+void updateWorld(WorldHandle handle);
+
+/*
+ * Take rectangle and place it as STATIC_PLATFORM in the world
+ */
 void phy_addPlatform(WorldHandle world, Rectangle plat);
-int phy_getRectangles(WorldHandle handle, Rectangle **rectangles, BodyType type);
+
+/*
+ * Store rectangle and rotation references in array
+ * @param bodyReference Array with size of BAG_SIZE to store the references in
+ * @param type The type of the objects to store from the handle
+ * @return Number of objects stored
+ */
+int phy_getBodyReferences(WorldHandle handle, BodyReference *bodyReferences, BodyType type);
 
 #endif
