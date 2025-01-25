@@ -22,12 +22,17 @@ void phy_free(WorldHandle handle);
 /*
  * Advance physics world and update body references
  */
-void updateWorld(WorldHandle handle);
+void phy_updateWorld(WorldHandle handle);
 
 /*
  * Take rectangle and place it as STATIC_PLATFORM in the world
  */
 void phy_addPlatform(WorldHandle world, Rectangle plat);
+
+/*
+ * Add player at pre-defined position as CHARACTER in the world
+ */
+void phy_addPlayer(WorldHandle world);
 
 /*
  * Store rectangle and rotation references in array

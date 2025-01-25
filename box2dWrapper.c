@@ -65,7 +65,7 @@ static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width,
     }
 }
 
-void updateWorld(WorldHandle handle) {
+void phy_updateWorld(WorldHandle handle) {
     b2World_Step(handle->world, 1.0f / 60.0f, 4);
     for (int i = 0; i < BAG_SIZE; i++) {
         if (handle->bag[i] != NULL) {
@@ -77,7 +77,7 @@ void updateWorld(WorldHandle handle) {
 WorldHandle phy_createWorld(void) {
     WorldHandle world = malloc(sizeof(struct World));
     b2WorldDef worldDef = b2DefaultWorldDef();
-    worldDef.gravity = (b2Vec2){0.0f, 50.0f};
+    worldDef.gravity = (b2Vec2){0.0f, 30.0f};
 
     b2WorldId worldId = b2CreateWorld(&worldDef);
     world->world.index1 = worldId.index1;
@@ -112,6 +112,23 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
     b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
 
     addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height);
+}
+
+void phy_addPlayer(WorldHandle world) {
+    b2BodyDef playerBodyDef = b2DefaultBodyDef();
+	playerBodyDef.type = b2_dynamicBody;
+	playerBodyDef.fixedRotation = true;
+    playerBodyDef.position = (b2Vec2){TOWORLD(40.0f), TOWORLD(5.0f)};
+
+    b2BodyId playerId = b2CreateBody(world->world, &playerBodyDef);
+    b2Polygon playerBox = b2MakeBox(TOWORLD(8.0f), TOWORLD(16.0f));
+
+    b2ShapeDef playerShapeDef = b2DefaultShapeDef();
+	playerShapeDef.density = 10.0f;
+	playerShapeDef.friction = 0.3f;
+    b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
+
+    addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f);
 }
 
 int phy_getBodyReferences(WorldHandle handle, BodyReference *bodyReferences, BodyType type) {
