@@ -1,7 +1,9 @@
-#ifndef BOX2DWRAPPER_H
-#define BOX2DWRAPPER_H
+#ifndef PHY_WORLD_H
+#define PHY_WORLD_H
 
 #include "raylib/rectangle.h"
+#include "bodyIdReference.h"
+
 #define BAG_SIZE 50
 
 typedef struct World *WorldHandle;
@@ -11,10 +13,10 @@ typedef enum BodyType {
     CHARACTER
 } BodyType;
 
-typedef struct BodyReference {
+typedef struct BodyRectReference {
 	Rectangle *rectangle;
 	float *rotation;
-} BodyReference;
+} BodyRectReference;
 
 WorldHandle phy_createWorld(void);
 void phy_free(WorldHandle handle);
@@ -40,6 +42,11 @@ void phy_addPlayer(WorldHandle world);
  * @param type The type of the objects to store from the handle
  * @return Number of objects stored
  */
-int phy_getBodyReferences(WorldHandle handle, BodyReference *bodyReferences, BodyType type);
+int phy_getBodyReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type);
 
+/*
+ * Get physics body reference from world
+ * @return NULL when not found
+ */
+BodyIdReference phy_getCharacterBodyReference(WorldHandle handle);
 #endif

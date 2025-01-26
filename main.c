@@ -2,9 +2,10 @@
 
 #include "include/raylib/raylib.h"
 #define RAYTMX_IMPLEMENTATION
-#include "include/box2dWrapper.h"
+#include "include/physicsWorld.h"
 #include "include/cameraControl.h"
 #include "include/tmxWrapper.h"
+#include "include/physicsCharacter.h"
 #include <stdio.h>
 
 #define SCREEN_WIDTH (1920 * 0.8)
@@ -29,8 +30,8 @@ int main(void) {
     }
 	phy_addPlayer(worldHandle);
 
-	BodyReference platforms[BAG_SIZE];
-	BodyReference playerBody;
+	BodyRectReference platforms[BAG_SIZE];
+	BodyRectReference playerBody;
 	int amountPlatforms = phy_getBodyReferences(worldHandle, platforms, STATIC_PLATFORM);
 	int amountPlayers = phy_getBodyReferences(worldHandle, &playerBody, CHARACTER);
 	assert(amountPlayers == 1);

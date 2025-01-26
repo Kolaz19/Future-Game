@@ -1,6 +1,7 @@
-#include "include/box2dWrapper.h"
+#include "include/physicsWorld.h"
 #include <assert.h>
 #include <stdlib.h>
+
 
 #include "include/box2d/box2d.h"
 #include "include/box2d/collision.h"
@@ -131,7 +132,7 @@ void phy_addPlayer(WorldHandle world) {
     addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f);
 }
 
-int phy_getBodyReferences(WorldHandle handle, BodyReference *bodyReferences, BodyType type) {
+int phy_getBodyReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type) {
 	Body **bodies = handle->bag;
 	int amount = 0;
 	// Loop through all objects in bag and assign the ones with needed type
@@ -142,4 +143,14 @@ int phy_getBodyReferences(WorldHandle handle, BodyReference *bodyReferences, Bod
 		}
 	}
 	return amount;
+}
+
+BodyIdReference phy_getCharacterBodyReference(WorldHandle handle) {
+	Body **bodies = handle->bag;
+	for (int i = 0; i < BAG_SIZE; i++) {
+		if (bodies[i] != NULL && bodies[i]->type == CHARACTER) {
+			return &(bodies[i]->body);
+		}
+	}
+	return NULL;
 }
