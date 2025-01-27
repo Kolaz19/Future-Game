@@ -47,6 +47,7 @@ int main(void) {
 
         pl_update(ref);
         phy_updateWorld(worldHandle);
+		cam_updateCamera(&camera, playerBody.rectangle->y);
 
         BeginDrawing();
         ClearBackground(BLACK);
