@@ -115,6 +115,25 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
     addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height);
 }
 
+void phy_addWalls(WorldHandle world, int mapWidth, int mapHeight, int mapStartX, int mapStartY, int wallThickness) {
+    b2BodyDef wallLeftBodyDef = b2DefaultBodyDef();
+    wallLeftBodyDef.position = (b2Vec2){TOWORLD((float)mapStartX + ((float)wallThickness / 2)), TOWORLD((float)mapStartY + ((float)mapHeight / 2))};
+
+    b2BodyDef wallRightBodyDef = b2DefaultBodyDef();
+    wallRightBodyDef.position = (b2Vec2){TOWORLD((float)mapStartX + (float)mapWidth - ((float)wallThickness / 2)), TOWORLD((float)mapStartY + ((float)mapHeight / 2))};
+
+    b2BodyId wallLeftId = b2CreateBody(world->world, &wallLeftBodyDef);
+    b2BodyId wallRightId = b2CreateBody(world->world, &wallRightBodyDef);
+    b2Polygon wallBox = b2MakeBox(TOWORLD((float)wallThickness / 2), TOWORLD((float)mapHeight / 2));
+
+    b2ShapeDef wallShapeDef = b2DefaultShapeDef();
+    b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox);
+    b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox);
+
+    addToBag(world->bag, &wallLeftId, WALL, (float)wallThickness, (float)mapHeight);
+    addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)mapHeight);
+}
+
 void phy_addPlayer(WorldHandle world) {
     b2BodyDef playerBodyDef = b2DefaultBodyDef();
 	playerBodyDef.type = b2_dynamicBody;

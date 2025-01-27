@@ -10,6 +10,7 @@ typedef struct World *WorldHandle;
 
 typedef enum BodyType {
     STATIC_PLATFORM,
+	WALL,
     CHARACTER
 } BodyType;
 
@@ -49,4 +50,9 @@ int phy_getBodyReferences(WorldHandle handle, BodyRectReference *bodyReferences,
  * @return NULL when not found
  */
 BodyIdReference phy_getCharacterBodyReference(WorldHandle handle);
+
+/*
+ * Add walls as WALL to the world (left and right side)
+ */
+void phy_addWalls(WorldHandle world, int mapWidth, int mapHeight, int mapStartX, int mapStartY, int wallThickness);
 #endif
