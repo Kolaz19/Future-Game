@@ -29,7 +29,7 @@ int main(void) {
         phy_addPlatform(worldHandle, colRectangles[i]);
     }
     phy_addPlayer(worldHandle);
-	phy_addWalls(worldHandle, (int)(map->width * map->tileWidth), (int)(map->height * map->tileHeight), 0, 0, 16);
+    phy_addWalls(worldHandle, (int)(map->width * map->tileWidth), (int)(map->height * map->tileHeight), 0, 0, 16);
 
     BodyIdReference ref = phy_getCharacterBodyReference(worldHandle);
     assert(ref != NULL);
@@ -47,7 +47,7 @@ int main(void) {
 
         pl_update(ref);
         phy_updateWorld(worldHandle);
-		cam_updateCamera(&camera, playerBody.rectangle->y);
+        cam_updateCamera(&camera, playerBody.rectangle->y);
 
         BeginDrawing();
         ClearBackground(BLACK);
@@ -55,7 +55,7 @@ int main(void) {
         DrawTMX(map, &camera, 0, 0, WHITE);
 
         for (int i = 0; i < amountPlatforms; i++) {
-            //DrawRectangle((int)platforms[i].rectangle->x, (int)platforms[i].rectangle->y, (int)platforms[i].rectangle->width, (int)platforms[i].rectangle->height, GREEN);
+            // DrawRectangle((int)platforms[i].rectangle->x, (int)platforms[i].rectangle->y, (int)platforms[i].rectangle->width, (int)platforms[i].rectangle->height, GREEN);
         }
         DrawRectangle((int)playerBody.rectangle->x, (int)playerBody.rectangle->y, (int)playerBody.rectangle->width, (int)playerBody.rectangle->height, BLUE);
 

@@ -110,6 +110,7 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
     b2Polygon groundBox = b2MakeBox(TOWORLD(plat.width / 2), TOWORLD(plat.height / 2));
 
     b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+	groundShapeDef.friction = 0.3f;
     b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
 
     addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height);
@@ -127,6 +128,7 @@ void phy_addWalls(WorldHandle world, int mapWidth, int mapHeight, int mapStartX,
     b2Polygon wallBox = b2MakeBox(TOWORLD((float)wallThickness / 2), TOWORLD((float)mapHeight / 2));
 
     b2ShapeDef wallShapeDef = b2DefaultShapeDef();
+	wallShapeDef.friction = 0.0f;
     b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox);
     b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox);
 
@@ -144,8 +146,8 @@ void phy_addPlayer(WorldHandle world) {
     b2Polygon playerBox = b2MakeBox(TOWORLD(8.0f), TOWORLD(16.0f));
 
     b2ShapeDef playerShapeDef = b2DefaultShapeDef();
-	playerShapeDef.density = 10.0f;
-	playerShapeDef.friction = 0.3f;
+	playerShapeDef.density = 20.0f;
+	playerShapeDef.friction = 0.1f;
     b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
 
     addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f);
