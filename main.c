@@ -7,9 +7,12 @@
 #include "include/physicsPlayer.h"
 #include "include/physicsWorld.h"
 #include "include/tmxWrapper.h"
+#include "include/animationPlayer.h"
 
 #define SCREEN_WIDTH (1920 * 0.8)
 #define SCREEN_HEIGHT (1080 * 0.8)
+
+//#define SHOW_COLLISION
 
 int main(void) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Future");
@@ -43,9 +46,16 @@ int main(void) {
     Camera2D camera;
     cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map->width * map->tileWidth), 330);
 
+
+	PlAnimation plAnim = panim_createAnimation();
+	Vector2 force;
+
     while (!WindowShouldClose()) {
 
         pl_update(ref);
+
+		pl_getVelocity(ref, &force.x , &force.y);
+		panim_update(plAnim, force.x, force.y);
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerBody.rectangle->y);
 
@@ -54,10 +64,13 @@ int main(void) {
         BeginMode2D(camera);
         DrawTMX(map, &camera, 0, 0, WHITE);
 
+#ifdef SHOW_COLLISION
         for (int i = 0; i < amountPlatforms; i++) {
-            // DrawRectangle((int)platforms[i].rectangle->x, (int)platforms[i].rectangle->y, (int)platforms[i].rectangle->width, (int)platforms[i].rectangle->height, GREEN);
+            DrawRectangle((int)platforms[i].rectangle->x, (int)platforms[i].rectangle->y, (int)platforms[i].rectangle->width, (int)platforms[i].rectangle->height, GREEN);
         }
         DrawRectangle((int)playerBody.rectangle->x, (int)playerBody.rectangle->y, (int)playerBody.rectangle->width, (int)playerBody.rectangle->height, BLUE);
+#endif
+		panim_draw(plAnim, (int)playerBody.rectangle->x, (int)playerBody.rectangle->y);
 
         EndMode2D();
         DrawFPS(10, 10);
@@ -66,6 +79,7 @@ int main(void) {
 
     UnloadTMX(map);
     phy_free(worldHandle);
+	panim_free(plAnim);
     CloseWindow();
 
     return 0;

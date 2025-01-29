@@ -1,2 +1,5 @@
 map.crocotile
 .clang-format
+main
+main.exe
+object_files/
