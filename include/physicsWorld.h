@@ -1,5 +1,6 @@
 #ifndef PHY_WORLD_H
 #define PHY_WORLD_H
+extern void TraceLog(int logLevel, const char *text, ...);         // Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...)
 
 #include "raylib/rectangle.h"
 #include "bodyIdReference.h"

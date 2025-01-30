@@ -1,6 +1,9 @@
+#include "include/customLogging.h"
+#include "include/slog.h"
 #include "include/utest.h"
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "include/raylib/raylib.h"
 #define RAYTMX_IMPLEMENTATION
@@ -14,12 +17,13 @@
 #define SCREEN_HEIGHT (1080 * 0.8)
 
 // #define SHOW_COLLISION
-#define UTEST_EXE
+// #define UTEST_EXE
 
 int main(void) {
 #ifdef UTEST_EXE
     return utest_main(0, NULL);
 #endif
+	initLogger();
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Future");
     SetTargetFPS(60);
 
@@ -85,6 +89,7 @@ int main(void) {
     phy_free(worldHandle);
     panim_free(plAnim);
     CloseWindow();
+	slog_destroy();
 
     return 0;
 }

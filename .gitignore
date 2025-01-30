@@ -3,3 +3,4 @@ map.crocotile
 main
 main.exe
 object_files/
+*.log
