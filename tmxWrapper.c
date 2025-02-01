@@ -1,5 +1,6 @@
 #include "include/tmxWrapper.h"
 #include <string.h>
+#include "include/slog.h"
 
 int map_getRectanglesFromObjectLayer(const TmxMap *map, const char *layerName, Rectangle *rectangles) {
     TmxLayer *matchingLayer = NULL;
@@ -11,12 +12,12 @@ int map_getRectanglesFromObjectLayer(const TmxMap *map, const char *layerName, R
     }
 
     if (matchingLayer == NULL) {
-        TraceLog(LOG_ERROR, "No layer with name %s found", layerName);
+		sloge("No layer with name %s found", layerName);
 		return 0;
     }
 
     if (matchingLayer->type != LAYER_TYPE_OBJECT_GROUP) {
-        TraceLog(LOG_ERROR, "Layer %s not object group layer, but %d", layerName, matchingLayer->type);
+		sloge("Layer %s not object group layer, but %d", layerName, matchingLayer->type);
 		return 0;
     }
 

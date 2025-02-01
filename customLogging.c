@@ -7,7 +7,7 @@
 
 // If true, output is only made to console
 // Full logging is enabled
-#define DEBUG false
+#define DEBUG true
 
 static void customLog(int msgType, const char *text, va_list args) {
     char buffer[256];
@@ -75,7 +75,8 @@ void initLogger(int argc, char *argv[]) {
     if (DEBUG) {
         slog_conf.nToFile = 0;
         slog_conf.nToScreen = 1;
-        slog_conf.nFlags = SLOG_FLAGS_ALL;
+        slog_conf.nFlags = SLOG_DEBUG | SLOG_INFO | SLOG_WARN |
+                           SLOG_ERROR | SLOG_FATAL;
         slog_conf.eColorFormat = SLOG_COLORING_TAG;
     }
     slog_config_set(&slog_conf);

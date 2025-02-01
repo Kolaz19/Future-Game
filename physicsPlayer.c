@@ -5,6 +5,7 @@
 #include "include/box2d/math_functions.h"
 #include "include/box2d/types.h"
 #include "include/raylib/raylib.h"
+#include "include/slog.h"
 
 #define RUNNING_FORCE 1000.0f
 #define VELOCITY_LIMIT 8
@@ -20,6 +21,7 @@ static void slowDown(BodyIdReference body) {
 void pl_update(BodyIdReference body) {
     b2Vec2 forceToApply = {0.0f, 0.0f};
     b2Vec2 velocity = b2Body_GetLinearVelocity(*body);
+	slogt("Velocity of player: X:%f Y:%f", velocity.x, velocity.y);
 
 	//Slow down when starting running in opposite direction
 	//or when coming to halt

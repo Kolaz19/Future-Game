@@ -1,5 +1,6 @@
 #include "include/animationPlayer.h"
 #include "include/animation.h"
+#include "include/slog.h"
 #include <stdlib.h>
 
 #define CHAR_SPRITESHEET "assets/player.png"
@@ -29,23 +30,38 @@ PlAnimation panim_createAnimation(void) {
 }
 
 void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
-	//Set correct state
+    Animation *prevAnimation = plAnim->curAnimation;
+    bool prevFlip = plAnim->flip;
+    // Set correct state
     if (velocityX > NEG_LIMIT && velocityX < POS_LIMIT && velocityY > NEG_LIMIT && velocityY < POS_LIMIT) {
         plAnim->curAnimation = &plAnim->idle;
+        if (plAnim->curAnimation != prevAnimation) {
+			slogd("Animation switched to IDLE");
+        }
     } else if (velocityY > POS_LIMIT) {
         plAnim->curAnimation = &plAnim->falling;
+        if (plAnim->curAnimation != prevAnimation) {
+			slogd("Animation switched to FALLING");
+        }
     } else if (velocityX != 0.0f) {
         plAnim->curAnimation = &plAnim->running;
+        if (plAnim->curAnimation != prevAnimation) {
+			slogd("Animation switched to RUNNING");
+        }
     }
 
-	//Set global flip state
+    // Set global flip state
     if (velocityX > POS_LIMIT) {
         plAnim->flip = false;
     } else if (velocityX < NEG_LIMIT) {
         plAnim->flip = true;
     }
 
-	//Flip current animation
+	if (prevFlip != plAnim->flip) {
+		slogd("Animation flipped to %d", plAnim->flip);
+	}
+
+    // Flip current animation
     if (plAnim->flip) {
         anim_flip(plAnim->curAnimation, FLIPX);
     } else {

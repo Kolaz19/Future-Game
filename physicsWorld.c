@@ -8,6 +8,7 @@
 #include "include/box2d/math_functions.h"
 #include "include/box2d/types.h"
 #include "include/raylib/pi.h"
+#include "include/slog.h"
 
 #define CONV_VAL 20
 #define TOWORLD(x) ((x) / CONV_VAL)
@@ -61,6 +62,7 @@ static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width,
 			bodies[i]->type = type;
 			// Initially set position and rotation
             updateRectangle(bodies[i]);
+			slogd("Body in bag at index [%d] added (TYPE:%d)", i, type);
 			return;
         }
     }
@@ -95,7 +97,9 @@ void phy_free(WorldHandle handle) {
 
     for (int i = 0; i < BAG_SIZE; i++) {
         if (bodies[i] != NULL) {
+			BodyType type = bodies[i]->type;
             free(bodies[i]);
+			slogd("Body in bag at index [%d] freed (TYPE:%d)",i, type);
         }
     }
     b2DestroyWorld(handle->world);
