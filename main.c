@@ -19,11 +19,11 @@
 // #define SHOW_COLLISION
 // #define UTEST_EXE
 
-int main(void) {
+int main(int argc, char *argv[]) {
 #ifdef UTEST_EXE
     return utest_main(0, NULL);
 #endif
-	initLogger();
+	initLogger(argc, argv);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Future");
     SetTargetFPS(60);
 
@@ -90,6 +90,5 @@ int main(void) {
     panim_free(plAnim);
     CloseWindow();
 	slog_destroy();
-
     return 0;
 }
