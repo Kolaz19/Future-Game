@@ -5,12 +5,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "include/raylib/raylib.h"
-#define RAYTMX_IMPLEMENTATION
 #include "include/animationPlayer.h"
 #include "include/cameraControl.h"
 #include "include/physicsPlayer.h"
 #include "include/physicsWorld.h"
+#include "include/raylib/raylib.h"
 #include "include/tmxWrapper.h"
 
 #define SCREEN_WIDTH (1920 * 0.8)
@@ -23,25 +22,28 @@ int main(int argc, char *argv[]) {
 #ifdef UTEST_EXE
     return utest_main(0, NULL);
 #endif
-	initLogger(argc, argv);
+    initLogger(argc, argv);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Future");
     SetTargetFPS(60);
 
     const char *tmxFileName = "assets/map_part1.tmx";
-    TmxMap *map = LoadTMX(tmxFileName);
-    if (map == NULL) {
-        TraceLog(LOG_ERROR, "Failed to load TMX");
-    }
+    MapManager manager = map_createMapManager(1);
 
-    Rectangle colRectangles[3];
-    int amountOfRectangles = map_getRectanglesFromObjectLayer(map, "Platforms", colRectangles);
     WorldHandle worldHandle = phy_createWorld();
 
+    Rectangle colRectangles[3];
+    int amountOfRectangles = map_getRectanglesFromCurrentMap(manager, "Platforms", colRectangles);
     for (int i = 0; i < amountOfRectangles; i++) {
         phy_addPlatform(worldHandle, colRectangles[i]);
     }
+    amountOfRectangles = map_getRectanglesFromNextMap(manager, "Platforms", colRectangles);
+    for (int i = 0; i < amountOfRectangles; i++) {
+        phy_addPlatform(worldHandle, colRectangles[i]);
+    }
+
     phy_addPlayer(worldHandle);
-    phy_addWalls(worldHandle, (int)(map->width * map->tileWidth), (int)(map->height * map->tileHeight), 0, 0, 16);
+    phy_addWalls(worldHandle, map_getBoundaryFromCurrentMap(manager), 16);
+    phy_addWalls(worldHandle, map_getBoundaryFromNextMap(manager), 16);
 
     BodyIdReference ref = phy_getCharacterBodyReference(worldHandle);
     assert(ref != NULL);
@@ -53,7 +55,7 @@ int main(int argc, char *argv[]) {
     assert(amountPlayers == 1);
 
     Camera2D camera;
-    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map->width * map->tileWidth), 330);
+    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, map_getBoundaryFromNextMap(manager).width, 330);
 
     PlAnimation plAnim = panim_createAnimation();
     Vector2 force;
@@ -66,11 +68,18 @@ int main(int argc, char *argv[]) {
         panim_update(plAnim, force.x, force.y);
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerBody.rectangle->y);
+        if (map_update(manager, playerBody.rectangle->y)) {
+            amountOfRectangles = map_getRectanglesFromNextMap(manager, "Platforms", colRectangles);
+            for (int i = 0; i < amountOfRectangles; i++) {
+                phy_addPlatform(worldHandle, colRectangles[i]);
+            }
+            phy_addWalls(worldHandle, map_getBoundaryFromNextMap(manager), 16);
+        }
 
         BeginDrawing();
         ClearBackground(BLACK);
         BeginMode2D(camera);
-        DrawTMX(map, &camera, 0, 0, WHITE);
+        map_draw(manager, &camera);
 
 #ifdef SHOW_COLLISION
         for (int i = 0; i < amountPlatforms; i++) {
@@ -85,10 +94,10 @@ int main(int argc, char *argv[]) {
         EndDrawing();
     }
 
-    UnloadTMX(map);
+    map_free(manager);
     phy_free(worldHandle);
     panim_free(plAnim);
     CloseWindow();
-	slog_destroy();
+    slog_destroy();
     return 0;
 }

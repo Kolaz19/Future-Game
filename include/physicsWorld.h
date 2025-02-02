@@ -55,5 +55,5 @@ BodyIdReference phy_getCharacterBodyReference(WorldHandle handle);
 /*
  * Add walls as WALL to the world (left and right side)
  */
-void phy_addWalls(WorldHandle world, int mapWidth, int mapHeight, int mapStartX, int mapStartY, int wallThickness);
+void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness);
 #endif

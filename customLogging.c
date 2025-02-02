@@ -75,7 +75,7 @@ void initLogger(int argc, char *argv[]) {
     if (DEBUG) {
         slog_conf.nToFile = 0;
         slog_conf.nToScreen = 1;
-        slog_conf.nFlags = SLOG_DEBUG | SLOG_INFO | SLOG_WARN |
+        slog_conf.nFlags =  SLOG_INFO | SLOG_WARN |
                            SLOG_ERROR | SLOG_FATAL;
         slog_conf.eColorFormat = SLOG_COLORING_TAG;
     }

@@ -120,24 +120,24 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
     addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height);
 }
 
-void phy_addWalls(WorldHandle world, int mapWidth, int mapHeight, int mapStartX, int mapStartY, int wallThickness) {
+void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness) {
     b2BodyDef wallLeftBodyDef = b2DefaultBodyDef();
-    wallLeftBodyDef.position = (b2Vec2){TOWORLD((float)mapStartX + ((float)wallThickness / 2)), TOWORLD((float)mapStartY + ((float)mapHeight / 2))};
+    wallLeftBodyDef.position = (b2Vec2){TOWORLD((float)boundary.x + ((float)wallThickness / 2)), TOWORLD((float)boundary.y + ((float)boundary.height / 2))};
 
     b2BodyDef wallRightBodyDef = b2DefaultBodyDef();
-    wallRightBodyDef.position = (b2Vec2){TOWORLD((float)mapStartX + (float)mapWidth - ((float)wallThickness / 2)), TOWORLD((float)mapStartY + ((float)mapHeight / 2))};
+    wallRightBodyDef.position = (b2Vec2){TOWORLD((float)boundary.x + (float)boundary.width - ((float)wallThickness / 2)), TOWORLD((float)boundary.y + ((float)boundary.height / 2))};
 
     b2BodyId wallLeftId = b2CreateBody(world->world, &wallLeftBodyDef);
     b2BodyId wallRightId = b2CreateBody(world->world, &wallRightBodyDef);
-    b2Polygon wallBox = b2MakeBox(TOWORLD((float)wallThickness / 2), TOWORLD((float)mapHeight / 2));
+    b2Polygon wallBox = b2MakeBox(TOWORLD((float)wallThickness / 2), TOWORLD((float)boundary.height / 2));
 
     b2ShapeDef wallShapeDef = b2DefaultShapeDef();
 	wallShapeDef.friction = 0.0f;
     b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox);
     b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox);
 
-    addToBag(world->bag, &wallLeftId, WALL, (float)wallThickness, (float)mapHeight);
-    addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)mapHeight);
+    addToBag(world->bag, &wallLeftId, WALL, (float)wallThickness, (float)boundary.height);
+    addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)boundary.height);
 }
 
 void phy_addPlayer(WorldHandle world) {
