@@ -1,5 +1,5 @@
 #define RAYTMX_IMPLEMENTATION
-#include "include/tmxWrapper.h"
+#include "include/mapManager.h"
 #include "include/raytmx/raytmx.h"
 #include "include/slog.h"
 #include <assert.h>
@@ -53,11 +53,14 @@ static bool loadMap(TmxMap **map, int level) {
 
 void map_draw(MapManager manager, Camera2D *cam) {
     DrawTMX(manager->curMap, cam, 0, manager->startYCurMap, WHITE);
-    if (manager->nextMap != NULL)
+    if (manager->nextMap != NULL) {
+        // Draw next map under current map
         DrawTMX(manager->nextMap, cam, 0,
-                manager->startYCurMap + manager->curMap->height *
-                                            manager->curMap->tileHeight,
+                manager->startYCurMap +
+                    manager->curMap->height *
+                        manager->curMap->tileHeight,
                 WHITE);
+    }
 }
 
 bool map_update(MapManager manager, float playerY) {
@@ -65,9 +68,13 @@ bool map_update(MapManager manager, float playerY) {
         return false;
     }
 
+    // Check if player position is over halfway point of next map
     if (playerY > manager->startYCurMap +
                       (manager->curMap->height * manager->curMap->tileHeight) +
                       (manager->nextMap->height * manager->curMap->tileHeight / 2.0f)) {
+        slogi("Map switch detected at player Y position [%f]", playerY);
+        // Set starting point for current map after current map
+        // because next map takes it's place
         manager->startYCurMap = manager->startYCurMap +
                                 (manager->curMap->height * manager->curMap->tileHeight);
         UnloadTMX(manager->curMap);
@@ -131,11 +138,18 @@ static int getRectanglesFromObjectLayer(const TmxMap *map, int mapStartY, const 
 }
 
 int map_getRectanglesFromCurrentMap(MapManager manager, const char *layerName, Rectangle *rectangles) {
+    if (manager->curMap == NULL) {
+        sloge("Attempt to get rectangles from NULL (current) map");
+        return 0;
+    }
     return getRectanglesFromObjectLayer(manager->curMap, manager->startYCurMap, layerName, rectangles);
 }
 
 int map_getRectanglesFromNextMap(MapManager manager, const char *layerName, Rectangle *rectangles) {
-    assert(manager->nextMap != NULL);
+    if (manager->nextMap == NULL) {
+        sloge("Attempt to get rectangles from NULL (next) map");
+        return 0;
+    }
     return getRectanglesFromObjectLayer(manager->nextMap,
                                         manager->startYCurMap + manager->curMap->tileHeight * manager->curMap->height,
                                         layerName, rectangles);
@@ -145,7 +159,18 @@ int map_getCurrentMapLevel(MapManager manager) {
     return manager->curMapLevel;
 }
 
+bool map_hasNextMap(MapManager manager) {
+    if (manager->nextMap != NULL) {
+        return true;
+    }
+    return false;
+}
+
 Rectangle map_getBoundaryFromCurrentMap(MapManager manager) {
+    if (manager->curMap == NULL) {
+        sloge("Attempt to get rectangle from NULL (current) map");
+        return (Rectangle){0.0f,0.0f,0.0f,0.0f};
+    }
     Rectangle boundary = {
         .x = 0.0f,
         .y = (float)manager->startYCurMap,
@@ -156,7 +181,10 @@ Rectangle map_getBoundaryFromCurrentMap(MapManager manager) {
 }
 
 Rectangle map_getBoundaryFromNextMap(MapManager manager) {
-    assert(manager->nextMap != NULL);
+    if (manager->nextMap == NULL) {
+        sloge("Attempt to get rectangle from NULL (next) map");
+        return (Rectangle){0.0f,0.0f,0.0f,0.0f};
+    }
     Rectangle boundary = {
         .x = 0.0f,
         .y = (float)manager->startYCurMap + manager->curMap->tileHeight * manager->curMap->height,

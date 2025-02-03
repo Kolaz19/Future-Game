@@ -10,7 +10,7 @@
 #include "include/physicsPlayer.h"
 #include "include/physicsWorld.h"
 #include "include/raylib/raylib.h"
-#include "include/tmxWrapper.h"
+#include "include/mapManager.h"
 
 #define SCREEN_WIDTH (1920 * 0.8)
 #define SCREEN_HEIGHT (1080 * 0.8)
