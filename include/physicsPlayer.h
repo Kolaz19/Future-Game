@@ -2,7 +2,17 @@
 #define PHY_CHAR_H
 
 #include "bodyIdReference.h"
-void pl_update(BodyIdReference body);
-void pl_getVelocity(BodyIdReference body,float *velX, float *velY);
+
+/*
+ * Catch button pressed and apply force to player
+ */
+void plphy_update(BodyIdReference body);
+
+/*
+ * Get velocity of player body
+ * @param velX Velocity of body on x axis
+ * @param velY Velocity of body on y axis
+ */
+void plphy_getVelocity(BodyIdReference body,float *velX, float *velY);
 
 #endif

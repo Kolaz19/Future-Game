@@ -157,7 +157,7 @@ void phy_addPlayer(WorldHandle world) {
     addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f);
 }
 
-int phy_getBodyReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type) {
+int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type) {
 	Body **bodies = handle->bag;
 	int amount = 0;
 	// Loop through all objects in bag and assign the ones with needed type
@@ -170,7 +170,7 @@ int phy_getBodyReferences(WorldHandle handle, BodyRectReference *bodyReferences,
 	return amount;
 }
 
-BodyIdReference phy_getCharacterBodyReference(WorldHandle handle) {
+BodyIdReference phy_getCharacterBodyIdReference(WorldHandle handle) {
 	Body **bodies = handle->bag;
 	for (int i = 0; i < BAG_SIZE; i++) {
 		if (bodies[i] != NULL && bodies[i]->type == CHARACTER) {

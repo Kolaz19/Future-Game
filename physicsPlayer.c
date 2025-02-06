@@ -18,7 +18,7 @@ static void slowDown(BodyIdReference body) {
     b2Body_SetLinearVelocity(*body, (b2Vec2){velocity.x * 0.7f, velocity.y});
 }
 
-void pl_update(BodyIdReference body) {
+void plphy_update(BodyIdReference body) {
     b2Vec2 forceToApply = {0.0f, 0.0f};
     b2Vec2 velocity = b2Body_GetLinearVelocity(*body);
 	slogt("Velocity of player: X:%f Y:%f", velocity.x, velocity.y);
@@ -46,7 +46,7 @@ void pl_update(BodyIdReference body) {
     }
 }
 
-void pl_getVelocity(BodyIdReference body, float *velX, float *velY) {
+void plphy_getVelocity(BodyIdReference body, float *velX, float *velY) {
     b2Vec2 vec = b2Body_GetLinearVelocity(*body);
     *velX = vec.x;
     *velY = vec.y;

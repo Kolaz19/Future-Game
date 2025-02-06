@@ -20,23 +20,23 @@ static const char *mapNameSuffix = ".tmx";
 
 static void setMapFileName(int level, char *mapName) {
     char *curChar = mapName;
-    int prefixLen = strlen(mapNamePrefix);
+    size_t prefixLen = strlen(mapNamePrefix);
     strncpy(curChar, mapNamePrefix, prefixLen);
     curChar += prefixLen;
 
     if (level > 9) {
         int nextIntChar = level / 10;
-        *curChar = '0' + nextIntChar;
+        *curChar = '0' + (char)nextIntChar;
         curChar++;
         nextIntChar = level % 10;
-        *curChar = '0' + nextIntChar;
+        *curChar = '0' + (char)nextIntChar;
         curChar++;
     } else {
-        *curChar = '0' + level;
+        *curChar = '0' + (char)level;
         curChar++;
     }
 
-    int suffixLen = strlen(mapNameSuffix) + 1;
+    size_t suffixLen = strlen(mapNameSuffix) + 1;
     strncpy(curChar, mapNameSuffix, suffixLen);
 }
 
@@ -57,8 +57,8 @@ void map_draw(MapManager manager, Camera2D *cam) {
         // Draw next map under current map
         DrawTMX(manager->nextMap, cam, 0,
                 manager->startYCurMap +
-                    manager->curMap->height *
-                        manager->curMap->tileHeight,
+                    (int)manager->curMap->height *
+                        (int)manager->curMap->tileHeight,
                 WHITE);
     }
 }
@@ -69,14 +69,14 @@ bool map_update(MapManager manager, float playerY) {
     }
 
     // Check if player position is over halfway point of next map
-    if (playerY > manager->startYCurMap +
-                      (manager->curMap->height * manager->curMap->tileHeight) +
-                      (manager->nextMap->height * manager->curMap->tileHeight / 2.0f)) {
+    if (playerY > (float)manager->startYCurMap +
+                      (float)(manager->curMap->height * manager->curMap->tileHeight) +
+                      ((float)manager->nextMap->height * (float)manager->curMap->tileHeight / 2.0f)) {
         slogi("Map switch detected at player Y position [%f]", playerY);
         // Set starting point for current map after current map
         // because next map takes it's place
         manager->startYCurMap = manager->startYCurMap +
-                                (manager->curMap->height * manager->curMap->tileHeight);
+                                (int)(manager->curMap->height * manager->curMap->tileHeight);
         UnloadTMX(manager->curMap);
         manager->curMap = manager->nextMap;
         manager->curMapLevel++;
@@ -129,7 +129,7 @@ static int getRectanglesFromObjectLayer(const TmxMap *map, int mapStartY, const 
 
     for (uint32_t i = 0; i < matchingLayer->exact.objectGroup.objectsLength; i++) {
         rectangles[i].x = (float)matchingLayer->exact.objectGroup.objects[i].x;
-        rectangles[i].y = mapStartY + (float)matchingLayer->exact.objectGroup.objects[i].y;
+        rectangles[i].y = (float)mapStartY + (float)matchingLayer->exact.objectGroup.objects[i].y;
         rectangles[i].width = (float)matchingLayer->exact.objectGroup.objects[i].width;
         rectangles[i].height = (float)matchingLayer->exact.objectGroup.objects[i].height;
     }
@@ -151,7 +151,7 @@ int map_getRectanglesFromNextMap(MapManager manager, const char *layerName, Rect
         return 0;
     }
     return getRectanglesFromObjectLayer(manager->nextMap,
-                                        manager->startYCurMap + manager->curMap->tileHeight * manager->curMap->height,
+                                        manager->startYCurMap + (int)manager->curMap->tileHeight * (int)manager->curMap->height,
                                         layerName, rectangles);
 }
 
@@ -169,13 +169,13 @@ bool map_hasNextMap(MapManager manager) {
 Rectangle map_getBoundaryFromCurrentMap(MapManager manager) {
     if (manager->curMap == NULL) {
         sloge("Attempt to get rectangle from NULL (current) map");
-        return (Rectangle){0.0f,0.0f,0.0f,0.0f};
+        return (Rectangle){0.0f, 0.0f, 0.0f, 0.0f};
     }
     Rectangle boundary = {
         .x = 0.0f,
         .y = (float)manager->startYCurMap,
-        .width = manager->curMap->tileWidth * manager->curMap->width,
-        .height = manager->curMap->tileHeight * manager->curMap->height,
+        .width = (float)(manager->curMap->tileWidth * manager->curMap->width),
+        .height = (float)(manager->curMap->tileHeight * manager->curMap->height),
     };
     return boundary;
 }
@@ -183,13 +183,13 @@ Rectangle map_getBoundaryFromCurrentMap(MapManager manager) {
 Rectangle map_getBoundaryFromNextMap(MapManager manager) {
     if (manager->nextMap == NULL) {
         sloge("Attempt to get rectangle from NULL (next) map");
-        return (Rectangle){0.0f,0.0f,0.0f,0.0f};
+        return (Rectangle){0.0f, 0.0f, 0.0f, 0.0f};
     }
     Rectangle boundary = {
         .x = 0.0f,
-        .y = (float)manager->startYCurMap + manager->curMap->tileHeight * manager->curMap->height,
-        .width = manager->nextMap->tileWidth * manager->nextMap->width,
-        .height = manager->nextMap->tileHeight * manager->nextMap->height,
+        .y = (float)((uint32_t)manager->startYCurMap + manager->curMap->tileHeight * manager->curMap->height),
+        .width = (float)(manager->nextMap->tileWidth * manager->nextMap->width),
+        .height = (float)(manager->nextMap->tileHeight * manager->nextMap->height),
     };
     return boundary;
 }

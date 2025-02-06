@@ -9,7 +9,7 @@ UTEST(phy, objects) {
 	phy_addPlatform(world, (Rectangle){30.0f, 30.0f, 50.0f, 10.0f});
 	phy_addPlatform(world, (Rectangle){30.0f, 30.0f, 50.0f, 10.0f});
 	BodyRectReference bodyReferences[BAG_SIZE] = {NULL};
-	int amountPlatforms = phy_getBodyReferences(world, bodyReferences, STATIC_PLATFORM);
+	int amountPlatforms = phy_getBodyRectReferences(world, bodyReferences, STATIC_PLATFORM);
 	//Check amount objects produced
 	ASSERT_EQ(amountPlatforms, 3);
 
@@ -26,7 +26,7 @@ UTEST(phy, objects) {
 UTEST(phy, character) {
 	//Check if character creation and retrieval works
 	WorldHandle world = phy_createWorld();
-	BodyIdReference ref = phy_getCharacterBodyReference(world);
+	BodyIdReference ref = phy_getCharacterBodyIdReference(world);
 	ASSERT_TRUE(ref == NULL);
 	phy_addPlayer(world);
 	ASSERT_FALSE(ref != NULL);

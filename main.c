@@ -7,16 +7,18 @@
 
 #include "include/animationPlayer.h"
 #include "include/cameraControl.h"
+#include "include/mapManager.h"
 #include "include/physicsPlayer.h"
 #include "include/physicsWorld.h"
 #include "include/raylib/raylib.h"
-#include "include/mapManager.h"
 
 #define SCREEN_WIDTH (1920 * 0.8)
 #define SCREEN_HEIGHT (1080 * 0.8)
 
 // #define SHOW_COLLISION
 // #define UTEST_EXE
+//
+void addPlatforms(WorldHandle handle, MapManager manager, bool initial);
 
 int main(int argc, char *argv[]) {
 #ifdef UTEST_EXE
@@ -26,53 +28,39 @@ int main(int argc, char *argv[]) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Future");
     SetTargetFPS(60);
 
-    const char *tmxFileName = "assets/map_part1.tmx";
     MapManager manager = map_createMapManager(1);
-
     WorldHandle worldHandle = phy_createWorld();
 
-    Rectangle colRectangles[3];
-    int amountOfRectangles = map_getRectanglesFromCurrentMap(manager, "Platforms", colRectangles);
-    for (int i = 0; i < amountOfRectangles; i++) {
-        phy_addPlatform(worldHandle, colRectangles[i]);
-    }
-    amountOfRectangles = map_getRectanglesFromNextMap(manager, "Platforms", colRectangles);
-    for (int i = 0; i < amountOfRectangles; i++) {
-        phy_addPlatform(worldHandle, colRectangles[i]);
-    }
-
     phy_addPlayer(worldHandle);
+    BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
+
     phy_addWalls(worldHandle, map_getBoundaryFromCurrentMap(manager), 16);
-    phy_addWalls(worldHandle, map_getBoundaryFromNextMap(manager), 16);
+    if (map_hasNextMap(manager)) {
+        phy_addWalls(worldHandle, map_getBoundaryFromNextMap(manager), 16);
+    }
+    addPlatforms(worldHandle, manager, true);
 
-    BodyIdReference ref = phy_getCharacterBodyReference(worldHandle);
-    assert(ref != NULL);
-
-    BodyRectReference platforms[BAG_SIZE];
-    BodyRectReference playerBody;
-    int amountPlatforms = phy_getBodyReferences(worldHandle, platforms, STATIC_PLATFORM);
-    int amountPlayers = phy_getBodyReferences(worldHandle, &playerBody, CHARACTER);
-    assert(amountPlayers == 1);
+    BodyRectReference playerRectangle;
+    phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
 
     Camera2D camera;
-    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, map_getBoundaryFromNextMap(manager).width, 330);
+    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map_getBoundaryFromCurrentMap(manager).width), 330);
 
     PlAnimation plAnim = panim_createAnimation();
     Vector2 force;
 
     while (!WindowShouldClose()) {
 
-        pl_update(ref);
+        plphy_update(playerBody);
+        plphy_getVelocity(playerBody, &force.x, &force.y);
 
-        pl_getVelocity(ref, &force.x, &force.y);
         panim_update(plAnim, force.x, force.y);
         phy_updateWorld(worldHandle);
-        cam_updateCamera(&camera, playerBody.rectangle->y);
-        if (map_update(manager, playerBody.rectangle->y)) {
-            amountOfRectangles = map_getRectanglesFromNextMap(manager, "Platforms", colRectangles);
-            for (int i = 0; i < amountOfRectangles; i++) {
-                phy_addPlatform(worldHandle, colRectangles[i]);
-            }
+        cam_updateCamera(&camera, playerRectangle.rectangle->y);
+
+        if (map_update(manager, playerRectangle.rectangle->y)) {
+            // Add objects to new map
+            addPlatforms(worldHandle, manager, false);
             phy_addWalls(worldHandle, map_getBoundaryFromNextMap(manager), 16);
         }
 
@@ -80,14 +68,7 @@ int main(int argc, char *argv[]) {
         ClearBackground(BLACK);
         BeginMode2D(camera);
         map_draw(manager, &camera);
-
-#ifdef SHOW_COLLISION
-        for (int i = 0; i < amountPlatforms; i++) {
-            DrawRectangle((int)platforms[i].rectangle->x, (int)platforms[i].rectangle->y, (int)platforms[i].rectangle->width, (int)platforms[i].rectangle->height, GREEN);
-        }
-        DrawRectangle((int)playerBody.rectangle->x, (int)playerBody.rectangle->y, (int)playerBody.rectangle->width, (int)playerBody.rectangle->height, BLUE);
-#endif
-        panim_draw(plAnim, (int)playerBody.rectangle->x, (int)playerBody.rectangle->y);
+        panim_draw(plAnim, (int)playerRectangle.rectangle->x, (int)playerRectangle.rectangle->y);
 
         EndMode2D();
         DrawFPS(10, 10);
@@ -100,4 +81,21 @@ int main(int argc, char *argv[]) {
     CloseWindow();
     slog_destroy();
     return 0;
+}
+
+void addPlatforms(WorldHandle handle, MapManager manager, bool initial) {
+    Rectangle staticPlatforms[50];
+    int amountOfRectangles = 0;
+
+    if (initial) {
+        amountOfRectangles = map_getRectanglesFromCurrentMap(manager, "Platforms", staticPlatforms);
+        for (int i = 0; i < amountOfRectangles; i++) {
+            phy_addPlatform(handle, staticPlatforms[i]);
+        }
+    }
+
+    amountOfRectangles = map_getRectanglesFromNextMap(manager, "Platforms", staticPlatforms);
+    for (int i = 0; i < amountOfRectangles; i++) {
+        phy_addPlatform(handle, staticPlatforms[i]);
+    }
 }

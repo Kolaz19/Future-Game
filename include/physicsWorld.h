@@ -44,13 +44,13 @@ void phy_addPlayer(WorldHandle world);
  * @param type The type of the objects to store from the handle
  * @return Number of objects stored
  */
-int phy_getBodyReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type);
+int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type);
 
 /*
  * Get physics body reference from world
  * @return NULL when not found
  */
-BodyIdReference phy_getCharacterBodyReference(WorldHandle handle);
+BodyIdReference phy_getCharacterBodyIdReference(WorldHandle handle);
 
 /*
  * Add walls as WALL to the world (left and right side)
