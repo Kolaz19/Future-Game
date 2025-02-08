@@ -56,4 +56,10 @@ BodyIdReference phy_getCharacterBodyIdReference(WorldHandle handle);
  * Add walls as WALL to the world (left and right side)
  */
 void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness);
+
+/*
+ * Destroy all physic objects above specific position
+ * @param posY Objects above this position get destroyed
+ */
+void phy_destroyObjectsAbove(WorldHandle handle, float posY);
 #endif

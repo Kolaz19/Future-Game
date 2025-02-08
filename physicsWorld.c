@@ -2,7 +2,6 @@
 #include <assert.h>
 #include <stdlib.h>
 
-
 #include "include/box2d/box2d.h"
 #include "include/box2d/collision.h"
 #include "include/box2d/math_functions.h"
@@ -13,7 +12,6 @@
 #define CONV_VAL 20
 #define TOWORLD(x) ((x) / CONV_VAL)
 #define TOPIXEL(x) ((x) * CONV_VAL)
-
 
 typedef struct Body {
     b2BodyId body;
@@ -55,15 +53,28 @@ static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width,
             bodies[i]->body.revision = entry->revision;
             bodies[i]->body.index1 = entry->index1;
 
-			// Width and height can not be retrieved later from physics object
-			// So we have to store it here
+            // Width and height can not be retrieved later from physics object
+            // So we have to store it here
             bodies[i]->rectangle.width = width;
             bodies[i]->rectangle.height = height;
-			bodies[i]->type = type;
-			// Initially set position and rotation
+            bodies[i]->type = type;
+            // Initially set position and rotation
             updateRectangle(bodies[i]);
-			slogd("Body in bag at index [%d] added (TYPE:%d)", i, type);
-			return;
+            slogd("Body in bag at index [%d] added (TYPE:%d)", i, type);
+            return;
+        }
+    }
+}
+
+void phy_destroyObjectsAbove(WorldHandle handle, float posY) {
+    BodyType type;
+    for (int i = 0; i < BAG_SIZE; i++) {
+        if (handle->bag[i] != NULL && handle->bag[i]->rectangle.y < posY) {
+            b2DestroyBody(handle->bag[i]->body);
+            type = handle->bag[i]->type;
+            free(handle->bag[i]);
+            handle->bag[i] = NULL;
+            slogd("Body in bag at index [%d] freed (TYPE:%d)", i, type);
         }
     }
 }
@@ -97,9 +108,9 @@ void phy_free(WorldHandle handle) {
 
     for (int i = 0; i < BAG_SIZE; i++) {
         if (bodies[i] != NULL) {
-			BodyType type = bodies[i]->type;
+            BodyType type = bodies[i]->type;
             free(bodies[i]);
-			slogd("Body in bag at index [%d] freed (TYPE:%d)",i, type);
+            slogd("Body in bag at index [%d] freed (TYPE:%d)", i, type);
         }
     }
     b2DestroyWorld(handle->world);
@@ -114,7 +125,7 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
     b2Polygon groundBox = b2MakeBox(TOWORLD(plat.width / 2), TOWORLD(plat.height / 2));
 
     b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-	groundShapeDef.friction = 0.3f;
+    groundShapeDef.friction = 0.3f;
     b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
 
     addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height);
@@ -129,10 +140,11 @@ void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness) {
 
     b2BodyId wallLeftId = b2CreateBody(world->world, &wallLeftBodyDef);
     b2BodyId wallRightId = b2CreateBody(world->world, &wallRightBodyDef);
+    // TODO Clean transition between two walls
     b2Polygon wallBox = b2MakeBox(TOWORLD((float)wallThickness / 2), TOWORLD((float)boundary.height / 2));
 
     b2ShapeDef wallShapeDef = b2DefaultShapeDef();
-	wallShapeDef.friction = 0.0f;
+    wallShapeDef.friction = 0.0f;
     b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox);
     b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox);
 
@@ -142,40 +154,40 @@ void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness) {
 
 void phy_addPlayer(WorldHandle world) {
     b2BodyDef playerBodyDef = b2DefaultBodyDef();
-	playerBodyDef.type = b2_dynamicBody;
-	playerBodyDef.fixedRotation = true;
+    playerBodyDef.type = b2_dynamicBody;
+    playerBodyDef.fixedRotation = true;
     playerBodyDef.position = (b2Vec2){TOWORLD(40.0f), TOWORLD(5.0f)};
 
     b2BodyId playerId = b2CreateBody(world->world, &playerBodyDef);
     b2Polygon playerBox = b2MakeBox(TOWORLD(8.0f), TOWORLD(16.0f));
 
     b2ShapeDef playerShapeDef = b2DefaultShapeDef();
-	playerShapeDef.density = 20.0f;
-	playerShapeDef.friction = 0.1f;
+    playerShapeDef.density = 20.0f;
+    playerShapeDef.friction = 0.1f;
     b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
 
     addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f);
 }
 
 int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type) {
-	Body **bodies = handle->bag;
-	int amount = 0;
-	// Loop through all objects in bag and assign the ones with needed type
-	for (int i = 0; i < BAG_SIZE; i++) {
-		if (bodies[i] != NULL && bodies[i]->type == type) {
-			bodyReferences[amount].rectangle = &(bodies[i]->rectangle);
-			bodyReferences[amount++].rotation = &(bodies[i]->rotation);
-		}
-	}
-	return amount;
+    Body **bodies = handle->bag;
+    int amount = 0;
+    // Loop through all objects in bag and assign the ones with needed type
+    for (int i = 0; i < BAG_SIZE; i++) {
+        if (bodies[i] != NULL && bodies[i]->type == type) {
+            bodyReferences[amount].rectangle = &(bodies[i]->rectangle);
+            bodyReferences[amount++].rotation = &(bodies[i]->rotation);
+        }
+    }
+    return amount;
 }
 
 BodyIdReference phy_getCharacterBodyIdReference(WorldHandle handle) {
-	Body **bodies = handle->bag;
-	for (int i = 0; i < BAG_SIZE; i++) {
-		if (bodies[i] != NULL && bodies[i]->type == CHARACTER) {
-			return &(bodies[i]->body);
-		}
-	}
-	return NULL;
+    Body **bodies = handle->bag;
+    for (int i = 0; i < BAG_SIZE; i++) {
+        if (bodies[i] != NULL && bodies[i]->type == CHARACTER) {
+            return &(bodies[i]->body);
+        }
+    }
+    return NULL;
 }

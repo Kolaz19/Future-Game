@@ -28,23 +28,23 @@ int main(int argc, char *argv[]) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Future");
     SetTargetFPS(60);
 
-    MapManager manager = map_createMapManager(1);
+    MapManager mapManager = map_createMapManager(1);
     WorldHandle worldHandle = phy_createWorld();
 
     phy_addPlayer(worldHandle);
     BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
 
-    phy_addWalls(worldHandle, map_getBoundaryFromCurrentMap(manager), 16);
-    if (map_hasNextMap(manager)) {
-        phy_addWalls(worldHandle, map_getBoundaryFromNextMap(manager), 16);
+    phy_addWalls(worldHandle, map_getBoundaryFromCurrentMap(mapManager), 16);
+    if (map_hasNextMap(mapManager)) {
+        phy_addWalls(worldHandle, map_getBoundaryFromNextMap(mapManager), 16);
     }
-    addPlatforms(worldHandle, manager, true);
+    addPlatforms(worldHandle, mapManager, true);
 
     BodyRectReference playerRectangle;
     phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
 
     Camera2D camera;
-    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map_getBoundaryFromCurrentMap(manager).width), 330);
+    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map_getBoundaryFromCurrentMap(mapManager).width), 330);
 
     PlAnimation plAnim = panim_createAnimation();
     Vector2 force;
@@ -58,16 +58,17 @@ int main(int argc, char *argv[]) {
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
 
-        if (map_update(manager, playerRectangle.rectangle->y)) {
+        if (map_update(mapManager, playerRectangle.rectangle->y)) {
+			phy_destroyObjectsAbove(worldHandle, map_getBoundaryFromCurrentMap(mapManager).y - 10.0f);
             // Add objects to new map
-            addPlatforms(worldHandle, manager, false);
-            phy_addWalls(worldHandle, map_getBoundaryFromNextMap(manager), 16);
+            addPlatforms(worldHandle, mapManager, false);
+            phy_addWalls(worldHandle, map_getBoundaryFromNextMap(mapManager), 16);
         }
 
         BeginDrawing();
         ClearBackground(BLACK);
         BeginMode2D(camera);
-        map_draw(manager, &camera);
+        map_draw(mapManager, &camera);
         panim_draw(plAnim, (int)playerRectangle.rectangle->x, (int)playerRectangle.rectangle->y);
 
         EndMode2D();
@@ -75,7 +76,7 @@ int main(int argc, char *argv[]) {
         EndDrawing();
     }
 
-    map_free(manager);
+    map_free(mapManager);
     phy_free(worldHandle);
     panim_free(plAnim);
     CloseWindow();
