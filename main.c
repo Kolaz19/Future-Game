@@ -19,6 +19,7 @@
 // #define UTEST_EXE
 //
 void addPlatforms(WorldHandle handle, MapManager manager, bool initial);
+void addLongWalls(WorldHandle worldHandle, MapManager mapManager);
 
 int main(int argc, char *argv[]) {
 #ifdef UTEST_EXE
@@ -34,10 +35,7 @@ int main(int argc, char *argv[]) {
     phy_addPlayer(worldHandle);
     BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
 
-    phy_addWalls(worldHandle, map_getBoundaryFromCurrentMap(mapManager), 16);
-    if (map_hasNextMap(mapManager)) {
-        phy_addWalls(worldHandle, map_getBoundaryFromNextMap(mapManager), 16);
-    }
+    addLongWalls(worldHandle, mapManager);
     addPlatforms(worldHandle, mapManager, true);
 
     BodyRectReference playerRectangle;
@@ -59,10 +57,9 @@ int main(int argc, char *argv[]) {
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
 
         if (map_update(mapManager, playerRectangle.rectangle->y)) {
-			phy_destroyObjectsAbove(worldHandle, map_getBoundaryFromCurrentMap(mapManager).y - 10.0f);
-            // Add objects to new map
+            addLongWalls(worldHandle, mapManager);
+            phy_destroyObjectsAbove(worldHandle, map_getBoundaryFromCurrentMap(mapManager).y - 10.0f);
             addPlatforms(worldHandle, mapManager, false);
-            phy_addWalls(worldHandle, map_getBoundaryFromNextMap(mapManager), 16);
         }
 
         BeginDrawing();
@@ -99,4 +96,13 @@ void addPlatforms(WorldHandle handle, MapManager manager, bool initial) {
     for (int i = 0; i < amountOfRectangles; i++) {
         phy_addPlatform(handle, staticPlatforms[i]);
     }
+}
+
+void addLongWalls(WorldHandle worldHandle, MapManager mapManager) {
+    Rectangle targetMapBoundary = map_getBoundaryFromCurrentMap(mapManager);
+    if (map_hasNextMap(mapManager)) {
+        Rectangle nextMapBoundary = map_getBoundaryFromNextMap(mapManager);
+        targetMapBoundary.height += nextMapBoundary.height;
+    }
+    phy_addWalls(worldHandle, targetMapBoundary, 16);
 }
