@@ -9,6 +9,7 @@
 
 #define RUNNING_FORCE 1000.0f
 #define VELOCITY_LIMIT 8
+#define JUMP_FORCE -250.0f
 
 /*
  * Slow down running speed
@@ -22,6 +23,10 @@ void plphy_update(BodyIdReference body) {
     b2Vec2 forceToApply = {0.0f, 0.0f};
     b2Vec2 velocity = b2Body_GetLinearVelocity(*body);
 	slogt("Velocity of player: X:%f Y:%f", velocity.x, velocity.y);
+
+	if (IsKeyDown(KEY_W) && velocity.y < 0.01f && velocity.y > -0.01f) {
+		b2Body_ApplyLinearImpulse(*body, (b2Vec2){0.0f, JUMP_FORCE}, (b2Vec2){0.0f, 0.0f}, true);
+	}
 
 	//Slow down when starting running in opposite direction
 	//or when coming to halt

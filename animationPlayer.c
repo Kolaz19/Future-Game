@@ -4,8 +4,10 @@
 #include <stdlib.h>
 
 #define CHAR_SPRITESHEET "assets/player.png"
-#define NEG_LIMIT -0.5f
-#define POS_LIMIT 0.5f
+#define NEG_LIMIT_RUN -0.5f
+#define POS_LIMIT_RUN 0.5f
+#define NEG_LIMIT_JUMP -0.1f
+#define POS_LIMIT_JUMP 0.1f
 
 typedef struct PlayerAnimations {
     Spritesheet sheet;
@@ -33,15 +35,20 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
     Animation *prevAnimation = plAnim->curAnimation;
     bool prevFlip = plAnim->flip;
     // Set correct state
-    if (velocityX > NEG_LIMIT && velocityX < POS_LIMIT && velocityY > NEG_LIMIT && velocityY < POS_LIMIT) {
-        plAnim->curAnimation = &plAnim->idle;
-        if (plAnim->curAnimation != prevAnimation) {
-			slogd("Animation switched to IDLE");
-        }
-    } else if (velocityY > POS_LIMIT) {
+	if (velocityY < NEG_LIMIT_JUMP) {
         plAnim->curAnimation = &plAnim->falling;
         if (plAnim->curAnimation != prevAnimation) {
 			slogd("Animation switched to FALLING");
+        }
+    } else if (velocityY > POS_LIMIT_JUMP) {
+        plAnim->curAnimation = &plAnim->falling;
+        if (plAnim->curAnimation != prevAnimation) {
+			slogd("Animation switched to FALLING");
+        }
+	} else if (velocityX > NEG_LIMIT_RUN && velocityX < POS_LIMIT_RUN && velocityY > NEG_LIMIT_RUN && velocityY < POS_LIMIT_RUN) {
+        plAnim->curAnimation = &plAnim->idle;
+        if (plAnim->curAnimation != prevAnimation) {
+			slogd("Animation switched to IDLE");
         }
     } else if (velocityX != 0.0f) {
         plAnim->curAnimation = &plAnim->running;
@@ -51,9 +58,9 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
     }
 
     // Set global flip state
-    if (velocityX > POS_LIMIT) {
+    if (velocityX > POS_LIMIT_RUN) {
         plAnim->flip = false;
-    } else if (velocityX < NEG_LIMIT) {
+    } else if (velocityX < NEG_LIMIT_RUN) {
         plAnim->flip = true;
     }
 
