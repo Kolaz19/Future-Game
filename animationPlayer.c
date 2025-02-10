@@ -4,8 +4,8 @@
 #include <stdlib.h>
 
 #define CHAR_SPRITESHEET "assets/player.png"
-#define NEG_LIMIT -0.1f
-#define POS_LIMIT 0.1f
+#define NEG_LIMIT -0.5f
+#define POS_LIMIT 0.5f
 
 typedef struct PlayerAnimations {
     Spritesheet sheet;
