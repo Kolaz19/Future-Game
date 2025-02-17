@@ -15,17 +15,19 @@ typedef struct PlayerAnimations {
     Animation idle;
     Animation running;
     Animation falling;
+    Animation jumping;
     Animation dying;
     bool flip;
 } PlayerAnimations;
 
 PlAnimation panim_createAnimation(void) {
     PlAnimation plAnim = malloc(sizeof(PlayerAnimations));
-    plAnim->sheet = anim_loadSpritesheet(CHAR_SPRITESHEET, 6, 5);
+    plAnim->sheet = anim_loadSpritesheet(CHAR_SPRITESHEET, 6, 6);
     plAnim->idle = anim_createAnimation(&(plAnim->sheet), 1, 4, 0.5f, LOOP);
     plAnim->running = anim_createAnimation(&(plAnim->sheet), 7, 10, 0.1f, LOOP);
     plAnim->falling = anim_createAnimation(&(plAnim->sheet), 13, 14, 0.1f, LOOP);
-    plAnim->dying = anim_createAnimation(&(plAnim->sheet), 19, 24, 0.5f, LOOP);
+    plAnim->jumping = anim_createAnimation(&(plAnim->sheet), 19, 20, 0.15f, LOOP);
+    plAnim->dying = anim_createAnimation(&(plAnim->sheet), 25, 26, 0.5f, LOOP);
     plAnim->curAnimation = &plAnim->idle;
     plAnim->flip = false;
     return plAnim;
@@ -35,15 +37,20 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
     Animation *prevAnimation = plAnim->curAnimation;
     bool prevFlip = plAnim->flip;
     // Set correct state
-	if (velocityY < NEG_LIMIT_JUMP) {
+	if (velocityY > 10) {
         plAnim->curAnimation = &plAnim->falling;
         if (plAnim->curAnimation != prevAnimation) {
 			slogd("Animation switched to FALLING");
         }
-    } else if (velocityY > POS_LIMIT_JUMP) {
-        plAnim->curAnimation = &plAnim->falling;
+	} else if (velocityY < NEG_LIMIT_JUMP) {
+        plAnim->curAnimation = &plAnim->jumping;
         if (plAnim->curAnimation != prevAnimation) {
 			slogd("Animation switched to FALLING");
+        }
+    } else if (velocityY > POS_LIMIT_JUMP) {
+        plAnim->curAnimation = &plAnim->jumping;
+        if (plAnim->curAnimation != prevAnimation) {
+			slogd("Animation switched to JUMPING");
         }
 	} else if (velocityX > NEG_LIMIT_RUN && velocityX < POS_LIMIT_RUN && velocityY > NEG_LIMIT_RUN && velocityY < POS_LIMIT_RUN) {
         plAnim->curAnimation = &plAnim->idle;

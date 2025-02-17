@@ -17,7 +17,7 @@
 
 // #define SHOW_COLLISION
 // #define UTEST_EXE
-//
+
 void addPlatforms(WorldHandle handle, MapManager manager, bool initial);
 void addLongWalls(WorldHandle worldHandle, MapManager mapManager);
 

@@ -9,7 +9,7 @@
 
 #define RUNNING_FORCE 1000.0f
 #define VELOCITY_LIMIT 8
-#define JUMP_FORCE -250.0f
+#define JUMP_FORCE -200.0f
 
 /*
  * Slow down running speed
