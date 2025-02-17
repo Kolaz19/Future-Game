@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) {
 
     phy_addPlayer(worldHandle);
     BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
+	float jumpCooldown = 0.0f;
 
     addLongWalls(worldHandle, mapManager);
     addPlatforms(worldHandle, mapManager, true);
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]) {
 
     while (!WindowShouldClose()) {
 
-        plphy_update(playerBody);
+        plphy_update(playerBody, &jumpCooldown);
         plphy_getVelocity(playerBody, &force.x, &force.y);
 
         panim_update(plAnim, force.x, force.y);

@@ -6,7 +6,7 @@
 /*
  * Catch button pressed and apply force to player
  */
-void plphy_update(BodyIdReference body);
+void plphy_update(BodyIdReference body, float *jumpCooldown);
 
 /*
  * Get velocity of player body

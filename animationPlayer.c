@@ -8,6 +8,7 @@
 #define POS_LIMIT_RUN 0.5f
 #define NEG_LIMIT_JUMP -0.1f
 #define POS_LIMIT_JUMP 0.1f
+#define LIMIT_FALLING 10.0f
 
 typedef struct PlayerAnimations {
     Spritesheet sheet;
@@ -37,7 +38,7 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
     Animation *prevAnimation = plAnim->curAnimation;
     bool prevFlip = plAnim->flip;
     // Set correct state
-	if (velocityY > 10) {
+	if (velocityY > LIMIT_FALLING) {
         plAnim->curAnimation = &plAnim->falling;
         if (plAnim->curAnimation != prevAnimation) {
 			slogd("Animation switched to FALLING");
@@ -45,7 +46,7 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
 	} else if (velocityY < NEG_LIMIT_JUMP) {
         plAnim->curAnimation = &plAnim->jumping;
         if (plAnim->curAnimation != prevAnimation) {
-			slogd("Animation switched to FALLING");
+			slogd("Animation switched to JUMPING");
         }
     } else if (velocityY > POS_LIMIT_JUMP) {
         plAnim->curAnimation = &plAnim->jumping;
