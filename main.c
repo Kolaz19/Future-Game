@@ -15,7 +15,6 @@
 #define SCREEN_WIDTH (1920 * 0.8)
 #define SCREEN_HEIGHT (1080 * 0.8)
 
-// #define SHOW_COLLISION
 // #define UTEST_EXE
 
 void addPlatforms(WorldHandle handle, MapManager manager, bool initial);
@@ -67,7 +66,7 @@ int main(int argc, char *argv[]) {
         ClearBackground(BLACK);
         BeginMode2D(camera);
         map_draw(mapManager, &camera);
-        panim_draw(plAnim, (int)playerRectangle.rectangle->x, (int)playerRectangle.rectangle->y);
+        panim_draw(plAnim, playerRectangle.rectangle->x, playerRectangle.rectangle->y);
 
         EndMode2D();
         DrawFPS(10, 10);

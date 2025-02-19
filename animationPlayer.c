@@ -85,8 +85,8 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
     anim_advanceAnimation(plAnim->curAnimation);
 }
 
-void panim_draw(PlAnimation plAnim, int posX, int posY) {
-    anim_drawAnimation(plAnim->curAnimation, &(Rectangle){(float)posX, (float)posY, 32.0f, 32.0f}, &(Vector2){8.0f, 0.0f}, 0.0f);
+void panim_draw(PlAnimation plAnim, float posX, float posY) {
+    anim_drawAnimation(plAnim->curAnimation, &(Rectangle){posX, posY, 32.0f, 32.0f}, &(Vector2){8.0f, 0.0f}, 0.0f);
 }
 
 void panim_free(PlAnimation plAnim) {
