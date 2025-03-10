@@ -14,11 +14,16 @@
 
 #define SCREEN_WIDTH (1920 * 0.8)
 #define SCREEN_HEIGHT (1080 * 0.8)
+#define DYING_FALL_VELOCITY 25
 
 // #define UTEST_EXE
 
 void addPlatforms(WorldHandle handle, MapManager manager, bool initial);
 void addLongWalls(WorldHandle worldHandle, MapManager mapManager);
+
+static bool playerIsDead = false;
+static float previousVelocityY = 0.0f;
+
 
 int main(int argc, char *argv[]) {
 #ifdef UTEST_EXE
@@ -33,7 +38,7 @@ int main(int argc, char *argv[]) {
 
     phy_addPlayer(worldHandle);
     BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
-	float jumpCooldown = 0.0f;
+    float jumpCooldown = 0.0f;
 
     addLongWalls(worldHandle, mapManager);
     addPlatforms(worldHandle, mapManager, true);
@@ -49,8 +54,17 @@ int main(int argc, char *argv[]) {
 
     while (!WindowShouldClose()) {
 
-        plphy_update(playerBody, &jumpCooldown);
+
+        if (!playerIsDead) plphy_update(playerBody, &jumpCooldown);
         plphy_getVelocity(playerBody, &force.x, &force.y);
+
+		//Dying
+        if (force.y < 0.01f && force.y > -0.01f && previousVelocityY > DYING_FALL_VELOCITY) {
+            playerIsDead = true;
+            panim_setDying(plAnim);
+        } else {
+            previousVelocityY = force.y;
+        }
 
         panim_update(plAnim, force.x, force.y);
         phy_updateWorld(worldHandle);

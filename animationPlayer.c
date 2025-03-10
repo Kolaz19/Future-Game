@@ -28,7 +28,8 @@ PlAnimation panim_createAnimation(void) {
     plAnim->running = anim_createAnimation(&(plAnim->sheet), 7, 10, 0.1f, LOOP);
     plAnim->falling = anim_createAnimation(&(plAnim->sheet), 13, 14, 0.1f, LOOP);
     plAnim->jumping = anim_createAnimation(&(plAnim->sheet), 19, 20, 0.15f, LOOP);
-    plAnim->dying = anim_createAnimation(&(plAnim->sheet), 25, 26, 0.5f, LOOP);
+    plAnim->dying = anim_createAnimation(&(plAnim->sheet), 25, 30, 0.1f, PLAY_ONCE);
+    anim_startAnimation(&plAnim->dying);
     plAnim->curAnimation = &plAnim->idle;
     plAnim->flip = false;
     return plAnim;
@@ -37,31 +38,40 @@ PlAnimation panim_createAnimation(void) {
 void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
     Animation *prevAnimation = plAnim->curAnimation;
     bool prevFlip = plAnim->flip;
+
+    // Check death state set in setDying()
+    if (plAnim->curAnimation == &plAnim->dying) {
+        if (!(anim_getCurrentFrame(&plAnim->dying) == 6)) {
+            anim_advanceAnimation(plAnim->curAnimation);
+        }
+        return;
+    }
+
     // Set correct state
-	if (velocityY > LIMIT_FALLING) {
+    if (velocityY > LIMIT_FALLING) {
         plAnim->curAnimation = &plAnim->falling;
         if (plAnim->curAnimation != prevAnimation) {
-			slogd("Animation switched to FALLING");
+            slogd("Animation switched to FALLING");
         }
-	} else if (velocityY < NEG_LIMIT_JUMP) {
+    } else if (velocityY < NEG_LIMIT_JUMP) {
         plAnim->curAnimation = &plAnim->jumping;
         if (plAnim->curAnimation != prevAnimation) {
-			slogd("Animation switched to JUMPING");
+            slogd("Animation switched to JUMPING");
         }
     } else if (velocityY > POS_LIMIT_JUMP) {
         plAnim->curAnimation = &plAnim->jumping;
         if (plAnim->curAnimation != prevAnimation) {
-			slogd("Animation switched to JUMPING");
+            slogd("Animation switched to JUMPING");
         }
-	} else if (velocityX > NEG_LIMIT_RUN && velocityX < POS_LIMIT_RUN && velocityY > NEG_LIMIT_RUN && velocityY < POS_LIMIT_RUN) {
+    } else if (velocityX > NEG_LIMIT_RUN && velocityX < POS_LIMIT_RUN && velocityY > NEG_LIMIT_RUN && velocityY < POS_LIMIT_RUN) {
         plAnim->curAnimation = &plAnim->idle;
         if (plAnim->curAnimation != prevAnimation) {
-			slogd("Animation switched to IDLE");
+            slogd("Animation switched to IDLE");
         }
     } else if (velocityX != 0.0f) {
         plAnim->curAnimation = &plAnim->running;
         if (plAnim->curAnimation != prevAnimation) {
-			slogd("Animation switched to RUNNING");
+            slogd("Animation switched to RUNNING");
         }
     }
 
@@ -72,9 +82,9 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
         plAnim->flip = true;
     }
 
-	if (prevFlip != plAnim->flip) {
-		slogd("Animation flipped to %d", plAnim->flip);
-	}
+    if (prevFlip != plAnim->flip) {
+        slogd("Animation flipped to %d", plAnim->flip);
+    }
 
     // Flip current animation
     if (plAnim->flip) {
@@ -83,6 +93,11 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
         anim_flipReset(plAnim->curAnimation, FLIPX);
     }
     anim_advanceAnimation(plAnim->curAnimation);
+}
+
+void panim_setDying(PlAnimation plAnim) {
+    plAnim->curAnimation = &plAnim->dying;
+    slogd("Animation switched to DYING");
 }
 
 void panim_draw(PlAnimation plAnim, float posX, float posY) {

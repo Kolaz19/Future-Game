@@ -156,7 +156,7 @@ void phy_addPlayer(WorldHandle world) {
     b2BodyDef playerBodyDef = b2DefaultBodyDef();
     playerBodyDef.type = b2_dynamicBody;
     playerBodyDef.fixedRotation = true;
-    playerBodyDef.position = (b2Vec2){TOWORLD(40.0f), TOWORLD(5.0f)};
+    playerBodyDef.position = (b2Vec2){TOWORLD(40.0f), TOWORLD(150.0f)};
 
     b2BodyId playerId = b2CreateBody(world->world, &playerBodyDef);
     b2Polygon playerBox = b2MakeBox(TOWORLD(8.0f), TOWORLD(16.0f));

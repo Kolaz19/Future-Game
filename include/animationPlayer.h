@@ -13,5 +13,6 @@ PlAnimation panim_createAnimation(void);
 void panim_update(PlAnimation plAnim, float velocityX, float velocityY);
 void panim_draw(PlAnimation plAnim, float posX, float posY);
 void panim_free(PlAnimation plAnim);
+void panim_setDying(PlAnimation plAnim);
 
 #endif
