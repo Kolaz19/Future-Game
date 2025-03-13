@@ -3,4 +3,7 @@ map.crocotile
 main
 main.exe
 object_files/
+compile_commands.json
+.cache/
+*session
 *.log

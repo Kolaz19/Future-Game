@@ -50,23 +50,22 @@ int main(int argc, char *argv[]) {
     cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map_getBoundaryFromCurrentMap(mapManager).width), 330);
 
     PlAnimation plAnim = panim_createAnimation();
-    Vector2 force;
+    Vector2 forceOfCharacter;
 
     while (!WindowShouldClose()) {
 
-
         if (!playerIsDead) plphy_update(playerBody, &jumpCooldown);
-        plphy_getVelocity(playerBody, &force.x, &force.y);
+        plphy_getVelocity(playerBody, &forceOfCharacter.x, &forceOfCharacter.y);
 
 		//Dying
-        if (force.y < 0.01f && force.y > -0.01f && previousVelocityY > DYING_FALL_VELOCITY) {
+        if (forceOfCharacter.y < 0.01f && forceOfCharacter.y > -0.01f && previousVelocityY > DYING_FALL_VELOCITY) {
             playerIsDead = true;
             panim_setDying(plAnim);
         } else {
-            previousVelocityY = force.y;
+            previousVelocityY = forceOfCharacter.y;
         }
 
-        panim_update(plAnim, force.x, force.y);
+        panim_update(plAnim, forceOfCharacter.x, forceOfCharacter.y);
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
 

@@ -36,3 +36,6 @@ clean:
 
 run: 
 	./main
+
+cdb:
+	compiledb make
