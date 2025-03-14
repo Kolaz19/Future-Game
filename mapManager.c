@@ -13,6 +13,7 @@ typedef struct Manager {
 } Manager;
 
 #define MAPNAME_MAXLEN 22
+#define OBJ_MAX_NAMELEN 20
 #define LASTLEVEL 3
 
 static const char *mapNamePrefix = "assets/map_part";
@@ -108,7 +109,7 @@ void map_free(MapManager manager) {
     free(manager);
 }
 
-static int getRectanglesFromObjectLayer(const TmxMap *map, int mapStartY, const char *layerName, Rectangle *rectangles) {
+static int getRectanglesFromObjectLayer(const TmxMap *map, int mapStartY, const char *layerName, Rectangle *rectangles, int *ids) {
     TmxLayer *matchingLayer = NULL;
 
     for (uint32_t i = 0; i < map->layersLength; i++) {
@@ -132,27 +133,39 @@ static int getRectanglesFromObjectLayer(const TmxMap *map, int mapStartY, const 
         rectangles[i].y = (float)mapStartY + (float)matchingLayer->exact.objectGroup.objects[i].y;
         rectangles[i].width = (float)matchingLayer->exact.objectGroup.objects[i].width;
         rectangles[i].height = (float)matchingLayer->exact.objectGroup.objects[i].height;
+		if (ids != NULL) {
+			if (strlen(matchingLayer->exact.objectGroup.objects[i].name) > OBJ_MAX_NAMELEN) {
+				sloge("Object name '%s' length exceeds %d characters", matchingLayer->exact.objectGroup.objects[i].name, OBJ_MAX_NAMELEN);
+				return 0;
+			}
+			char *endPtr;
+			ids[i] = (int)strtol(matchingLayer->exact.objectGroup.objects[i].name, &endPtr, 10);
+			if (ids[i] == 0) {
+				sloge("Object name '%s' could not be converted into integer value", matchingLayer->exact.objectGroup.objects[i].name);
+				return 0;
+			}
+		}
     }
 
     return (int)matchingLayer->exact.objectGroup.objectsLength;
 }
 
-int map_getRectanglesFromCurrentMap(MapManager manager, const char *layerName, Rectangle *rectangles) {
+int map_getRectanglesFromCurrentMap(MapManager manager, const char *layerName, Rectangle *rectangles, int *ids) {
     if (manager->curMap == NULL) {
         sloge("Attempt to get rectangles from NULL (current) map");
         return 0;
     }
-    return getRectanglesFromObjectLayer(manager->curMap, manager->startYCurMap, layerName, rectangles);
+    return getRectanglesFromObjectLayer(manager->curMap, manager->startYCurMap, layerName, rectangles, ids);
 }
 
-int map_getRectanglesFromNextMap(MapManager manager, const char *layerName, Rectangle *rectangles) {
+int map_getRectanglesFromNextMap(MapManager manager, const char *layerName, Rectangle *rectangles, int *ids) {
     if (manager->nextMap == NULL) {
         sloge("Attempt to get rectangles from NULL (next) map");
         return 0;
     }
     return getRectanglesFromObjectLayer(manager->nextMap,
                                         manager->startYCurMap + (int)manager->curMap->tileHeight * (int)manager->curMap->height,
-                                        layerName, rectangles);
+                                        layerName, rectangles, ids);
 }
 
 int map_getCurrentMapLevel(MapManager manager) {

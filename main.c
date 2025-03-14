@@ -12,8 +12,8 @@
 #include "include/physicsWorld.h"
 #include "include/raylib/raylib.h"
 
-#define SCREEN_WIDTH (1920 * 0.8)
-#define SCREEN_HEIGHT (1080 * 0.8)
+#define SCREEN_WIDTH ((int)(1920 * 0.8))
+#define SCREEN_HEIGHT ((int)(1080 * 0.8))
 #define DYING_FALL_VELOCITY 25
 
 // #define UTEST_EXE
@@ -23,7 +23,6 @@ void addLongWalls(WorldHandle worldHandle, MapManager mapManager);
 
 static bool playerIsDead = false;
 static float previousVelocityY = 0.0f;
-
 
 int main(int argc, char *argv[]) {
 #ifdef UTEST_EXE
@@ -54,10 +53,11 @@ int main(int argc, char *argv[]) {
 
     while (!WindowShouldClose()) {
 
-        if (!playerIsDead) plphy_update(playerBody, &jumpCooldown);
+        if (!playerIsDead)
+            plphy_update(playerBody, &jumpCooldown);
         plphy_getVelocity(playerBody, &forceOfCharacter.x, &forceOfCharacter.y);
 
-		//Dying
+        // Dying
         if (forceOfCharacter.y < 0.01f && forceOfCharacter.y > -0.01f && previousVelocityY > DYING_FALL_VELOCITY) {
             playerIsDead = true;
             panim_setDying(plAnim);
@@ -95,19 +95,28 @@ int main(int argc, char *argv[]) {
 }
 
 void addPlatforms(WorldHandle handle, MapManager manager, bool initial) {
-    Rectangle staticPlatforms[50];
+    Rectangle platforms[50];
+    int dynamicPlatformsIds[50];
     int amountOfRectangles = 0;
 
     if (initial) {
-        amountOfRectangles = map_getRectanglesFromCurrentMap(manager, "Platforms", staticPlatforms);
+        amountOfRectangles = map_getRectanglesFromCurrentMap(manager, "Platforms", platforms, NULL);
         for (int i = 0; i < amountOfRectangles; i++) {
-            phy_addPlatform(handle, staticPlatforms[i]);
+            phy_addPlatform(handle, platforms[i]);
+        }
+        amountOfRectangles = map_getRectanglesFromCurrentMap(manager, "Dynamic", platforms, dynamicPlatformsIds);
+        for (int i = 0; i < amountOfRectangles; i++) {
+            phy_addDynamic(handle, platforms[i], dynamicPlatformsIds[i]);
         }
     }
 
-    amountOfRectangles = map_getRectanglesFromNextMap(manager, "Platforms", staticPlatforms);
+    amountOfRectangles = map_getRectanglesFromNextMap(manager, "Platforms", platforms, NULL);
     for (int i = 0; i < amountOfRectangles; i++) {
-        phy_addPlatform(handle, staticPlatforms[i]);
+        phy_addPlatform(handle, platforms[i]);
+    }
+    amountOfRectangles = map_getRectanglesFromNextMap(manager, "Dynamic", platforms, dynamicPlatformsIds);
+    for (int i = 0; i < amountOfRectangles; i++) {
+        phy_addDynamic(handle, platforms[i], dynamicPlatformsIds[i]);
     }
 }
 

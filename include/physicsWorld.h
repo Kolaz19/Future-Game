@@ -11,6 +11,7 @@ typedef struct World *WorldHandle;
 
 typedef enum BodyType {
     STATIC_PLATFORM,
+	DYNAMIC_PLATFORM,
 	WALL,
     CHARACTER
 } BodyType;
@@ -18,6 +19,7 @@ typedef enum BodyType {
 typedef struct BodyRectReference {
 	Rectangle *rectangle;
 	float *rotation;
+	int id; /// 0 when undefined (optional)
 } BodyRectReference;
 
 WorldHandle phy_createWorld(void);
@@ -32,6 +34,12 @@ void phy_updateWorld(WorldHandle handle);
  * Take rectangle and place it as STATIC_PLATFORM in the world
  */
 void phy_addPlatform(WorldHandle world, Rectangle plat);
+
+/*
+ * Take rectangle and place it as DYNAMIC_PLATFORM in the world
+ * Dynamic platforms have a ID to identify them further
+ */
+void phy_addDynamic(WorldHandle world, Rectangle plat, int id);
 
 /*
  * Add player at pre-defined position as CHARACTER in the world

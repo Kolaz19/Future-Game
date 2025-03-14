@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="35" height="90" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#000000" nextlayerid="3" nextobjectid="29">
+<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="35" height="90" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#000000" nextlayerid="4" nextobjectid="31">
  <tileset firstgid="1" source="Tileset.tsx"/>
  <layer id="1" name="Kachelebene 1" width="35" height="90">
   <data encoding="csv">
@@ -122,5 +122,8 @@
   <object id="26" x="384.152" y="1280.2" width="63.5715" height="15.6069"/>
   <object id="27" x="63.9245" y="1232.17" width="31.9465" height="15.6069"/>
   <object id="28" x="31.8449" y="1248.11" width="31.9465" height="15.6069"/>
+ </objectgroup>
+ <objectgroup id="3" name="Dynamic">
+  <object id="29" name="22" x="207.938" y="591.813" width="32" height="16"/>
  </objectgroup>
 </map>

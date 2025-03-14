@@ -1,6 +1,7 @@
 #include "include/physicsWorld.h"
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "include/box2d/box2d.h"
 #include "include/box2d/collision.h"
@@ -18,6 +19,7 @@ typedef struct Body {
     Rectangle rectangle; /// Is always in pixel dimension
     BodyType type;
     float rotation;
+	int id; /// Optional ID for further identification
 } Body;
 
 struct World {
@@ -44,8 +46,9 @@ static void updateRectangle(Body *body) {
  * @param entry physics body
  * @param width Width of the rectangle
  * @param height Height of the rectangle
+ * @param name ID of body, relevant for dynamic bodies
  */
-static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width, float height) {
+static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width, float height, int id) {
     for (int i = 0; i < BAG_SIZE; i++) {
         if (bodies[i] == NULL) {
             bodies[i] = malloc(sizeof(Body));
@@ -58,9 +61,11 @@ static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width,
             bodies[i]->rectangle.width = width;
             bodies[i]->rectangle.height = height;
             bodies[i]->type = type;
+			bodies[i]->id = id;
+			 
             // Initially set position and rotation
             updateRectangle(bodies[i]);
-            slogd("Body in bag at index [%d] added (TYPE:%d)", i, type);
+            slogd("Body in bag at index [%d] added (TYPE:%d ID:%d)", i, type, id);
             return;
         }
     }
@@ -128,7 +133,21 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
     groundShapeDef.friction = 0.3f;
     b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
 
-    addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height);
+    addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height, 0);
+}
+
+void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
+    b2BodyDef dynamicBodyDef = b2DefaultBodyDef();
+    dynamicBodyDef.position = (b2Vec2){TOWORLD(plat.x + plat.width / 2), TOWORLD(plat.y + plat.height / 2)};
+
+    b2BodyId dynamicId = b2CreateBody(world->world, &dynamicBodyDef);
+    b2Polygon dynamicBox = b2MakeBox(TOWORLD(plat.width / 2), TOWORLD(plat.height / 2));
+
+    b2ShapeDef dynamicShapeDef = b2DefaultShapeDef();
+    dynamicShapeDef.friction = 0.3f;
+    b2CreatePolygonShape(dynamicId, &dynamicShapeDef, &dynamicBox);
+
+    addToBag(world->bag, &dynamicId, DYNAMIC_PLATFORM, plat.width, plat.height, id);
 }
 
 void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness) {
@@ -148,8 +167,8 @@ void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness) {
     b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox);
     b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox);
 
-    addToBag(world->bag, &wallLeftId, WALL, (float)wallThickness, (float)boundary.height);
-    addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)boundary.height);
+    addToBag(world->bag, &wallLeftId, WALL, (float)wallThickness, (float)boundary.height, 0);
+    addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)boundary.height, 0);
 }
 
 void phy_addPlayer(WorldHandle world) {
@@ -166,7 +185,7 @@ void phy_addPlayer(WorldHandle world) {
     playerShapeDef.friction = 0.1f;
     b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
 
-    addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f);
+    addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, 0);
 }
 
 int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type) {
@@ -176,7 +195,8 @@ int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferen
     for (int i = 0; i < BAG_SIZE; i++) {
         if (bodies[i] != NULL && bodies[i]->type == type) {
             bodyReferences[amount].rectangle = &(bodies[i]->rectangle);
-            bodyReferences[amount++].rotation = &(bodies[i]->rotation);
+            bodyReferences[amount].rotation = &(bodies[i]->rotation);
+            bodyReferences[amount].id = (bodies[i]->id);
         }
     }
     return amount;

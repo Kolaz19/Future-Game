@@ -29,13 +29,13 @@ bool map_update(MapManager manager, float playerY);
  * Extract rectangles from specified object layer
  * @return Amount of rectangles
  */
-int map_getRectanglesFromCurrentMap(MapManager manager, const char *layerName, Rectangle *rectangles);
+int map_getRectanglesFromCurrentMap(MapManager manager, const char *layerName, Rectangle *rectangles, int *ids);
 
 /*
  * Extract rectangles from specified object layer
  * @return Amount of rectangles
  */
-int map_getRectanglesFromNextMap(MapManager manager, const char *layerName, Rectangle *rectangles);
+int map_getRectanglesFromNextMap(MapManager manager, const char *layerName, Rectangle *rectangles, int *ids);
 
 /*
  * Get number of current map
