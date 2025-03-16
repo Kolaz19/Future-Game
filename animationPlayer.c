@@ -96,6 +96,7 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
 }
 
 void panim_setDying(PlAnimation plAnim) {
+	if (plAnim->curAnimation == &plAnim->dying) return;
     bool prevAnimationFlip = plAnim->curAnimation->flipX;
     plAnim->curAnimation = &plAnim->dying;
     plAnim->curAnimation->flipX = prevAnimationFlip;

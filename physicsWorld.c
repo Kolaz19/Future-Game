@@ -200,7 +200,7 @@ void phy_addPlayer(WorldHandle world) {
     playerShapeDef.friction = 0.1f;
     b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
 
-    addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, 0);
+    addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, 1);
 }
 
 int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type) {
@@ -225,4 +225,14 @@ BodyIdReference phy_getCharacterBodyIdReference(WorldHandle handle) {
         }
     }
     return NULL;
+}
+
+void phy_getVelocity(BodyIdReference body, float *velX, float *velY) {
+    b2Vec2 vec = b2Body_GetLinearVelocity(*body);
+    *velX = vec.x;
+    *velY = vec.y;
+}
+
+bool phy_isEnable(BodyIdReference body) {
+	return b2Body_IsEnabled(*body);
 }

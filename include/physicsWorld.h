@@ -1,9 +1,9 @@
 #ifndef PHY_WORLD_H
 #define PHY_WORLD_H
-extern void TraceLog(int logLevel, const char *text, ...);         // Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...)
 
 #include "raylib/rectangle.h"
 #include "bodyIdReference.h"
+#include <stdbool.h>
 
 #define BAG_SIZE 50
 
@@ -71,4 +71,7 @@ void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness);
  * @param posY Objects above this position get destroyed
  */
 void phy_destroyObjectsAbove(WorldHandle handle, float posY);
+
+void phy_getVelocity(BodyIdReference body, float *velX, float *velY);
+bool phy_isEnable(BodyIdReference body);
 #endif

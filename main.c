@@ -8,21 +8,16 @@
 #include "include/animationPlayer.h"
 #include "include/cameraControl.h"
 #include "include/mapManager.h"
-#include "include/physicsPlayer.h"
 #include "include/physicsWorld.h"
 #include "include/raylib/raylib.h"
 
 #define SCREEN_WIDTH ((int)(1920 * 0.8))
 #define SCREEN_HEIGHT ((int)(1080 * 0.8))
-#define DYING_FALL_VELOCITY 25
 
 // #define UTEST_EXE
 
 void addPlatforms(WorldHandle handle, MapManager manager, bool initial);
 void addLongWalls(WorldHandle worldHandle, MapManager mapManager);
-
-static bool playerIsDead = false;
-static float previousVelocityY = 0.0f;
 
 int main(int argc, char *argv[]) {
 #ifdef UTEST_EXE
@@ -37,7 +32,6 @@ int main(int argc, char *argv[]) {
 
     phy_addPlayer(worldHandle);
     BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
-    float jumpCooldown = 0.0f;
 
     addLongWalls(worldHandle, mapManager);
     addPlatforms(worldHandle, mapManager, true);
@@ -53,16 +47,11 @@ int main(int argc, char *argv[]) {
 
     while (!WindowShouldClose()) {
 
-        if (!playerIsDead)
-            plphy_update(playerBody, &jumpCooldown);
-        plphy_getVelocity(playerBody, &forceOfCharacter.x, &forceOfCharacter.y);
-
-        // Dying
-        if (forceOfCharacter.y < 0.01f && forceOfCharacter.y > -0.01f && previousVelocityY > DYING_FALL_VELOCITY) {
-            playerIsDead = true;
+		// Player body was disabled - player is dead
+        if (!phy_isEnable(playerBody)) {
             panim_setDying(plAnim);
         } else {
-            previousVelocityY = forceOfCharacter.y;
+            phy_getVelocity(playerBody, &forceOfCharacter.x, &forceOfCharacter.y);
         }
 
         panim_update(plAnim, forceOfCharacter.x, forceOfCharacter.y);
