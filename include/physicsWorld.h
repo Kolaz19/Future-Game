@@ -27,6 +27,7 @@ void phy_free(WorldHandle handle);
 
 /*
  * Advance physics world and update body references
+ * Run update function for every body
  */
 void phy_updateWorld(WorldHandle handle);
 

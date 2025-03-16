@@ -5,5 +5,4 @@ main.exe
 object_files/
 compile_commands.json
 .cache/
-assets/*session
 *.log

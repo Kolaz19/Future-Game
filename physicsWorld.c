@@ -7,6 +7,7 @@
 #include "include/box2d/collision.h"
 #include "include/box2d/math_functions.h"
 #include "include/box2d/types.h"
+#include "include/bodyBehavior.h"
 #include "include/raylib/pi.h"
 #include "include/slog.h"
 
@@ -14,12 +15,19 @@
 #define TOWORLD(x) ((x) / CONV_VAL)
 #define TOPIXEL(x) ((x) * CONV_VAL)
 
+/// Update function is performed every frame
+typedef struct {
+    int id; /// Further specification of BodyType, can be 0
+    float status; /// For tracking time or other status saves
+    void (*update)(b2BodyId *, float *);
+} UpdateEntity;
+
 typedef struct Body {
     b2BodyId body;
     Rectangle rectangle; /// Is always in pixel dimension
     BodyType type;
     float rotation;
-	int id; /// Optional ID for further identification
+    UpdateEntity uEntity;
 } Body;
 
 struct World {
@@ -61,8 +69,12 @@ static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width,
             bodies[i]->rectangle.width = width;
             bodies[i]->rectangle.height = height;
             bodies[i]->type = type;
-			bodies[i]->id = id;
-			 
+
+            // Initialize update function
+            bodies[i]->uEntity.id = id;
+            bodies[i]->uEntity.status = 0.0f;
+            setUpdateFunction(id, &bodies[i]->uEntity.update);
+
             // Initially set position and rotation
             updateRectangle(bodies[i]);
             slogd("Body in bag at index [%d] added (TYPE:%d ID:%d)", i, type, id);
@@ -89,6 +101,9 @@ void phy_updateWorld(WorldHandle handle) {
     for (int i = 0; i < BAG_SIZE; i++) {
         if (handle->bag[i] != NULL) {
             updateRectangle(handle->bag[i]);
+            handle->bag[i]->uEntity.update(
+                &(handle->bag[i]->body),
+                &(handle->bag[i]->uEntity.status));
         }
     }
 }
@@ -196,7 +211,7 @@ int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferen
         if (bodies[i] != NULL && bodies[i]->type == type) {
             bodyReferences[amount].rectangle = &(bodies[i]->rectangle);
             bodyReferences[amount].rotation = &(bodies[i]->rotation);
-            bodyReferences[amount].id = (bodies[i]->id);
+            bodyReferences[amount].id = (bodies[i]->uEntity.id);
         }
     }
     return amount;
