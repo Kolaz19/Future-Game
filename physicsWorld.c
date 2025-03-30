@@ -154,12 +154,14 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
 void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
     b2BodyDef dynamicBodyDef = b2DefaultBodyDef();
     dynamicBodyDef.position = (b2Vec2){TOWORLD(plat.x + plat.width / 2), TOWORLD(plat.y + plat.height / 2)};
+	dynamicBodyDef.type = b2_dynamicBody;
 
     b2BodyId dynamicId = b2CreateBody(world->world, &dynamicBodyDef);
     b2Polygon dynamicBox = b2MakeBox(TOWORLD(plat.width / 2), TOWORLD(plat.height / 2));
 
     b2ShapeDef dynamicShapeDef = b2DefaultShapeDef();
     dynamicShapeDef.friction = 0.3f;
+    dynamicShapeDef.density = 60.0f;
     b2CreatePolygonShape(dynamicId, &dynamicShapeDef, &dynamicBox);
 
     addToBag(world->bag, &dynamicId, DYNAMIC_PLATFORM, plat.width, plat.height, id);
@@ -200,7 +202,7 @@ void phy_addPlayer(WorldHandle world) {
     playerShapeDef.friction = 0.1f;
     b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
 
-    addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, 1);
+    addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, 99);
 }
 
 int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type) {
@@ -211,7 +213,7 @@ int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferen
         if (bodies[i] != NULL && bodies[i]->type == type) {
             bodyReferences[amount].rectangle = &(bodies[i]->rectangle);
             bodyReferences[amount].rotation = &(bodies[i]->rotation);
-            bodyReferences[amount].id = (bodies[i]->uEntity.id);
+            bodyReferences[amount++].id = (bodies[i]->uEntity.id);
         }
     }
     return amount;

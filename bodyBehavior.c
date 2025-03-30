@@ -33,7 +33,7 @@ void playerUpdate(b2BodyId *body, float *jumpCooldown) {
     if (!b2Body_IsEnabled(*body)) {
         return;
     }
-    if (velocity.y < 0.01f && velocity.y > -0.01f && previousPlayerVelocityY > DYING_FALL_VELOCITY) {
+    if (velocity.y < 0.01f  && previousPlayerVelocityY > DYING_FALL_VELOCITY) {
         b2Body_Disable(*body);
     } else {
         previousPlayerVelocityY = velocity.y;
@@ -81,7 +81,7 @@ void setUpdateFunction(int id, void (**update)(b2BodyId *, float *)) {
     case 0:
         *update = &noUpdate;
         break;
-    case 1:
+    case 99:
         *update = &playerUpdate;
         break;
     }

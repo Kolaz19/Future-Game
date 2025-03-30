@@ -10,6 +10,7 @@
 #include "include/mapManager.h"
 #include "include/physicsWorld.h"
 #include "include/raylib/raylib.h"
+#include "include/drawDynamicPlatform.h"
 
 #define SCREEN_WIDTH ((int)(1920 * 0.8))
 #define SCREEN_HEIGHT ((int)(1080 * 0.8))
@@ -37,7 +38,12 @@ int main(int argc, char *argv[]) {
     addPlatforms(worldHandle, mapManager, true);
 
     BodyRectReference playerRectangle;
+	BodyRectReference dynamicRectangles[BAG_SIZE];
     phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
+    int amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
+	PlatformTextureHandle platTextHandle = platTex_createPlatformTextureHandle();
+
+	assert(amountDynamicRecs == 2);
 
     Camera2D camera;
     cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map_getBoundaryFromCurrentMap(mapManager).width), 330);
@@ -62,6 +68,7 @@ int main(int argc, char *argv[]) {
             addLongWalls(worldHandle, mapManager);
             phy_destroyObjectsAbove(worldHandle, map_getBoundaryFromCurrentMap(mapManager).y - 10.0f);
             addPlatforms(worldHandle, mapManager, false);
+    		amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
         }
 
         BeginDrawing();
@@ -69,6 +76,9 @@ int main(int argc, char *argv[]) {
         BeginMode2D(camera);
         map_draw(mapManager, &camera);
         panim_draw(plAnim, playerRectangle.rectangle->x, playerRectangle.rectangle->y);
+		for (int i = 0; i < amountDynamicRecs; i++) {
+			platTex_drawPlatform(platTextHandle, dynamicRectangles[i].id, dynamicRectangles[i].rectangle, *dynamicRectangles[i].rotation);
+		}
 
         EndMode2D();
         DrawFPS(10, 10);
