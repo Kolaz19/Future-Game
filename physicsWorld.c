@@ -3,11 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "include/bodyBehavior.h"
 #include "include/box2d/box2d.h"
 #include "include/box2d/collision.h"
 #include "include/box2d/math_functions.h"
 #include "include/box2d/types.h"
-#include "include/bodyBehavior.h"
 #include "include/raylib/pi.h"
 #include "include/slog.h"
 
@@ -15,19 +15,14 @@
 #define TOWORLD(x) ((x) / CONV_VAL)
 #define TOPIXEL(x) ((x) * CONV_VAL)
 
-/// Update function is performed every frame
-typedef struct {
-    int id; /// Further specification of BodyType, can be 0
-    float status; /// For tracking time or other status saves
-    void (*update)(b2BodyId *, float *);
-} UpdateEntity;
-
 typedef struct Body {
     b2BodyId body;
+    int id;              /// Further specification of BodyType, can be 0
     Rectangle rectangle; /// Is always in pixel dimension
     BodyType type;
     float rotation;
-    UpdateEntity uEntity;
+    UpdateData updateData; /// Is passed to update function every frame
+    void (*update)(UpdateData *);
 } Body;
 
 struct World {
@@ -69,11 +64,13 @@ static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width,
             bodies[i]->rectangle.width = width;
             bodies[i]->rectangle.height = height;
             bodies[i]->type = type;
+            bodies[i]->id = id;
 
             // Initialize update function
-            bodies[i]->uEntity.id = id;
-            bodies[i]->uEntity.status = 0.0f;
-            setUpdateFunction(id, &bodies[i]->uEntity.update);
+            bodies[i]->updateData.status = UPDATE_STATUS_INIT;
+            bodies[i]->updateData.timer = 0.0f;
+            bodies[i]->updateData.body = &bodies[i]->body;
+            setUpdateFunction(id, &bodies[i]->update);
 
             // Initially set position and rotation
             updateRectangle(bodies[i]);
@@ -101,9 +98,8 @@ void phy_updateWorld(WorldHandle handle) {
     for (int i = 0; i < BAG_SIZE; i++) {
         if (handle->bag[i] != NULL) {
             updateRectangle(handle->bag[i]);
-            handle->bag[i]->uEntity.update(
-                &(handle->bag[i]->body),
-                &(handle->bag[i]->uEntity.status));
+            handle->bag[i]->update(
+                &(handle->bag[i]->updateData));
         }
     }
 }
@@ -154,7 +150,7 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
 void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
     b2BodyDef dynamicBodyDef = b2DefaultBodyDef();
     dynamicBodyDef.position = (b2Vec2){TOWORLD(plat.x + plat.width / 2), TOWORLD(plat.y + plat.height / 2)};
-	dynamicBodyDef.type = b2_dynamicBody;
+    dynamicBodyDef.type = b2_staticBody;
 
     b2BodyId dynamicId = b2CreateBody(world->world, &dynamicBodyDef);
     b2Polygon dynamicBox = b2MakeBox(TOWORLD(plat.width / 2), TOWORLD(plat.height / 2));
@@ -202,6 +198,11 @@ void phy_addPlayer(WorldHandle world) {
     playerShapeDef.friction = 0.1f;
     b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
 
+    // Enable contact events for player
+    b2ShapeId oneShape;
+    b2Body_GetShapes(playerId, &oneShape, 1);
+    b2Shape_EnableContactEvents(oneShape, true);
+
     addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, 99);
 }
 
@@ -213,7 +214,7 @@ int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferen
         if (bodies[i] != NULL && bodies[i]->type == type) {
             bodyReferences[amount].rectangle = &(bodies[i]->rectangle);
             bodyReferences[amount].rotation = &(bodies[i]->rotation);
-            bodyReferences[amount++].id = (bodies[i]->uEntity.id);
+            bodyReferences[amount++].id = (bodies[i]->id);
         }
     }
     return amount;
@@ -236,5 +237,5 @@ void phy_getVelocity(BodyIdReference body, float *velX, float *velY) {
 }
 
 bool phy_isEnable(BodyIdReference body) {
-	return b2Body_IsEnabled(*body);
+    return b2Body_IsEnabled(*body);
 }
