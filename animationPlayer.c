@@ -99,8 +99,14 @@ void panim_setDying(PlAnimation plAnim) {
 	if (plAnim->curAnimation == &plAnim->dying) return;
     bool prevAnimationFlip = plAnim->curAnimation->flipX;
     plAnim->curAnimation = &plAnim->dying;
+	anim_startAnimation(plAnim->curAnimation);
     plAnim->curAnimation->flipX = prevAnimationFlip;
     slogd("Animation switched to DYING");
+}
+
+void panim_setAlive(PlAnimation plAnim) {
+    plAnim->curAnimation = &plAnim->idle;
+    slogd("Animation switched to ALIVE/IDLE");
 }
 
 void panim_draw(PlAnimation plAnim, float posX, float posY) {

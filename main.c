@@ -1,3 +1,4 @@
+#include "include/box2d/box2d.h"
 #include "include/customLogging.h"
 #include "include/slog.h"
 #include "include/utest.h"
@@ -43,8 +44,6 @@ int main(int argc, char *argv[]) {
     int amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
 	PlatformTextureHandle platTextHandle = platTex_createPlatformTextureHandle();
 
-	assert(amountDynamicRecs == 2);
-
     Camera2D camera;
     cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map_getBoundaryFromCurrentMap(mapManager).width), 330);
 
@@ -63,6 +62,12 @@ int main(int argc, char *argv[]) {
         panim_update(plAnim, forceOfCharacter.x, forceOfCharacter.y);
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
+
+		if (IsKeyPressed(KEY_R)) {
+			phy_setPosition(playerBody, 40.0f, 150.0f);
+			b2Body_Enable(*playerBody);
+			panim_setAlive(plAnim);
+		}
 
         if (map_update(mapManager, playerRectangle.rectangle->y)) {
             addLongWalls(worldHandle, mapManager);
@@ -126,4 +131,7 @@ void addLongWalls(WorldHandle worldHandle, MapManager mapManager) {
         targetMapBoundary.height += nextMapBoundary.height;
     }
     phy_addWalls(worldHandle, targetMapBoundary, 16);
+}
+
+void reset(WorldHandle worldHandle, MapManager mapManager) {
 }

@@ -236,6 +236,11 @@ void phy_getVelocity(BodyIdReference body, float *velX, float *velY) {
     *velY = vec.y;
 }
 
+void phy_setPosition(BodyIdReference body, float posX, float posY) {
+	b2Body_SetTransform(*body, (b2Vec2){TOWORLD(posX), TOWORLD(posY)}, (b2Rot){1.0f, 0.0f});
+	b2Body_SetLinearVelocity(*body, (b2Vec2){0.0f, 0.0f});
+}
+
 bool phy_isEnable(BodyIdReference body) {
     return b2Body_IsEnabled(*body);
 }
