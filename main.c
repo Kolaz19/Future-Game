@@ -8,10 +8,10 @@
 
 #include "include/animationPlayer.h"
 #include "include/cameraControl.h"
+#include "include/drawDynamicPlatform.h"
 #include "include/mapManager.h"
 #include "include/physicsWorld.h"
 #include "include/raylib/raylib.h"
-#include "include/drawDynamicPlatform.h"
 
 #define SCREEN_WIDTH ((int)(1920 * 0.8))
 #define SCREEN_HEIGHT ((int)(1080 * 0.8))
@@ -39,10 +39,10 @@ int main(int argc, char *argv[]) {
     addPlatforms(worldHandle, mapManager, true);
 
     BodyRectReference playerRectangle;
-	BodyRectReference dynamicRectangles[BAG_SIZE];
+    BodyRectReference dynamicRectangles[BAG_SIZE];
     phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
     int amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
-	PlatformTextureHandle platTextHandle = platTex_createPlatformTextureHandle();
+    PlatformTextureHandle platTextHandle = platTex_createPlatformTextureHandle();
 
     Camera2D camera;
     cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map_getBoundaryFromCurrentMap(mapManager).width), 330);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 
     while (!WindowShouldClose()) {
 
-		// Player body was disabled - player is dead
+        // Player body was disabled - player is dead
         if (!phy_isEnable(playerBody)) {
             panim_setDying(plAnim);
         } else {
@@ -63,17 +63,26 @@ int main(int argc, char *argv[]) {
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
 
-		if (IsKeyPressed(KEY_R)) {
-			phy_setPosition(playerBody, 40.0f, 150.0f);
-			b2Body_Enable(*playerBody);
-			panim_setAlive(plAnim);
-		}
+        if (IsKeyPressed(KEY_R)) {
+			//Reset game
+            map_free(mapManager);
+            phy_free(worldHandle);
+            mapManager = map_createMapManager(1);
+            worldHandle = phy_createWorld();
+            phy_addPlayer(worldHandle);
+            playerBody = phy_getCharacterBodyIdReference(worldHandle);
+            addLongWalls(worldHandle, mapManager);
+            addPlatforms(worldHandle, mapManager, true);
+            phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
+            amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
+            panim_setAlive(plAnim);
+        }
 
         if (map_update(mapManager, playerRectangle.rectangle->y)) {
             addLongWalls(worldHandle, mapManager);
             phy_destroyObjectsAbove(worldHandle, map_getBoundaryFromCurrentMap(mapManager).y - 10.0f);
             addPlatforms(worldHandle, mapManager, false);
-    		amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
+            amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
         }
 
         BeginDrawing();
@@ -81,9 +90,9 @@ int main(int argc, char *argv[]) {
         BeginMode2D(camera);
         map_draw(mapManager, &camera);
         panim_draw(plAnim, playerRectangle.rectangle->x, playerRectangle.rectangle->y);
-		for (int i = 0; i < amountDynamicRecs; i++) {
-			platTex_drawPlatform(platTextHandle, dynamicRectangles[i].id, dynamicRectangles[i].rectangle, *dynamicRectangles[i].rotation);
-		}
+        for (int i = 0; i < amountDynamicRecs; i++) {
+            platTex_drawPlatform(platTextHandle, dynamicRectangles[i].id, dynamicRectangles[i].rectangle, *dynamicRectangles[i].rotation);
+        }
 
         EndMode2D();
         DrawFPS(10, 10);
@@ -131,7 +140,4 @@ void addLongWalls(WorldHandle worldHandle, MapManager mapManager) {
         targetMapBoundary.height += nextMapBoundary.height;
     }
     phy_addWalls(worldHandle, targetMapBoundary, 16);
-}
-
-void reset(WorldHandle worldHandle, MapManager mapManager) {
 }
