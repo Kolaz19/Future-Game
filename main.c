@@ -8,6 +8,7 @@
 
 #include "include/animationPlayer.h"
 #include "include/cameraControl.h"
+#include "include/checkPoint.h"
 #include "include/drawDynamicPlatform.h"
 #include "include/mapManager.h"
 #include "include/physicsWorld.h"
@@ -20,6 +21,7 @@
 
 void addPlatforms(WorldHandle handle, MapManager manager, bool initial);
 void addLongWalls(WorldHandle worldHandle, MapManager mapManager);
+void resetCheckpoint(Checkpoint checkpoint, MapManager mapManager);
 
 int main(int argc, char *argv[]) {
 #ifdef UTEST_EXE
@@ -29,10 +31,14 @@ int main(int argc, char *argv[]) {
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Future");
     SetTargetFPS(60);
 
-    MapManager mapManager = map_createMapManager(1);
+    Checkpoint checkpoint = check_createCheckpoint();
+	//Load savestate here
+    MapManager mapManager = map_createMapManager(check_getCurrentLevel(checkpoint));
+	resetCheckpoint(checkpoint, mapManager);
+
     WorldHandle worldHandle = phy_createWorld();
 
-    phy_addPlayer(worldHandle);
+    phy_addPlayer(worldHandle, check_getX(checkpoint), check_getY(checkpoint));
     BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
 
     addLongWalls(worldHandle, mapManager);
@@ -57,6 +63,7 @@ int main(int argc, char *argv[]) {
             panim_setDying(plAnim);
         } else {
             phy_getVelocity(playerBody, &forceOfCharacter.x, &forceOfCharacter.y);
+            check_update(checkpoint, playerRectangle.rectangle->y);
         }
 
         panim_update(plAnim, forceOfCharacter.x, forceOfCharacter.y);
@@ -64,12 +71,14 @@ int main(int argc, char *argv[]) {
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
 
         if (IsKeyPressed(KEY_R)) {
-			//Reset game
+            // Reset game
             map_free(mapManager);
             phy_free(worldHandle);
-            mapManager = map_createMapManager(1);
+            mapManager = map_createMapManager(check_getCurrentLevel(checkpoint));
+			resetCheckpoint(checkpoint, mapManager);
+
             worldHandle = phy_createWorld();
-            phy_addPlayer(worldHandle);
+			phy_addPlayer(worldHandle, check_getX(checkpoint), check_getY(checkpoint));
             playerBody = phy_getCharacterBodyIdReference(worldHandle);
             addLongWalls(worldHandle, mapManager);
             addPlatforms(worldHandle, mapManager, true);
@@ -83,6 +92,10 @@ int main(int argc, char *argv[]) {
             phy_destroyObjectsAbove(worldHandle, map_getBoundaryFromCurrentMap(mapManager).y - 10.0f);
             addPlatforms(worldHandle, mapManager, false);
             amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
+            Rectangle newCheckpoint;
+            if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
+                check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
+            }
         }
 
         BeginDrawing();
@@ -101,6 +114,7 @@ int main(int argc, char *argv[]) {
 
     map_free(mapManager);
     phy_free(worldHandle);
+    check_free(checkpoint);
     panim_free(plAnim);
     CloseWindow();
     slog_destroy();
@@ -140,4 +154,27 @@ void addLongWalls(WorldHandle worldHandle, MapManager mapManager) {
         targetMapBoundary.height += nextMapBoundary.height;
     }
     phy_addWalls(worldHandle, targetMapBoundary, 16);
+}
+
+void resetCheckpoint(Checkpoint checkpoint, MapManager mapManager) {
+    Rectangle newCheckpoint;
+    if (check_getCurrentLevel(checkpoint) != 1) {
+        if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
+            check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
+            check_setCurrentCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
+        } else {
+			sloge("No checkpoint on initial load");
+        }
+    } else {
+        if (map_getRectanglesFromCurrentMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
+            check_setCurrentCheckpoint(checkpoint, &newCheckpoint, map_getCurrentMapLevel(mapManager));
+        } else {
+			sloge("No checkpoint in first map");
+        }
+        if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
+            check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
+        } else {
+            check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getCurrentMapLevel(mapManager));
+        }
+    }
 }

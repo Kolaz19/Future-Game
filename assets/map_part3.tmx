@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="35" height="90" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="9">
+<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="35" height="90" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="10">
  <tileset firstgid="1" source="Tileset.tsx"/>
  <layer id="1" name="Kachelebene 1" width="35" height="90">
   <data encoding="csv">
@@ -104,5 +104,8 @@
   <object id="6" x="16.1664" y="480.002" width="143.832" height="15.9915"/>
   <object id="7" x="16.4641" y="608.019" width="143.534" height="15.9915"/>
   <object id="8" x="16.2005" y="1424.01" width="527.714" height="15.6751"/>
+ </objectgroup>
+ <objectgroup id="3" name="Checkpoints">
+  <object id="9" x="124" y="33.3333"/>
  </objectgroup>
 </map>

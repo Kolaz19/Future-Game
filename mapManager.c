@@ -97,10 +97,16 @@ MapManager map_createMapManager(int startLevel) {
     manager->startYCurMap = 0;
     manager->curMap = NULL;
     manager->nextMap = NULL;
-    manager->curMapLevel = startLevel;
 
-    loadMap(&(manager->curMap), startLevel);
-    loadMap(&(manager->nextMap), startLevel + 1);
+    if (startLevel == 1) {
+        loadMap(&(manager->curMap), startLevel);
+        loadMap(&(manager->nextMap), startLevel + 1);
+        manager->curMapLevel = startLevel;
+    } else {
+        manager->curMapLevel = startLevel - 1;
+        loadMap(&(manager->curMap), startLevel - 1);
+        loadMap(&(manager->nextMap), startLevel);
+    }
 
     return manager;
 }
@@ -133,18 +139,18 @@ static int getRectanglesFromObjectLayer(const TmxMap *map, int mapStartY, const 
         rectangles[i].y = (float)mapStartY + (float)matchingLayer->exact.objectGroup.objects[i].y;
         rectangles[i].width = (float)matchingLayer->exact.objectGroup.objects[i].width;
         rectangles[i].height = (float)matchingLayer->exact.objectGroup.objects[i].height;
-		if (ids != NULL) {
-			if (strlen(matchingLayer->exact.objectGroup.objects[i].name) > OBJ_MAX_NAMELEN) {
-				sloge("Object name '%s' length exceeds %d characters", matchingLayer->exact.objectGroup.objects[i].name, OBJ_MAX_NAMELEN);
-				return 0;
-			}
-			char *endPtr;
-			ids[i] = (int)strtol(matchingLayer->exact.objectGroup.objects[i].name, &endPtr, 10);
-			if (ids[i] == 0) {
-				sloge("Object name '%s' could not be converted into integer value", matchingLayer->exact.objectGroup.objects[i].name);
-				return 0;
-			}
-		}
+        if (ids != NULL) {
+            if (strlen(matchingLayer->exact.objectGroup.objects[i].name) > OBJ_MAX_NAMELEN) {
+                sloge("Object name '%s' length exceeds %d characters", matchingLayer->exact.objectGroup.objects[i].name, OBJ_MAX_NAMELEN);
+                return 0;
+            }
+            char *endPtr;
+            ids[i] = (int)strtol(matchingLayer->exact.objectGroup.objects[i].name, &endPtr, 10);
+            if (ids[i] == 0) {
+                sloge("Object name '%s' could not be converted into integer value", matchingLayer->exact.objectGroup.objects[i].name);
+                return 0;
+            }
+        }
     }
 
     return (int)matchingLayer->exact.objectGroup.objectsLength;
@@ -170,6 +176,10 @@ int map_getRectanglesFromNextMap(MapManager manager, const char *layerName, Rect
 
 int map_getCurrentMapLevel(MapManager manager) {
     return manager->curMapLevel;
+}
+
+int map_getNextMapLevel(MapManager manager) {
+    return manager->curMapLevel + 1;
 }
 
 bool map_hasNextMap(MapManager manager) {

@@ -1,0 +1,79 @@
+#include "include/checkPoint.h"
+#include "include/raylib/raylib.h"
+#include "include/slog.h"
+#include <stdlib.h>
+
+#define CHECKPOINT_WAITTIME 2.0f
+
+typedef struct {
+    int level;
+    float posX;
+    float posY;
+} CheckpointData;
+
+typedef struct Checkpoint_internal {
+    CheckpointData current;
+    CheckpointData next;
+    float timer;
+    int height;
+} Checkpoint_internal;
+
+Checkpoint check_createCheckpoint(void) {
+    Checkpoint cp = malloc(sizeof(Checkpoint_internal));
+    cp->timer = 0.0f;
+    cp->height = 0;
+    cp->current.level = 1;
+    cp->next.level = 1;
+    return cp;
+}
+
+int check_getCurrentLevel(Checkpoint cp) {
+    return cp->current.level;
+}
+
+void check_setCurrentCheckpoint(Checkpoint cp, Rectangle *rect, int level) {
+    cp->current.posX = rect->x;
+    cp->current.posY = rect->y;
+    cp->current.level = level;
+}
+
+void check_setNextCheckpoint(Checkpoint cp, Rectangle *rect, int level) {
+    cp->next.posX = rect->x;
+    cp->next.posY = rect->y;
+    cp->next.level = level;
+}
+
+void check_free(Checkpoint cp) {
+    free(cp);
+}
+
+float check_getX(Checkpoint cp) {
+	return cp->current.posX;
+}
+
+float check_getY(Checkpoint cp) {
+	return cp->current.posY;
+}
+
+void check_update(Checkpoint cp, float playerPosY) {
+    if (cp->current.level == cp->next.level)
+        return;
+
+    if (playerPosY > cp->next.posY) {
+        cp->timer += GetFrameTime();
+        if (cp->height != (int)playerPosY) {
+            cp->height = (int)playerPosY;
+            cp->timer = 0.0f;
+        }
+    }
+
+    if (cp->timer > CHECKPOINT_WAITTIME) {
+        cp->height = (int)playerPosY;
+        cp->timer = 0.0f;
+        cp->height = 0;
+        cp->current.level = cp->next.level;
+        cp->current.posX = cp->next.posX;
+        cp->current.posY = cp->next.posY;
+        slogi("Savepoint set");
+    }
+}

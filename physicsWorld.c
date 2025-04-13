@@ -184,11 +184,11 @@ void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness) {
     addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)boundary.height, 0);
 }
 
-void phy_addPlayer(WorldHandle world) {
+void phy_addPlayer(WorldHandle world, float posX, float posY) {
     b2BodyDef playerBodyDef = b2DefaultBodyDef();
     playerBodyDef.type = b2_dynamicBody;
     playerBodyDef.fixedRotation = true;
-    playerBodyDef.position = (b2Vec2){TOWORLD(40.0f), TOWORLD(150.0f)};
+    playerBodyDef.position = (b2Vec2){TOWORLD(posX), TOWORLD(posY)};
 
     b2BodyId playerId = b2CreateBody(world->world, &playerBodyDef);
     b2Polygon playerBox = b2MakeBox(TOWORLD(8.0f), TOWORLD(16.0f));

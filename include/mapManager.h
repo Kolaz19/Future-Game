@@ -44,6 +44,12 @@ int map_getRectanglesFromNextMap(MapManager manager, const char *layerName, Rect
 int map_getCurrentMapLevel(MapManager manager);
 
 /*
+ * Get number of next map
+ * @return Map level
+ */
+int map_getNextMapLevel(MapManager manager);
+
+/*
  * Get max dimension of map
  */
 Rectangle map_getBoundaryFromCurrentMap(MapManager manager);

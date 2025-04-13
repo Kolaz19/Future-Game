@@ -45,7 +45,7 @@ void phy_addDynamic(WorldHandle world, Rectangle plat, int id);
 /*
  * Add player at pre-defined position as CHARACTER in the world
  */
-void phy_addPlayer(WorldHandle world);
+void phy_addPlayer(WorldHandle world, float posX, float posY);
 
 /*
  * Store rectangle and rotation references in array
