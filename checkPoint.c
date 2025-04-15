@@ -11,9 +11,17 @@ typedef struct {
     float posY;
 } CheckpointData;
 
+/**
+ * Holds the currently active/reached checkpoint
+ * This will be used to load the game
+ * The next checkpoint will get the current checkpoint
+ * with check_update
+ */
 typedef struct Checkpoint_internal {
     CheckpointData current;
     CheckpointData next;
+    /// Time starts counting when player is under height of next checkpoint
+    /// and height of player is same as height last frame
     float timer;
     int height;
 } Checkpoint_internal;
@@ -48,14 +56,16 @@ void check_free(Checkpoint cp) {
 }
 
 float check_getX(Checkpoint cp) {
-	return cp->current.posX;
+    return cp->current.posX;
 }
 
 float check_getY(Checkpoint cp) {
-	return cp->current.posY;
+    return cp->current.posY;
 }
 
 void check_update(Checkpoint cp, float playerPosY) {
+	//Return when next checkpoint was not set
+	//(Levels can have no checkpoints)
     if (cp->current.level == cp->next.level)
         return;
 
@@ -74,6 +84,7 @@ void check_update(Checkpoint cp, float playerPosY) {
         cp->current.level = cp->next.level;
         cp->current.posX = cp->next.posX;
         cp->current.posY = cp->next.posY;
-        slogi("Savepoint set");
+        slogi("Savepoint set at level %d at pos(X:%f|Y:%f)",
+              cp->current.level, cp->current.posX, cp->current.posY);
     }
 }

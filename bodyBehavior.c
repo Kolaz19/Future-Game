@@ -1,5 +1,6 @@
 #include "include/bodyBehavior.h"
 #include "include/box2d/box2d.h"
+#include "include/box2d/types.h"
 #include "include/raylib/raylib.h"
 #include "include/slog.h"
 
@@ -16,7 +17,6 @@ static float previousPlayerVelocityY = 0.0f;
 void noUpdate(UpdateData *updateData) { return; }
 #pragma GCC diagnostic pop
 
-
 /*
  * Slow down running speed
  */
@@ -26,16 +26,34 @@ static void slowDown(b2BodyId *body) {
 }
 
 void contactUpdate(UpdateData *updateData) {
-    if (updateData->status == 0) {
-        b2WorldId world = b2Body_GetWorld(*updateData->body);
-        b2ContactEvents contactEvents = b2World_GetContactEvents(world);
-        for (int i = 0; i < contactEvents.beginCount; ++i) {
-            b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
-            if (beginEvent->shapeIdA.index1 == updateData->body->index1 ||
-                beginEvent->shapeIdB.index1 == updateData->body->index1) {
-				slogi("CONTACT");
-            }
+    if (updateData->status == 2)
+        return;
+    bool contact = false;
+    b2WorldId world = b2Body_GetWorld(*updateData->body);
+    b2ContactEvents contactEvents = b2World_GetContactEvents(world);
+    for (int i = 0; i < contactEvents.beginCount; ++i) {
+        b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
+        if (beginEvent->shapeIdA.index1 == updateData->body->index1 ||
+            beginEvent->shapeIdB.index1 == updateData->body->index1) {
+            contact = true;
         }
+    }
+
+    switch (updateData->status) {
+    case 0:
+        if (contact) {
+            updateData->status = 1;
+            b2Body_SetType(*updateData->body, b2_dynamicBody);
+        }
+        break;
+    case 1:
+        if (updateData->timer > 0.1f) {
+            updateData->status = 0;
+            b2Body_SetType(*updateData->body, b2_staticBody);
+        } else {
+            updateData->timer += GetFrameTime();
+        }
+        break;
     }
 }
 

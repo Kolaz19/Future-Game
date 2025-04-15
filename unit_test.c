@@ -28,6 +28,6 @@ UTEST(phy, character) {
 	WorldHandle world = phy_createWorld();
 	BodyIdReference ref = phy_getCharacterBodyIdReference(world);
 	ASSERT_TRUE(ref == NULL);
-	phy_addPlayer(world);
+	phy_addPlayer(world, 0.0f, 0.0f);
 	ASSERT_FALSE(ref != NULL);
 }

@@ -14,6 +14,7 @@ typedef struct PersistentUpdateData {
 /*
  * Set update function based on ID
  * ID 0 always gets empty update function
+ * ID 99 is player
  */
 void setUpdateFunction(int id, void (**update)(UpdateData *updateData));
 

@@ -20,14 +20,14 @@
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 280,
+                "x": 279.99999999999994,
                 "y": 719.6666666666666
             }
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 4,
             "selectedLayer": 1,

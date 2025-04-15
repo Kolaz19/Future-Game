@@ -12,11 +12,11 @@ typedef struct Manager {
     int curMapLevel;
 } Manager;
 
-#define MAPNAME_MAXLEN 22
+#define MAPNAME_MAXLEN 27
 #define OBJ_MAX_NAMELEN 20
 #define LASTLEVEL 3
 
-static const char *mapNamePrefix = "assets/map_part";
+static const char *mapNamePrefix = "assets/maps/map_part";
 static const char *mapNameSuffix = ".tmx";
 
 static void setMapFileName(int level, char *mapName) {

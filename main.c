@@ -32,9 +32,9 @@ int main(int argc, char *argv[]) {
     SetTargetFPS(60);
 
     Checkpoint checkpoint = check_createCheckpoint();
-	//Load savestate here
+    // Load savestate here
     MapManager mapManager = map_createMapManager(check_getCurrentLevel(checkpoint));
-	resetCheckpoint(checkpoint, mapManager);
+    resetCheckpoint(checkpoint, mapManager);
 
     WorldHandle worldHandle = phy_createWorld();
 
@@ -71,14 +71,14 @@ int main(int argc, char *argv[]) {
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
 
         if (IsKeyPressed(KEY_R)) {
-            // Reset game
+            // Reset game and load at current checkpoint
             map_free(mapManager);
             phy_free(worldHandle);
             mapManager = map_createMapManager(check_getCurrentLevel(checkpoint));
-			resetCheckpoint(checkpoint, mapManager);
+            resetCheckpoint(checkpoint, mapManager);
 
             worldHandle = phy_createWorld();
-			phy_addPlayer(worldHandle, check_getX(checkpoint), check_getY(checkpoint));
+            phy_addPlayer(worldHandle, check_getX(checkpoint), check_getY(checkpoint));
             playerBody = phy_getCharacterBodyIdReference(worldHandle);
             addLongWalls(worldHandle, mapManager);
             addPlatforms(worldHandle, mapManager, true);
@@ -158,23 +158,28 @@ void addLongWalls(WorldHandle worldHandle, MapManager mapManager) {
 
 void resetCheckpoint(Checkpoint checkpoint, MapManager mapManager) {
     Rectangle newCheckpoint;
-    if (check_getCurrentLevel(checkpoint) != 1) {
-        if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
-            check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
-            check_setCurrentCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
-        } else {
-			sloge("No checkpoint on initial load");
-        }
-    } else {
+
+    if (check_getCurrentLevel(checkpoint) == 1) {
+		//First level
+		//Set current checkpoint to first level
         if (map_getRectanglesFromCurrentMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
             check_setCurrentCheckpoint(checkpoint, &newCheckpoint, map_getCurrentMapLevel(mapManager));
         } else {
-			sloge("No checkpoint in first map");
+            sloge("No checkpoint in first map");
         }
+		//Next checkpoint CAN have a checkpoint
         if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
             check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
         } else {
             check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getCurrentMapLevel(mapManager));
+        }
+    } else {
+		//Second to n level -> Player spawns at top of nextMapLevel and not at currentMapLevel
+        if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
+            check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
+            check_setCurrentCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
+        } else {
+            sloge("No checkpoint on initial load");
         }
     }
 }
