@@ -8,7 +8,7 @@
 #define VELOCITY_LIMIT 8
 #define JUMP_COOLDOWN_LIMIT 0.5f
 #define JUMP_FORCE -200.0f
-#define DYING_FALL_VELOCITY 25
+#define DYING_FALL_VELOCITY 22
 
 static float previousPlayerVelocityY = 0.0f;
 
@@ -114,6 +114,7 @@ void setUpdateFunction(int id, void (**update)(UpdateData *updateData)) {
     case 0:
         *update = &noUpdate;
         break;
+	// 32*16 Two balls
     case 1:
         *update = &contactUpdate;
         break;
