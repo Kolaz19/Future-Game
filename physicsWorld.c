@@ -1,4 +1,5 @@
 #include "include/physicsWorld.h"
+#include "include/dynBodyDef.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
@@ -144,7 +145,7 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
     groundShapeDef.friction = 0.3f;
     b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
 
-    addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height, 0);
+    addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height, UNDEFINED);
 }
 
 void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
@@ -156,9 +157,10 @@ void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
     b2Polygon dynamicBox = b2MakeBox(TOWORLD(plat.width / 2), TOWORLD(plat.height / 2));
 
     b2ShapeDef dynamicShapeDef = b2DefaultShapeDef();
-    dynamicShapeDef.friction = 0.3f;
-    dynamicShapeDef.density = 60.0f;
-    b2CreatePolygonShape(dynamicId, &dynamicShapeDef, &dynamicBox);
+    dynamicShapeDef.friction = 0.4f;
+    dynamicShapeDef.density = 65.0f;
+    b2ShapeId shapeId = b2CreatePolygonShape(dynamicId, &dynamicShapeDef, &dynamicBox);
+	b2Shape_SetRestitution(shapeId, 0.0f);
 
     addToBag(world->bag, &dynamicId, DYNAMIC_PLATFORM, plat.width, plat.height, id);
 }
@@ -180,8 +182,8 @@ void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness) {
     b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox);
     b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox);
 
-    addToBag(world->bag, &wallLeftId, WALL, (float)wallThickness, (float)boundary.height, 0);
-    addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)boundary.height, 0);
+    addToBag(world->bag, &wallLeftId, WALL, (float)wallThickness, (float)boundary.height, UNDEFINED);
+    addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)boundary.height, UNDEFINED);
 }
 
 void phy_addPlayer(WorldHandle world, float posX, float posY) {
@@ -196,14 +198,14 @@ void phy_addPlayer(WorldHandle world, float posX, float posY) {
     b2ShapeDef playerShapeDef = b2DefaultShapeDef();
     playerShapeDef.density = 20.0f;
     playerShapeDef.friction = 0.1f;
-    b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
+    b2ShapeId shapeId = b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
 
     // Enable contact events for player
-    b2ShapeId oneShape;
-    b2Body_GetShapes(playerId, &oneShape, 1);
-    b2Shape_EnableContactEvents(oneShape, true);
+    b2Body_GetShapes(playerId, &shapeId, 1);
+    b2Shape_EnableContactEvents(shapeId, true);
+	b2Shape_SetRestitution(shapeId, 0.0f);
 
-    addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, 99);
+    addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, PLAYER);
 }
 
 int phy_getBodyRectReferences(WorldHandle handle, BodyRectReference *bodyReferences, BodyType type) {

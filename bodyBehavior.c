@@ -1,4 +1,5 @@
 #include "include/bodyBehavior.h"
+#include "include/dynBodyDef.h"
 #include "include/box2d/box2d.h"
 #include "include/box2d/types.h"
 #include "include/raylib/raylib.h"
@@ -9,6 +10,13 @@
 #define JUMP_COOLDOWN_LIMIT 0.5f
 #define JUMP_FORCE -200.0f
 #define DYING_FALL_VELOCITY 22
+
+#define STATUS_INIT UPDATE_STATUS_INIT
+#define STATUS_CONTACT 1
+#define STATUS_WAS_CONTACT 2
+#define STATUS_FREE_FALL 3
+#define STATUS_UNSTABLE 4
+#define STATUS_SMALL_STABLE 5
 
 static float previousPlayerVelocityY = 0.0f;
 
@@ -25,33 +33,49 @@ static void slowDown(b2BodyId *body) {
     b2Body_SetLinearVelocity(*body, (b2Vec2){velocity.x * 0.7f, velocity.y});
 }
 
-void contactUpdate(UpdateData *updateData) {
-    if (updateData->status == 2)
+/*
+ * First contact makes platform unstable
+ * It then moves a bit until locking in place again
+ * Then time goes by until it completely breaks free
+ */
+void unstableUpdate(UpdateData *updateData) {
+    if (updateData->status == STATUS_FREE_FALL)
         return;
-    bool contact = false;
-    b2WorldId world = b2Body_GetWorld(*updateData->body);
-    b2ContactEvents contactEvents = b2World_GetContactEvents(world);
-    for (int i = 0; i < contactEvents.beginCount; ++i) {
-        b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
-        if (beginEvent->shapeIdA.index1 == updateData->body->index1 ||
-            beginEvent->shapeIdB.index1 == updateData->body->index1) {
-            contact = true;
+
+    const float unstableTime = 0.1f;
+    const float smallStableTime = 1.4f;
+    if (updateData->status == STATUS_INIT) {
+        b2WorldId world = b2Body_GetWorld(*updateData->body);
+        b2ContactEvents contactEvents = b2World_GetContactEvents(world);
+        for (int i = 0; i < contactEvents.beginCount; ++i) {
+            b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
+            if (beginEvent->shapeIdA.index1 == updateData->body->index1 ||
+                beginEvent->shapeIdB.index1 == updateData->body->index1) {
+                updateData->status = STATUS_CONTACT;
+            }
         }
     }
 
     switch (updateData->status) {
-    case 0:
-        if (contact) {
-            updateData->status = 1;
-            b2Body_SetType(*updateData->body, b2_dynamicBody);
+    case STATUS_CONTACT:
+        b2Body_SetType(*updateData->body, b2_dynamicBody);
+        updateData->status = STATUS_UNSTABLE;
+        break;
+    case STATUS_UNSTABLE:
+        if (updateData->timer < unstableTime) {
+            updateData->timer += GetFrameTime();
+        } else {
+            b2Body_SetType(*updateData->body, b2_staticBody);
+            updateData->status = STATUS_SMALL_STABLE;
+            updateData->timer = 0.0f;
         }
         break;
-    case 1:
-        if (updateData->timer > 0.1f) {
-            updateData->status = 0;
-            b2Body_SetType(*updateData->body, b2_staticBody);
-        } else {
+    case STATUS_SMALL_STABLE:
+        if (updateData->timer < smallStableTime) {
             updateData->timer += GetFrameTime();
+        } else {
+            updateData->status = STATUS_FREE_FALL;
+            b2Body_SetType(*updateData->body, b2_dynamicBody);
         }
         break;
     }
@@ -111,14 +135,14 @@ void playerUpdate(UpdateData *updateData) {
 void setUpdateFunction(int id, void (**update)(UpdateData *updateData)) {
     *update = &noUpdate;
     switch (id) {
-    case 0:
+    case UNDEFINED:
         *update = &noUpdate;
         break;
-	// 32*16 Two balls
-    case 1:
-        *update = &contactUpdate;
+    case CIRCLES_32X16:
+        // 32*16
+        *update = &unstableUpdate;
         break;
-    case 99:
+    case PLAYER:
         *update = &playerUpdate;
         break;
     }

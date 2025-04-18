@@ -1,4 +1,5 @@
 #include "include/drawDynamicPlatform.h"
+#include "include/dynBodyDef.h"
 #include <stdlib.h>
 
 #define ID_INDX(x) (x - 1)
@@ -14,8 +15,10 @@ static void loadTexture(PlatformTextureHandle handle, int id, char *fileName) {
 
 PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
 
+	//Numbers have to match name of object in Dynamic layer
     TextureName textureNames[] = {
-        {1, "assets/Plat1.png"}};
+        {CIRCLES_32X16, "assets/Plat1.png"} // 32x16 Circles
+    };
     int noElements = (sizeof(textureNames) / sizeof(TextureName));
 
     Texture *handle = malloc((unsigned long)noElements * sizeof(Texture));
