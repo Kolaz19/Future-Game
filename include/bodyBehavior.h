@@ -3,19 +3,31 @@
 
 #include "box2d/box2d.h"
 
+/*
+ * Two bodies with the same update function
+ * can have different behavior based on
+ * this modifier
+ */
+typedef enum DynBodyUpdateModifier {
+    DEFAULT,
+    LEFT,
+    RIGHT,
+}DynBodyUpdateModifier;
+
 typedef struct PersistentUpdateData {
-	b2BodyId* body;
-	int status;
-	float timer;
-}UpdateData;
+    b2BodyId *body;
+    int status;
+    float timer;
+    DynBodyUpdateModifier modifier;
+} UpdateData;
 
 #define UPDATE_STATUS_INIT 0
 
 /*
- * Set update function based on ID
- * ID 0 always gets empty update function
- * ID 99 is player
+ * Set update function for a dynamic body
+ * Return update modifier for additional behavior
+ * in update function
  */
-void setUpdateFunction(int id, void (**update)(UpdateData *updateData));
+enum DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *updateData));
 
 #endif

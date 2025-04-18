@@ -1,9 +1,10 @@
 #include "include/bodyBehavior.h"
-#include "include/dynBodyDef.h"
 #include "include/box2d/box2d.h"
 #include "include/box2d/types.h"
+#include "include/dynBodyDef.h"
 #include "include/raylib/raylib.h"
 #include "include/slog.h"
+
 
 #define RUNNING_FORCE 1000.0f
 #define VELOCITY_LIMIT 8
@@ -17,6 +18,7 @@
 #define STATUS_FREE_FALL 3
 #define STATUS_UNSTABLE 4
 #define STATUS_SMALL_STABLE 5
+#define STATUS_LOCK_IN_PLACE 6
 
 static float previousPlayerVelocityY = 0.0f;
 
@@ -33,6 +35,48 @@ static void slowDown(b2BodyId *body) {
     b2Body_SetLinearVelocity(*body, (b2Vec2){velocity.x * 0.7f, velocity.y});
 }
 
+static bool contactBegin(b2BodyId *body) {
+    b2WorldId world = b2Body_GetWorld(*body);
+    b2ContactEvents contactEvents = b2World_GetContactEvents(world);
+    for (int i = 0; i < contactEvents.beginCount; ++i) {
+        b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
+        if (beginEvent->shapeIdA.index1 == body->index1 ||
+            beginEvent->shapeIdB.index1 == body->index1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/*
+ * First contact makes platform unstable
+ * It then moves a bit until it locks in place
+ */
+void shiftLittleUpdate(UpdateData *updateData) {
+    if (updateData->status == STATUS_LOCK_IN_PLACE)
+        return;
+
+    const float unstableTime = 0.2f;
+    if (updateData->status == STATUS_INIT && contactBegin(updateData->body)) {
+        updateData->status = STATUS_CONTACT;
+    }
+
+    switch (updateData->status) {
+    case STATUS_CONTACT:
+        b2Body_SetType(*updateData->body, b2_dynamicBody);
+        updateData->status = STATUS_UNSTABLE;
+        break;
+    case STATUS_UNSTABLE:
+        if (updateData->timer < unstableTime) {
+            updateData->timer += GetFrameTime();
+        } else {
+            b2Body_SetType(*updateData->body, b2_staticBody);
+            updateData->status = STATUS_LOCK_IN_PLACE;
+        }
+		break;
+    }
+}
+
 /*
  * First contact makes platform unstable
  * It then moves a bit until locking in place again
@@ -44,16 +88,8 @@ void unstableUpdate(UpdateData *updateData) {
 
     const float unstableTime = 0.1f;
     const float smallStableTime = 1.4f;
-    if (updateData->status == STATUS_INIT) {
-        b2WorldId world = b2Body_GetWorld(*updateData->body);
-        b2ContactEvents contactEvents = b2World_GetContactEvents(world);
-        for (int i = 0; i < contactEvents.beginCount; ++i) {
-            b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
-            if (beginEvent->shapeIdA.index1 == updateData->body->index1 ||
-                beginEvent->shapeIdB.index1 == updateData->body->index1) {
-                updateData->status = STATUS_CONTACT;
-            }
-        }
+    if (updateData->status == STATUS_INIT && contactBegin(updateData->body)) {
+        updateData->status = STATUS_CONTACT;
     }
 
     switch (updateData->status) {
@@ -132,18 +168,21 @@ void playerUpdate(UpdateData *updateData) {
     }
 }
 
-void setUpdateFunction(int id, void (**update)(UpdateData *updateData)) {
+DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *updateData)) {
     *update = &noUpdate;
     switch (id) {
     case UNDEFINED:
         *update = &noUpdate;
         break;
     case CIRCLES_32X16:
-        // 32*16
         *update = &unstableUpdate;
+        break;
+    case BASIC_96X16:
+        *update = &shiftLittleUpdate;
         break;
     case PLAYER:
         *update = &playerUpdate;
         break;
     }
+	return DEFAULT;
 }

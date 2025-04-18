@@ -71,7 +71,7 @@ static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width,
             bodies[i]->updateData.status = UPDATE_STATUS_INIT;
             bodies[i]->updateData.timer = 0.0f;
             bodies[i]->updateData.body = &bodies[i]->body;
-            setUpdateFunction(id, &bodies[i]->update);
+			bodies[i]->updateData.modifier = setUpdateFunction(id, &bodies[i]->update);
 
             // Initially set position and rotation
             updateRectangle(bodies[i]);
