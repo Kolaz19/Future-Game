@@ -18,6 +18,7 @@
 #define STATUS_UNSTABLE 4
 #define STATUS_SMALL_STABLE 5
 #define STATUS_LOCK_IN_PLACE 6
+#define STATUS_JUMP 7
 
 static float previousPlayerVelocityY = 0.0f;
 
@@ -41,6 +42,19 @@ static bool contactBegin(b2BodyId *body) {
         b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
         if (beginEvent->shapeIdA.index1 == body->index1 ||
             beginEvent->shapeIdB.index1 == body->index1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool contactEnd(b2BodyId *body) {
+    b2WorldId world = b2Body_GetWorld(*body);
+    b2ContactEvents contactEvents = b2World_GetContactEvents(world);
+    for (int i = 0; i < contactEvents.endCount; ++i) {
+        b2ContactEndTouchEvent *endEvent = contactEvents.endEvents + i;
+        if (endEvent->shapeIdA.index1 == body->index1 ||
+            endEvent->shapeIdB.index1 == body->index1) {
             return true;
         }
     }
@@ -134,15 +148,23 @@ void playerUpdate(UpdateData *updateData) {
         previousPlayerVelocityY = velocity.y;
     }
 
+    // Track if player is jumping
+    if (updateData->status == STATUS_JUMP && contactBegin(updateData->body)) {
+        updateData->status = STATUS_INIT;
+    } else if (contactEnd(updateData->body)) {
+        updateData->status = STATUS_JUMP;
+    }
+
     // Only advance cooldown when player is on ground
-    if (velocity.y > -0.1f && velocity.y < 0.1f) {
+    if ((velocity.y > -0.1f && velocity.y < 0.1f) || updateData->status == STATUS_INIT) {
         updateData->timer += GetFrameTime();
     } else {
         updateData->timer = 0.0f;
     }
 
-    // Jumping
-    if (IsKeyDown(KEY_W) && velocity.y < 0.01f && velocity.y > -0.01f && updateData->timer > JUMP_COOLDOWN_LIMIT) {
+    // Jumping - either static or dynamic platform
+    bool groundContact = (velocity.y < 0.01f && velocity.y > -0.01f) || updateData->status == STATUS_INIT;
+    if (IsKeyDown(KEY_W) && groundContact && updateData->timer > JUMP_COOLDOWN_LIMIT) {
         b2Body_ApplyLinearImpulse(*updateData->body, (b2Vec2){0.0f, JUMP_FORCE}, (b2Vec2){0.0f, 0.0f}, true);
         updateData->timer = 0.0f;
     }
