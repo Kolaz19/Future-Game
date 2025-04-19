@@ -119,7 +119,7 @@
   <object id="35" x="111.695" y="528.103" width="192.151" height="15.9194"/>
  </objectgroup>
  <objectgroup id="4" name="Checkpoints">
-  <object id="32" x="46.5" y="321.5"/>
+  <object id="32" x="42.75" y="320" width="16" height="32"/>
  </objectgroup>
  <objectgroup id="3" name="Dynamic"/>
 </map>

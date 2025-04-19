@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
             panim_setDying(plAnim);
         } else {
             phy_getVelocity(playerBody, &forceOfCharacter.x, &forceOfCharacter.y);
-            check_update(checkpoint, playerRectangle.rectangle->y);
+            check_update(checkpoint, playerRectangle.rectangle->y + playerRectangle.rectangle->height);
         }
 
 		phy_updateDynamicGroundContact(playerBody, &playerHasGroundContact);

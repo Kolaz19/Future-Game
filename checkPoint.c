@@ -3,7 +3,7 @@
 #include "include/slog.h"
 #include <stdlib.h>
 
-#define CHECKPOINT_WAITTIME 2.0f
+#define CHECKPOINT_WAITTIME 1.0f
 
 typedef struct {
     int level;
@@ -30,8 +30,8 @@ Checkpoint check_createCheckpoint(void) {
     Checkpoint cp = malloc(sizeof(Checkpoint_internal));
     cp->timer = 0.0f;
     cp->height = 0;
-    cp->current.level = 2;
-    cp->next.level = 2;
+    cp->current.level = 1;
+    cp->next.level = 1;
     return cp;
 }
 

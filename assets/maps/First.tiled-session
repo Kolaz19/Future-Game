@@ -14,36 +14,48 @@
         },
         "map_part1.tmx": {
             "expandedObjectLayers": [
-                2,
+                3,
                 4,
-                3
+                2
             ],
-            "scale": 1,
-            "selectedLayer": 3,
+            "scale": 0.5,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 280,
-                "y": 719.5
+                "x": 147,
+                "y": 561
             }
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
-                2,
+                3,
                 4,
-                3
+                2
             ],
             "scale": 1,
-            "selectedLayer": 0,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 280,
-                "y": 720.5
+                "x": 204.5,
+                "y": 182.5
             }
         },
         "map_part3.tmx": {
-            "scale": 0.75,
+            "expandedObjectLayers": [
+                3,
+                2
+            ],
+            "scale": 5.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 279.99999999999994,
-                "y": 720.6666666666666
+                "x": 473.72727272727275,
+                "y": 197.36363636363637
+            }
+        },
+        "map_part4.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 113,
+                "y": -103
             }
         }
     },
