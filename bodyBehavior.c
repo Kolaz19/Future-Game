@@ -205,6 +205,9 @@ DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *upda
         *update = &shiftLittleUpdate;
         return LEFT;
         break;
+    case CIRCLES_BROKEN_32X32:
+        *update = &unstableUpdate;
+		break;
     case PLAYER:
         *update = &playerUpdate;
         break;

@@ -10,6 +10,7 @@ enum DynbBodyDef {
     UNDEFINED = 0,
     CIRCLES_32X16 = 1,
 	BASIC_96X16 = 2,
+	CIRCLES_BROKEN_32X32 = 3,
     PLAYER = 99,
 };
 

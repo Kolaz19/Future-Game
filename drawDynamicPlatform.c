@@ -17,8 +17,9 @@ PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
 
 	//Numbers have to match name of object in Dynamic layer
     TextureName textureNames[] = {
-        {CIRCLES_32X16, "assets/dynamicPlatforms/Plat1.png"}, // 32x16 Circles
-        {BASIC_96X16, "assets/dynamicPlatforms/Plat2.png"} // 96x16 Circles
+        {CIRCLES_32X16, "assets/dynamicPlatforms/Plat1.png"},
+        {BASIC_96X16, "assets/dynamicPlatforms/Plat2.png"},
+        {CIRCLES_BROKEN_32X32, "assets/dynamicPlatforms/Plat3.png"}
     };
     int noElements = (sizeof(textureNames) / sizeof(TextureName));
 

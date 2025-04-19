@@ -159,7 +159,11 @@ void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
 
     b2ShapeDef dynamicShapeDef = b2DefaultShapeDef();
     dynamicShapeDef.friction = 0.4f;
-    dynamicShapeDef.density = 65.0f;
+    if (plat.width > 15.0f && plat.height > 15.0f) {
+        dynamicShapeDef.density = 35.0f;
+    } else {
+        dynamicShapeDef.density = 65.0f;
+    }
     b2ShapeId shapeId = b2CreatePolygonShape(dynamicId, &dynamicShapeDef, &dynamicBox);
     b2Shape_SetRestitution(shapeId, 0.0f);
 
