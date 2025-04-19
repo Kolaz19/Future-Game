@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map_part1.tmx",
+    "activeFile": "map_part2.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -41,13 +41,14 @@
         "map_part3.tmx": {
             "expandedObjectLayers": [
                 3,
+                4,
                 2
             ],
-            "scale": 1.5,
-            "selectedLayer": 0,
+            "scale": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 373.66666666666663,
-                "y": 757.6666666666665
+                "x": 502.5,
+                "y": 897.5
             }
         },
         "map_part4.tmx": {
@@ -68,13 +69,15 @@
     "openFiles": [
         "map_part1.tmx",
         "map_part2.tmx",
-        "map_part3.tmx"
+        "map_part3.tmx",
+        "map_part4.tmx"
     ],
     "project": "First.tiled-project",
     "recentFiles": [
+        "map_part1.tmx",
+        "map_part4.tmx",
         "map_part3.tmx",
         "map_part2.tmx",
-        "map_part1.tmx",
         "Tileset.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",

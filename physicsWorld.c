@@ -271,6 +271,16 @@ void phy_updateDynamicGroundContact(BodyIdReference body, bool *hasGroundContact
     }
 }
 
-bool phy_isEnable(BodyIdReference body) {
-    return b2Body_IsEnabled(*body);
+bool phy_isPlayerDead(WorldHandle handle) {
+    Body **bodies = handle->bag;
+    for (int i = 0; i < BAG_SIZE; i++) {
+        if (bodies[i] != NULL && bodies[i]->type == CHARACTER) {
+            if (bodies[i]->updateData.status == UPDATE_STATUS_DEAD) {
+				return true;
+			} else {
+				return false;
+			}
+        }
+    }
+	return false;
 }

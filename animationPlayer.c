@@ -96,10 +96,11 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
 }
 
 void panim_setDying(PlAnimation plAnim) {
-	if (plAnim->curAnimation == &plAnim->dying) return;
+    if (plAnim->curAnimation == &plAnim->dying)
+        return;
     bool prevAnimationFlip = plAnim->curAnimation->flipX;
     plAnim->curAnimation = &plAnim->dying;
-	anim_startAnimation(plAnim->curAnimation);
+    anim_startAnimation(plAnim->curAnimation);
     plAnim->curAnimation->flipX = prevAnimationFlip;
     slogd("Animation switched to DYING");
 }

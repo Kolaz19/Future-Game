@@ -1,5 +1,6 @@
 #include "include/bodyBehavior.h"
 #include "include/box2d/box2d.h"
+#include "include/box2d/collision.h"
 #include "include/box2d/types.h"
 #include "include/dynBodyDef.h"
 #include "include/raylib/raylib.h"
@@ -12,6 +13,7 @@
 #define DYING_FALL_VELOCITY 22
 
 #define STATUS_INIT UPDATE_STATUS_INIT
+#define STATUS_DEAD UPDATE_STATUS_DEAD
 #define STATUS_CONTACT 1
 #define STATUS_WAS_CONTACT 2
 #define STATUS_FREE_FALL 3
@@ -139,11 +141,20 @@ void playerUpdate(UpdateData *updateData) {
     slogt("Velocity of player: X:%f Y:%f", velocity.x, velocity.y);
 
     // Check for death by falling
-    if (!b2Body_IsEnabled(*updateData->body)) {
+    if (updateData->status == STATUS_DEAD) {
         return;
     }
     if (velocity.y < 0.01f && previousPlayerVelocityY > DYING_FALL_VELOCITY) {
-        b2Body_Disable(*updateData->body);
+        updateData->status = STATUS_DEAD;
+        updateData->timer = 0.0f;
+        previousPlayerVelocityY = 0.0f;
+
+		//Collision box has to be changed when player dies
+        b2ShapeId shapeId;
+        b2Body_GetShapes(*updateData->body, &shapeId, 1);
+        b2Polygon playerBox = b2MakeOffsetBox(0.8f, 0.15f, (b2Vec2){0.0f, 0.65f}, (b2Rot){1.0f, 0.0f});
+        b2Shape_SetPolygon(shapeId, &playerBox);
+        return;
     } else {
         previousPlayerVelocityY = velocity.y;
     }
@@ -207,7 +218,7 @@ DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *upda
         break;
     case CIRCLES_BROKEN_32X32:
         *update = &unstableUpdate;
-		break;
+        break;
     case PLAYER:
         *update = &playerUpdate;
         break;

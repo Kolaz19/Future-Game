@@ -59,8 +59,9 @@ int main(int argc, char *argv[]) {
 
     while (!WindowShouldClose()) {
 
+
         // Player body was disabled - player is dead
-        if (!phy_isEnable(playerBody)) {
+        if (phy_isPlayerDead(worldHandle)) {
             panim_setDying(plAnim);
         } else {
             phy_getVelocity(playerBody, &forceOfCharacter.x, &forceOfCharacter.y);

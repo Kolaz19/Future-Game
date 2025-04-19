@@ -79,6 +79,10 @@ void phy_destroyObjectsAbove(WorldHandle handle, float posY);
 void phy_updateDynamicGroundContact(BodyIdReference body, bool *hasGroundContact);
 
 void phy_getVelocity(BodyIdReference body, float *velX, float *velY);
-bool phy_isEnable(BodyIdReference body);
 void phy_setPosition(BodyIdReference body, float posX, float posY);
+
+/*
+ * Read player update flag for dying
+ */
+bool phy_isPlayerDead(WorldHandle handle);
 #endif
