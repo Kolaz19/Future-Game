@@ -72,6 +72,12 @@ void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness);
  */
 void phy_destroyObjectsAbove(WorldHandle handle, float posY);
 
+/*
+ * Update flag that tracks if player has contact with a dynamic
+ * body or not
+ */
+void phy_updateDynamicGroundContact(BodyIdReference body, bool *hasGroundContact);
+
 void phy_getVelocity(BodyIdReference body, float *velX, float *velY);
 bool phy_isEnable(BodyIdReference body);
 void phy_setPosition(BodyIdReference body, float posX, float posY);

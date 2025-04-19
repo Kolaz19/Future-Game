@@ -71,7 +71,7 @@ static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width,
             bodies[i]->updateData.status = UPDATE_STATUS_INIT;
             bodies[i]->updateData.timer = 0.0f;
             bodies[i]->updateData.body = &bodies[i]->body;
-			bodies[i]->updateData.modifier = setUpdateFunction(id, &bodies[i]->update);
+            bodies[i]->updateData.modifier = setUpdateFunction(id, &bodies[i]->update);
 
             // Initially set position and rotation
             updateRectangle(bodies[i]);
@@ -143,7 +143,8 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
 
     b2ShapeDef groundShapeDef = b2DefaultShapeDef();
     groundShapeDef.friction = 0.3f;
-    b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+    b2ShapeId shapeId = b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
+    b2Shape_SetRestitution(shapeId, 0.0f);
 
     addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height, UNDEFINED);
 }
@@ -160,7 +161,7 @@ void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
     dynamicShapeDef.friction = 0.4f;
     dynamicShapeDef.density = 65.0f;
     b2ShapeId shapeId = b2CreatePolygonShape(dynamicId, &dynamicShapeDef, &dynamicBox);
-	b2Shape_SetRestitution(shapeId, 0.0f);
+    b2Shape_SetRestitution(shapeId, 0.0f);
 
     addToBag(world->bag, &dynamicId, DYNAMIC_PLATFORM, plat.width, plat.height, id);
 }
@@ -203,7 +204,7 @@ void phy_addPlayer(WorldHandle world, float posX, float posY) {
     // Enable contact events for player
     b2Body_GetShapes(playerId, &shapeId, 1);
     b2Shape_EnableContactEvents(shapeId, true);
-	b2Shape_SetRestitution(shapeId, 0.0f);
+    b2Shape_SetRestitution(shapeId, 0.0f);
 
     addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, PLAYER);
 }
@@ -239,8 +240,31 @@ void phy_getVelocity(BodyIdReference body, float *velX, float *velY) {
 }
 
 void phy_setPosition(BodyIdReference body, float posX, float posY) {
-	b2Body_SetTransform(*body, (b2Vec2){TOWORLD(posX), TOWORLD(posY)}, (b2Rot){1.0f, 0.0f});
-	b2Body_SetLinearVelocity(*body, (b2Vec2){0.0f, 0.0f});
+    b2Body_SetTransform(*body, (b2Vec2){TOWORLD(posX), TOWORLD(posY)}, (b2Rot){1.0f, 0.0f});
+    b2Body_SetLinearVelocity(*body, (b2Vec2){0.0f, 0.0f});
+}
+
+void phy_updateDynamicGroundContact(BodyIdReference body, bool *hasGroundContact) {
+    b2WorldId world = b2Body_GetWorld(*body);
+    b2ContactEvents contactEvents = b2World_GetContactEvents(world);
+
+    if (*hasGroundContact) {
+        for (int i = 0; i < contactEvents.endCount; ++i) {
+            b2ContactEndTouchEvent *endEvent = contactEvents.endEvents + i;
+            if (endEvent->shapeIdA.index1 == body->index1 ||
+                endEvent->shapeIdB.index1 == body->index1) {
+                *hasGroundContact = false;
+            }
+        }
+    } else {
+        for (int i = 0; i < contactEvents.beginCount; ++i) {
+            b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
+            if (beginEvent->shapeIdA.index1 == body->index1 ||
+                beginEvent->shapeIdB.index1 == body->index1) {
+                *hasGroundContact = true;
+            }
+        }
+    }
 }
 
 bool phy_isEnable(BodyIdReference body) {

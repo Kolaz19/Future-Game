@@ -35,7 +35,7 @@ PlAnimation panim_createAnimation(void) {
     return plAnim;
 }
 
-void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
+void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool hasGroundContact) {
     Animation *prevAnimation = plAnim->curAnimation;
     bool prevFlip = plAnim->flip;
 
@@ -53,12 +53,12 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY) {
         if (plAnim->curAnimation != prevAnimation) {
             slogd("Animation switched to FALLING");
         }
-    } else if (velocityY < NEG_LIMIT_JUMP) {
+    } else if (velocityY < NEG_LIMIT_JUMP && !hasGroundContact) {
         plAnim->curAnimation = &plAnim->jumping;
         if (plAnim->curAnimation != prevAnimation) {
             slogd("Animation switched to JUMPING");
         }
-    } else if (velocityY > POS_LIMIT_JUMP) {
+    } else if (velocityY > POS_LIMIT_JUMP && !hasGroundContact) {
         plAnim->curAnimation = &plAnim->jumping;
         if (plAnim->curAnimation != prevAnimation) {
             slogd("Animation switched to JUMPING");

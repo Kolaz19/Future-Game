@@ -5,7 +5,6 @@
 #include "include/raylib/raylib.h"
 #include "include/slog.h"
 
-
 #define RUNNING_FORCE 1000.0f
 #define VELOCITY_LIMIT 8
 #define JUMP_COOLDOWN_LIMIT 0.5f
@@ -64,6 +63,9 @@ void shiftLittleUpdate(UpdateData *updateData) {
     switch (updateData->status) {
     case STATUS_CONTACT:
         b2Body_SetType(*updateData->body, b2_dynamicBody);
+        if (updateData->modifier == LEFT) {
+            b2Body_ApplyTorque(*updateData->body, -30000.0f, true);
+        }
         updateData->status = STATUS_UNSTABLE;
         break;
     case STATUS_UNSTABLE:
@@ -73,7 +75,7 @@ void shiftLittleUpdate(UpdateData *updateData) {
             b2Body_SetType(*updateData->body, b2_staticBody);
             updateData->status = STATUS_LOCK_IN_PLACE;
         }
-		break;
+        break;
     }
 }
 
@@ -179,10 +181,11 @@ DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *upda
         break;
     case BASIC_96X16:
         *update = &shiftLittleUpdate;
+        return LEFT;
         break;
     case PLAYER:
         *update = &playerUpdate;
         break;
     }
-	return DEFAULT;
+    return DEFAULT;
 }
