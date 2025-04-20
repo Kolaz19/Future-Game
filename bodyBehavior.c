@@ -96,6 +96,18 @@ void shiftLittleUpdate(UpdateData *updateData) {
 }
 
 /*
+ * Just break free when touched
+ */
+void justFallOnCollisionUpdate(UpdateData *updateData) {
+	if (updateData->status == STATUS_FREE_FALL) return;
+
+	if (contactBegin(updateData->body)) {
+        b2Body_SetType(*updateData->body, b2_dynamicBody);
+		updateData->status = STATUS_FREE_FALL;
+	}
+}
+
+/*
  * First contact makes platform unstable
  * It then moves a bit until locking in place again
  * Then time goes by until it completely breaks free
@@ -209,16 +221,20 @@ DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *upda
     case UNDEFINED:
         *update = &noUpdate;
         break;
-    case CIRCLES_32X16:
-        *update = &unstableUpdate;
-        break;
     case BASIC_96X16:
         *update = &shiftLittleUpdate;
         return LEFT;
         break;
+	case THINNER_BROKEN_112X16:
+		*update = &justFallOnCollisionUpdate;
+		break;
     case CIRCLES_BROKEN_32X32:
-        *update = &unstableUpdate;
-        break;
+    case CIRCLES_32X16:
+	case THIN_NO_END_80X16:
+	case THIN_END_112X16:
+	case THIN_END_144X16:
+		*update = &unstableUpdate;
+		break;
     case PLAYER:
         *update = &playerUpdate;
         break;

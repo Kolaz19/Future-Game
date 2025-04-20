@@ -14,7 +14,7 @@ typedef struct Manager {
 
 #define MAPNAME_MAXLEN 27
 #define OBJ_MAX_NAMELEN 20
-#define LASTLEVEL 3
+#define LASTLEVEL 4
 
 static const char *mapNamePrefix = "assets/maps/map_part";
 static const char *mapNameSuffix = ".tmx";

@@ -166,6 +166,7 @@ void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
     }
     b2ShapeId shapeId = b2CreatePolygonShape(dynamicId, &dynamicShapeDef, &dynamicBox);
     b2Shape_SetRestitution(shapeId, 0.0f);
+    b2Shape_EnableContactEvents(shapeId, true);
 
     addToBag(world->bag, &dynamicId, DYNAMIC_PLATFORM, plat.width, plat.height, id);
 }

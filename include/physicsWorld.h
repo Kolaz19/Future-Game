@@ -5,7 +5,7 @@
 #include "bodyIdReference.h"
 #include <stdbool.h>
 
-#define BAG_SIZE 50
+#define BAG_SIZE 100
 
 typedef struct World *WorldHandle;
 

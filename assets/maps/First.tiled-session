@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map_part2.tmx",
+    "activeFile": "map_part4.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -14,49 +14,54 @@
         },
         "map_part1.tmx": {
             "expandedObjectLayers": [
-                3,
                 4,
+                3,
                 2
             ],
             "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 147,
-                "y": 801
+                "x": 280,
+                "y": 719
             }
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
-                3,
                 4,
+                3,
                 2
             ],
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 204.5,
-                "y": 182.5
+                "x": 280,
+                "y": 720.5
             }
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
-                3,
                 4,
+                3,
                 2
             ],
-            "scale": 1,
-            "selectedLayer": 2,
+            "scale": 3,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 502.5,
-                "y": 897.5
+                "x": 317.83333333333337,
+                "y": 773.8333333333333
             }
         },
         "map_part4.tmx": {
-            "scale": 0.5,
+            "expandedObjectLayers": [
+                4,
+                3,
+                2
+            ],
+            "scale": 4,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 113,
-                "y": -103
+                "x": 299.375,
+                "y": 135.875
             }
         }
     },
@@ -75,9 +80,9 @@
     "project": "First.tiled-project",
     "recentFiles": [
         "map_part1.tmx",
-        "map_part4.tmx",
-        "map_part3.tmx",
         "map_part2.tmx",
+        "map_part3.tmx",
+        "map_part4.tmx",
         "Tileset.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",

@@ -19,7 +19,11 @@ PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
     TextureName textureNames[] = {
         {CIRCLES_32X16, "assets/dynamicPlatforms/Plat1.png"},
         {BASIC_96X16, "assets/dynamicPlatforms/Plat2.png"},
-        {CIRCLES_BROKEN_32X32, "assets/dynamicPlatforms/Plat3.png"}
+        {CIRCLES_BROKEN_32X32, "assets/dynamicPlatforms/Plat3.png"},
+        {THINNER_BROKEN_112X16, "assets/dynamicPlatforms/Plat4.png"},
+        {THIN_NO_END_80X16, "assets/dynamicPlatforms/Plat5.png"},
+        {THIN_END_112X16, "assets/dynamicPlatforms/Plat6.png"},
+        {THIN_END_144X16, "assets/dynamicPlatforms/Plat7.png"}
     };
     int noElements = (sizeof(textureNames) / sizeof(TextureName));
 
