@@ -152,7 +152,7 @@ void playerUpdate(UpdateData *updateData) {
 		//Collision box has to be changed when player dies
         b2ShapeId shapeId;
         b2Body_GetShapes(*updateData->body, &shapeId, 1);
-        b2Polygon playerBox = b2MakeOffsetBox(0.8f, 0.15f, (b2Vec2){0.0f, 0.65f}, (b2Rot){1.0f, 0.0f});
+        b2Polygon playerBox = b2MakeOffsetBox(0.5f, 0.15f, (b2Vec2){0.0f, 0.65f}, (b2Rot){1.0f, 0.0f});
         b2Shape_SetPolygon(shapeId, &playerBox);
         return;
     } else {
