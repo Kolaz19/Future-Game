@@ -23,7 +23,8 @@ PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
         {THINNER_BROKEN_112X16, "assets/dynamicPlatforms/Plat4.png"},
         {THIN_NO_END_80X16, "assets/dynamicPlatforms/Plat5.png"},
         {THIN_END_112X16, "assets/dynamicPlatforms/Plat6.png"},
-        {THIN_END_144X16, "assets/dynamicPlatforms/Plat7.png"}
+        {THIN_END_144X16, "assets/dynamicPlatforms/Plat7.png"},
+        {JOINT_ONLY_RIGHT_208X16, "assets/dynamicPlatforms/Plat8.png"}
     };
     int noElements = (sizeof(textureNames) / sizeof(TextureName));
 

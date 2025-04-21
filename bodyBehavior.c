@@ -225,6 +225,7 @@ DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *upda
         *update = &shiftLittleUpdate;
         return LEFT;
         break;
+	case JOINT_ONLY_RIGHT_208X16:
 	case THINNER_BROKEN_112X16:
 		*update = &justFallOnCollisionUpdate;
 		break;

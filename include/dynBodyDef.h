@@ -15,6 +15,7 @@ enum DynbBodyDef {
 	THIN_NO_END_80X16 = 5,
 	THIN_END_112X16 = 6,
 	THIN_END_144X16 = 7,
+	JOINT_ONLY_RIGHT_208X16 = 8,
     PLAYER = 99,
 };
 

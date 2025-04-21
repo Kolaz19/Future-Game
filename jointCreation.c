@@ -2,33 +2,36 @@
 #include "include/dynBodyDef.h"
 
 #define CONV_VAL 20
+#define SPRITE_SIZE 16.0f
 #define TOWORLD(x) ((x) / CONV_VAL)
 #define TOPIXEL(x) ((x) * CONV_VAL)
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-int noCreation(JointCreationContext*) { return 0; }
+int noCreation(JointCreationContext* context) { return 0; }
 #pragma GCC diagnostic pop
 
 
-int anchorOnRightSide(JointCreationContext* context) {
+int anchorOnLeftSide(JointCreationContext* context) {
     b2WorldId world = b2Body_GetWorld(*context->original);
     b2Vec2 pos = b2Body_GetPosition(*context->original);
 
-    b2BodyDef dynamicBodyDef2 = b2DefaultBodyDef();
-    dynamicBodyDef2.position = (b2Vec2){pos.x + TOWORLD(context->width) / 2 - TOWORLD(16.0f), pos.y + TOWORLD(8.0f) };
-    dynamicBodyDef2.type = b2_staticBody;
-    context->new[0] = b2CreateBody(world, &dynamicBodyDef2);
-    b2Polygon dynamicBox2 = b2MakeBox(TOWORLD(8.0f), TOWORLD(8.0f));
-    b2ShapeDef dynamicShapeDef2 = b2DefaultShapeDef();
-    b2CreatePolygonShape(context->new[0], &dynamicShapeDef2, &dynamicBox2);
+    b2BodyDef dynamicBodyDef = b2DefaultBodyDef();
+	//At first sprite of body
+    dynamicBodyDef.position = (b2Vec2){pos.x - TOWORLD(context->width / 2 - SPRITE_SIZE / 2), pos.y };
+    dynamicBodyDef.type = b2_staticBody;
+    context->new[0] = b2CreateBody(world, &dynamicBodyDef);
+    b2Polygon dynamicBox = b2MakeBox(TOWORLD(SPRITE_SIZE / 2.0f), TOWORLD(SPRITE_SIZE / 2.0f));
+    b2ShapeDef dynamicShapeDef = b2DefaultShapeDef();
+	dynamicShapeDef.isSensor = true;
+    b2CreatePolygonShape(context->new[0], &dynamicShapeDef, &dynamicBox);
 
-    b2RevoluteJointDef jointDef2 = b2DefaultRevoluteJointDef();
-    jointDef2.bodyIdA = *context->original;
-    jointDef2.bodyIdB = context->new[0];
-    jointDef2.localAnchorA = (b2Vec2){0.0f, 0.0f}; // b2Body_GetLocalPoint(dynamicId2, worldPoint);
-    jointDef2.localAnchorB = (b2Vec2){0.0f, 5.0f}; // b2Body_GetLocalPoint(dynamicId, worldPoint);
-    b2CreateRevoluteJoint(world, &jointDef2);
+    b2RevoluteJointDef jointDef = b2DefaultRevoluteJointDef();
+    jointDef.bodyIdA = *context->original;
+    jointDef.bodyIdB = context->new[0];
+    jointDef.localAnchorA = (b2Vec2){-1.0f * TOWORLD(context->width / 2.0f - SPRITE_SIZE / 2), 0.0f}; 
+    jointDef.localAnchorB = (b2Vec2){0.0f, 0.0f}; 
+    b2CreateRevoluteJoint(world, &jointDef);
 	return 1;
 }
 
@@ -38,12 +41,10 @@ bool setJointCreationFunction(int id, int (**create)(JointCreationContext*)) {
     case UNDEFINED:
         *create = &noCreation;
         break;
-		/*
-    case THIN_END_144X16:
-		*create = &anchorOnRightSide;
+    case JOINT_ONLY_RIGHT_208X16:
+		*create = &anchorOnLeftSide;
 		return true;
 		break;
-		*/
 	}
 	return false;
 }

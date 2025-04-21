@@ -14,8 +14,8 @@
         },
         "map_part1.tmx": {
             "expandedObjectLayers": [
-                4,
                 3,
+                4,
                 2
             ],
             "scale": 0.5,
@@ -27,8 +27,8 @@
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
-                4,
                 3,
+                4,
                 2
             ],
             "scale": 1,
@@ -40,15 +40,15 @@
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
-                4,
                 3,
+                4,
                 2
             ],
             "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 317.83333333333337,
-                "y": 773.8333333333333
+                "x": 280,
+                "y": 720.1666666666666
             }
         },
         "map_part4.tmx": {
