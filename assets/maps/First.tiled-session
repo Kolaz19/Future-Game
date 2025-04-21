@@ -15,8 +15,8 @@
         "map_part1.tmx": {
             "expandedObjectLayers": [
                 3,
-                4,
-                2
+                2,
+                4
             ],
             "scale": 0.5,
             "selectedLayer": 2,
@@ -28,21 +28,21 @@
         "map_part2.tmx": {
             "expandedObjectLayers": [
                 3,
-                4,
-                2
+                2,
+                4
             ],
             "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 280,
-                "y": 720.5
+                "y": 480.5
             }
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
                 3,
-                4,
-                2
+                2,
+                4
             ],
             "scale": 3,
             "selectedLayer": 1,
@@ -53,15 +53,15 @@
         },
         "map_part4.tmx": {
             "expandedObjectLayers": [
-                4,
                 3,
-                2
+                2,
+                4
             ],
-            "scale": 4,
-            "selectedLayer": 0,
+            "scale": 2,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 299.375,
-                "y": 135.875
+                "x": 378,
+                "y": 1141.75
             }
         }
     },
