@@ -9,6 +9,7 @@
 #include "include/box2d/collision.h"
 #include "include/box2d/math_functions.h"
 #include "include/box2d/types.h"
+#include "include/jointCreation.h"
 #include "include/raylib/pi.h"
 #include "include/slog.h"
 
@@ -168,6 +169,22 @@ void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
     b2Shape_SetRestitution(shapeId, 0.0f);
     b2Shape_EnableContactEvents(shapeId, true);
 
+	// Optional joint creation
+    int (*create)(JointCreationContext*);
+    if (setJointCreationFunction(id, &create)) {
+		JointCreationContext jointContext = {
+			.original = &dynamicId,
+			.width = plat.width,
+			.height = plat.height
+		};
+        int numberOfNewBodies = (*create)(&jointContext);
+        // Add it to bag so it can be cleaned up
+        // Values are not that important
+        for (int i = 0; i < numberOfNewBodies; i++) {
+            addToBag(world->bag, jointContext.new+i, STATIC_PLATFORM, 1, 1, UNDEFINED);
+        }
+    }
+
     addToBag(world->bag, &dynamicId, DYNAMIC_PLATFORM, plat.width, plat.height, id);
 }
 
@@ -277,11 +294,11 @@ bool phy_isPlayerDead(WorldHandle handle) {
     for (int i = 0; i < BAG_SIZE; i++) {
         if (bodies[i] != NULL && bodies[i]->type == CHARACTER) {
             if (bodies[i]->updateData.status == UPDATE_STATUS_DEAD) {
-				return true;
-			} else {
-				return false;
-			}
+                return true;
+            } else {
+                return false;
+            }
         }
     }
-	return false;
+    return false;
 }
