@@ -74,6 +74,7 @@ int main(int argc, char *argv[]) {
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
 
         if (IsKeyPressed(KEY_R)) {
+			slogi("Player reset the level with checkpoint level %d", check_getCurrentLevel(checkpoint));
             // Reset game and load at current checkpoint
             map_free(mapManager);
             phy_free(worldHandle);

@@ -252,6 +252,7 @@ BodyIdReference phy_getCharacterBodyIdReference(WorldHandle handle) {
             return &(bodies[i]->body);
         }
     }
+	sloge("No player body in bag");
     return NULL;
 }
 
@@ -277,6 +278,7 @@ void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundConta
             (b2Body_GetType(b2Shape_GetBody(endEvent->shapeIdA)) == b2_dynamicBody &&
              b2Body_GetType(b2Shape_GetBody(endEvent->shapeIdB)) == b2_dynamicBody)) {
             (*amountGroundContact)--;
+			slogt("Player dynamic body contact amount updated: %d", *amountGroundContact);
         }
     }
     for (int i = 0; i < contactEvents.beginCount; ++i) {
@@ -286,6 +288,7 @@ void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundConta
             (b2Body_GetType(b2Shape_GetBody(beginEvent->shapeIdA)) == b2_dynamicBody &&
              b2Body_GetType(b2Shape_GetBody(beginEvent->shapeIdB)) == b2_dynamicBody)) {
             (*amountGroundContact)++;
+			slogt("Player dynamic body contact amount updated: %d", *amountGroundContact);
         }
     }
 	assert((*amountGroundContact) >= 0);

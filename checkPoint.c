@@ -30,8 +30,8 @@ Checkpoint check_createCheckpoint(void) {
     Checkpoint cp = malloc(sizeof(Checkpoint_internal));
     cp->timer = 0.0f;
     cp->height = 0;
-    cp->current.level = 5;
-    cp->next.level = 4;
+    cp->current.level = 1;
+    cp->next.level = 1;
     return cp;
 }
 
@@ -43,12 +43,16 @@ void check_setCurrentCheckpoint(Checkpoint cp, Rectangle *rect, int level) {
     cp->current.posX = rect->x;
     cp->current.posY = rect->y;
     cp->current.level = level;
+    slogi("Current checkpoint manually set at level %d at pos(X:%f|Y:%f)",
+          level, rect->x, rect->y);
 }
 
 void check_setNextCheckpoint(Checkpoint cp, Rectangle *rect, int level) {
     cp->next.posX = rect->x;
     cp->next.posY = rect->y;
     cp->next.level = level;
+    slogi("Next checkpoint manually set at level %d at pos(X:%f|Y:%f)",
+          level, rect->x, rect->y);
 }
 
 void check_free(Checkpoint cp) {
@@ -64,8 +68,8 @@ float check_getY(Checkpoint cp) {
 }
 
 void check_update(Checkpoint cp, float playerPosY) {
-	//Return when next checkpoint was not set
-	//(Levels can have no checkpoints)
+    // Return when next checkpoint was not set
+    //(Levels can have no checkpoints)
     if (cp->current.level == cp->next.level)
         return;
 
@@ -84,7 +88,7 @@ void check_update(Checkpoint cp, float playerPosY) {
         cp->current.level = cp->next.level;
         cp->current.posX = cp->next.posX;
         cp->current.posY = cp->next.posY;
-        slogi("Savepoint set at level %d at pos(X:%f|Y:%f)",
+        slogi("Checkpoint automatically set at level %d at pos(X:%f|Y:%f)",
               cp->current.level, cp->current.posX, cp->current.posY);
     }
 }
