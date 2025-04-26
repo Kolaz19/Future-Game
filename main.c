@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 
     phy_addPlayer(worldHandle, check_getX(checkpoint), check_getY(checkpoint));
     BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
-	bool playerHasGroundContact = false;
+	int amountDynamicGroundContact = 0;
 
     addLongWalls(worldHandle, mapManager);
     addPlatforms(worldHandle, mapManager, true);
@@ -68,8 +68,8 @@ int main(int argc, char *argv[]) {
             check_update(checkpoint, playerRectangle.rectangle->y + playerRectangle.rectangle->height);
         }
 
-		phy_updateDynamicGroundContact(playerBody, &playerHasGroundContact);
-        panim_update(plAnim, forceOfCharacter.x, forceOfCharacter.y, playerHasGroundContact);
+		phy_updateDynamicGroundContact(playerBody, &amountDynamicGroundContact);
+        panim_update(plAnim, forceOfCharacter.x, forceOfCharacter.y, amountDynamicGroundContact > 0);
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
 

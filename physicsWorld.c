@@ -170,19 +170,18 @@ void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
     b2Shape_SetRestitution(shapeId, 0.0f);
     b2Shape_EnableContactEvents(shapeId, true);
 
-	// Optional joint creation
-    int (*create)(JointCreationContext*);
+    // Optional joint creation
+    int (*create)(JointCreationContext *);
     if (setJointCreationFunction(id, &create)) {
-		JointCreationContext jointContext = {
-			.original = &dynamicId,
-			.width = plat.width,
-			.height = plat.height
-		};
+        JointCreationContext jointContext = {
+            .original = &dynamicId,
+            .width = plat.width,
+            .height = plat.height};
         int numberOfNewBodies = (*create)(&jointContext);
         // Add it to bag so it can be cleaned up
         // Values are not that important
         for (int i = 0; i < numberOfNewBodies; i++) {
-            addToBag(world->bag, jointContext.new+i, STATIC_PLATFORM, 1, 1, UNDEFINED);
+            addToBag(world->bag, jointContext.new + i, STATIC_PLATFORM, 1, 1, UNDEFINED);
         }
     }
 
@@ -267,27 +266,29 @@ void phy_setPosition(BodyIdReference body, float posX, float posY) {
     b2Body_SetLinearVelocity(*body, (b2Vec2){0.0f, 0.0f});
 }
 
-void phy_updateDynamicGroundContact(BodyIdReference body, bool *hasGroundContact) {
+void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundContact) {
     b2WorldId world = b2Body_GetWorld(*body);
     b2ContactEvents contactEvents = b2World_GetContactEvents(world);
 
-    if (*hasGroundContact) {
-        for (int i = 0; i < contactEvents.endCount; ++i) {
-            b2ContactEndTouchEvent *endEvent = contactEvents.endEvents + i;
-            if (endEvent->shapeIdA.index1 == body->index1 ||
-                endEvent->shapeIdB.index1 == body->index1) {
-                *hasGroundContact = false;
-            }
-        }
-    } else {
-        for (int i = 0; i < contactEvents.beginCount; ++i) {
-            b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
-            if (beginEvent->shapeIdA.index1 == body->index1 ||
-                beginEvent->shapeIdB.index1 == body->index1) {
-                *hasGroundContact = true;
-            }
+    for (int i = 0; i < contactEvents.endCount; ++i) {
+        b2ContactEndTouchEvent *endEvent = contactEvents.endEvents + i;
+        if ((endEvent->shapeIdA.index1 == body->index1 ||
+             endEvent->shapeIdB.index1 == body->index1) &&
+            (b2Body_GetType(b2Shape_GetBody(endEvent->shapeIdA)) == b2_dynamicBody &&
+             b2Body_GetType(b2Shape_GetBody(endEvent->shapeIdB)) == b2_dynamicBody)) {
+            (*amountGroundContact)--;
         }
     }
+    for (int i = 0; i < contactEvents.beginCount; ++i) {
+        b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
+        if ((beginEvent->shapeIdA.index1 == body->index1 ||
+             beginEvent->shapeIdB.index1 == body->index1) &&
+            (b2Body_GetType(b2Shape_GetBody(beginEvent->shapeIdA)) == b2_dynamicBody &&
+             b2Body_GetType(b2Shape_GetBody(beginEvent->shapeIdB)) == b2_dynamicBody)) {
+            (*amountGroundContact)++;
+        }
+    }
+	assert((*amountGroundContact) >= 0);
 }
 
 bool phy_isPlayerDead(WorldHandle handle) {
