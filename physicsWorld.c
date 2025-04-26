@@ -146,6 +146,7 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
     groundShapeDef.friction = 0.3f;
     b2ShapeId shapeId = b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
     b2Shape_SetRestitution(shapeId, 0.0f);
+    b2Shape_EnableContactEvents(shapeId, true);
 
     addToBag(world->bag, &groundId, STATIC_PLATFORM, plat.width, plat.height, UNDEFINED);
 }

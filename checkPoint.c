@@ -30,7 +30,7 @@ Checkpoint check_createCheckpoint(void) {
     Checkpoint cp = malloc(sizeof(Checkpoint_internal));
     cp->timer = 0.0f;
     cp->height = 0;
-    cp->current.level = 4;
+    cp->current.level = 5;
     cp->next.level = 4;
     return cp;
 }
