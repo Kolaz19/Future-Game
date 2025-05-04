@@ -1,6 +1,7 @@
 #include "include/bodyBehavior.h"
 #include "include/box2d/box2d.h"
 #include "include/box2d/collision.h"
+#include "include/box2d/id.h"
 #include "include/box2d/types.h"
 #include "include/dynBodyDef.h"
 #include "include/raylib/raylib.h"
@@ -39,12 +40,18 @@ static void slowDown(b2BodyId *body) {
 
 static bool contactBegin(b2BodyId *body) {
     b2WorldId world = b2Body_GetWorld(*body);
+    b2ShapeId shapes[MAX_SHAPES_ATTACHED_TO_BODY];
+    int shapesStored = b2Body_GetShapes(*body, shapes, b2Body_GetShapeCount(*body));
     b2ContactEvents contactEvents = b2World_GetContactEvents(world);
-    for (int i = 0; i < contactEvents.beginCount; ++i) {
+    // Loop through shape events
+    for (int i = 0; i < contactEvents.beginCount; i++) {
         b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
-        if (beginEvent->shapeIdA.index1 == body->index1 ||
-            beginEvent->shapeIdB.index1 == body->index1) {
-            return true;
+        // Loop through all shapes of body
+        for (int k = 0; k < shapesStored; k++) {
+            if (B2_ID_EQUALS(beginEvent->shapeIdA, shapes[k]) ||
+                B2_ID_EQUALS(beginEvent->shapeIdB, shapes[k])) {
+                return true;
+            }
         }
     }
     return false;
@@ -52,12 +59,19 @@ static bool contactBegin(b2BodyId *body) {
 
 static bool contactEnd(b2BodyId *body) {
     b2WorldId world = b2Body_GetWorld(*body);
+    b2ShapeId shapes[MAX_SHAPES_ATTACHED_TO_BODY];
+    int shapesStored = b2Body_GetShapes(*body, shapes, b2Body_GetShapeCount(*body));
     b2ContactEvents contactEvents = b2World_GetContactEvents(world);
-    for (int i = 0; i < contactEvents.endCount; ++i) {
+    // Loop through shape events
+    for (int i = 0; i < contactEvents.endCount; i++) {
         b2ContactEndTouchEvent *endEvent = contactEvents.endEvents + i;
-        if (endEvent->shapeIdA.index1 == body->index1 ||
-            endEvent->shapeIdB.index1 == body->index1) {
-            return true;
+        // Loop through all shapes of body
+        for (int k = 0; k < shapesStored; k++) {
+            if (B2_ID_EQUALS(endEvent->shapeIdA, shapes[k]) ||
+                B2_ID_EQUALS(endEvent->shapeIdB, shapes[k])) {
+                // Sensor (foot of player) should be ignored
+                return true;
+            }
         }
     }
     return false;
@@ -99,12 +113,13 @@ void shiftLittleUpdate(UpdateData *updateData) {
  * Just break free when touched
  */
 void justFallOnCollisionUpdate(UpdateData *updateData) {
-	if (updateData->status == STATUS_FREE_FALL) return;
+    if (updateData->status == STATUS_FREE_FALL)
+        return;
 
-	if (contactBegin(updateData->body)) {
+    if (contactBegin(updateData->body)) {
         b2Body_SetType(*updateData->body, b2_dynamicBody);
-		updateData->status = STATUS_FREE_FALL;
-	}
+        updateData->status = STATUS_FREE_FALL;
+    }
 }
 
 /*
@@ -161,11 +176,15 @@ void playerUpdate(UpdateData *updateData) {
         updateData->timer = 0.0f;
         previousPlayerVelocityY = 0.0f;
 
-		//Collision box has to be changed when player dies
-        b2ShapeId shapeId;
-        b2Body_GetShapes(*updateData->body, &shapeId, 1);
-        b2Polygon playerBox = b2MakeOffsetBox(0.5f, 0.15f, (b2Vec2){0.0f, 0.65f}, (b2Rot){1.0f, 0.0f});
-        b2Shape_SetPolygon(shapeId, &playerBox);
+        // Collision box has to be changed when player dies
+        b2ShapeId shapeId[2];
+        b2Body_GetShapes(*updateData->body, shapeId, 2);
+        for (int i = 0; i < 2; i++) {
+            if (!b2Shape_IsSensor(shapeId[i])) {
+                b2Polygon playerBox = b2MakeOffsetBox(0.5f, 0.15f, (b2Vec2){0.0f, 0.65f}, (b2Rot){1.0f, 0.0f});
+                b2Shape_SetPolygon(shapeId[i], &playerBox);
+            }
+        }
         return;
     } else {
         previousPlayerVelocityY = velocity.y;
@@ -225,19 +244,19 @@ DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *upda
         *update = &shiftLittleUpdate;
         return LEFT;
         break;
-	case THINNER_BROKEN_112X16:
-	case SLIDER_128X16:
-		*update = &justFallOnCollisionUpdate;
-		break;
+    case THINNER_BROKEN_112X16:
+    case SLIDER_128X16:
+        *update = &justFallOnCollisionUpdate;
+        break;
     case CIRCLES_BROKEN_32X32:
     case CIRCLES_32X16:
-	case THIN_NO_END_80X16:
-	case THIN_END_112X16:
-	case BIG_UPPER_BLOCK_64X112:
-	case THIN_END_144X16:
-	case JOINT_ONLY_RIGHT_208X16:
-		*update = &unstableUpdate;
-		break;
+    case THIN_NO_END_80X16:
+    case THIN_END_112X16:
+    case BIG_UPPER_BLOCK_64X112:
+    case THIN_END_144X16:
+    case JOINT_ONLY_RIGHT_208X16:
+        *update = &unstableUpdate;
+        break;
     case PLAYER:
         *update = &playerUpdate;
         break;

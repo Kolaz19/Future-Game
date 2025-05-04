@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
         if (IsKeyPressed(KEY_R)) {
 			slogi("Player reset the level with checkpoint level %d", check_getCurrentLevel(checkpoint));
             // Reset game and load at current checkpoint
+			amountDynamicGroundContact = 0;
             map_free(mapManager);
             phy_free(worldHandle);
             mapManager = map_createMapManager(check_getCurrentLevel(checkpoint));
@@ -113,6 +114,7 @@ int main(int argc, char *argv[]) {
 
         EndMode2D();
         DrawFPS(10, 10);
+		//DrawText(TextFormat("Contact %d",amountDynamicGroundContact), 200, 10, 40, RAYWHITE);
         EndDrawing();
     }
 

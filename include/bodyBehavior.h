@@ -21,6 +21,8 @@ typedef struct PersistentUpdateData {
     DynBodyUpdateModifier modifier;
 } UpdateData;
 
+#define MAX_SHAPES_ATTACHED_TO_BODY 2
+
 #define UPDATE_STATUS_INIT 0
 #define UPDATE_STATUS_DEAD 9
 

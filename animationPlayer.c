@@ -53,28 +53,25 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
         if (plAnim->curAnimation != prevAnimation) {
             slogd("Animation switched to FALLING");
         }
-    } else if (velocityY < NEG_LIMIT_JUMP && !hasGroundContact) {
+    } else if (hasGroundContact || (velocityY > NEG_LIMIT_JUMP && velocityY < POS_LIMIT_JUMP)) {
+        if (velocityX < NEG_LIMIT_RUN || velocityX > POS_LIMIT_RUN) {
+            plAnim->curAnimation = &plAnim->running;
+            if (plAnim->curAnimation != prevAnimation) {
+                slogd("Animation switched to RUNNING");
+            }
+        } else {
+            plAnim->curAnimation = &plAnim->idle;
+            if (plAnim->curAnimation != prevAnimation) {
+                slogd("Animation switched to IDLE");
+            }
+        }
+
+    } else {
         plAnim->curAnimation = &plAnim->jumping;
         if (plAnim->curAnimation != prevAnimation) {
             slogd("Animation switched to JUMPING");
-        }
-    } else if (velocityY > POS_LIMIT_JUMP && !hasGroundContact) {
-        plAnim->curAnimation = &plAnim->jumping;
-        if (plAnim->curAnimation != prevAnimation) {
-            slogd("Animation switched to JUMPING");
-        }
-    } else if (velocityX > NEG_LIMIT_RUN && velocityX < POS_LIMIT_RUN && velocityY > NEG_LIMIT_RUN && velocityY < POS_LIMIT_RUN) {
-        plAnim->curAnimation = &plAnim->idle;
-        if (plAnim->curAnimation != prevAnimation) {
-            slogd("Animation switched to IDLE");
-        }
-    } else if (velocityX != 0.0f) {
-        plAnim->curAnimation = &plAnim->running;
-        if (plAnim->curAnimation != prevAnimation) {
-            slogd("Animation switched to RUNNING");
         }
     }
-
     // Set global flip state
     if (velocityX > POS_LIMIT_RUN) {
         plAnim->flip = false;

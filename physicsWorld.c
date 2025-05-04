@@ -223,9 +223,14 @@ void phy_addPlayer(WorldHandle world, float posX, float posY) {
     playerShapeDef.friction = 0.1f;
     b2ShapeId shapeId = b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
 
+    b2Polygon footBox = b2MakeOffsetBox(TOWORLD(7.5f), TOWORLD(1.0f), (b2Vec2){0.0f, TOWORLD(16.0f)}, (b2Rot){1.0f, 0.0f});
+    playerShapeDef.density = 0.0f;
+    playerShapeDef.isSensor = true;
+    b2ShapeId footShapeId = b2CreatePolygonShape(playerId, &playerShapeDef, &footBox);
+
     // Enable contact events for player
-    b2Body_GetShapes(playerId, &shapeId, 1);
     b2Shape_EnableContactEvents(shapeId, true);
+    b2Shape_EnableSensorEvents(footShapeId, true);
     b2Shape_SetRestitution(shapeId, 0.0f);
 
     addToBag(world->bag, &playerId, CHARACTER, 16.0f, 32.0f, PLAYER);
@@ -252,7 +257,7 @@ BodyIdReference phy_getCharacterBodyIdReference(WorldHandle handle) {
             return &(bodies[i]->body);
         }
     }
-	sloge("No player body in bag");
+    sloge("No player body in bag");
     return NULL;
 }
 
@@ -267,31 +272,41 @@ void phy_setPosition(BodyIdReference body, float posX, float posY) {
     b2Body_SetLinearVelocity(*body, (b2Vec2){0.0f, 0.0f});
 }
 
+/*
+ * Platforms and dynamic platforms have enabled contact events
+ * Not walls
+ */
 void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundContact) {
     b2WorldId world = b2Body_GetWorld(*body);
-    b2ContactEvents contactEvents = b2World_GetContactEvents(world);
+    b2ShapeId shapes[MAX_SHAPES_ATTACHED_TO_BODY];
+    b2ShapeId *sensorShape = NULL;
+	//Get foot sensor of character
+    int shapesStored = b2Body_GetShapes(*body, shapes, b2Body_GetShapeCount(*body));
+    for (int i = 0; i < shapesStored; i++) {
+        if (b2Shape_IsSensor(shapes[i])) {
+            sensorShape = shapes + i;
+        }
+    }
+    assert(sensorShape != NULL);
 
-    for (int i = 0; i < contactEvents.endCount; ++i) {
-        b2ContactEndTouchEvent *endEvent = contactEvents.endEvents + i;
-        if ((endEvent->shapeIdA.index1 == body->index1 ||
-             endEvent->shapeIdB.index1 == body->index1) &&
-            (b2Body_GetType(b2Shape_GetBody(endEvent->shapeIdA)) == b2_dynamicBody &&
-             b2Body_GetType(b2Shape_GetBody(endEvent->shapeIdB)) == b2_dynamicBody)) {
+    b2SensorEvents sensorEvents = b2World_GetSensorEvents(world);
+
+    for (int i = 0; i < sensorEvents.endCount; i++) {
+        b2SensorEndTouchEvent *endEvent = sensorEvents.endEvents + i;
+        if (B2_ID_EQUALS(endEvent->sensorShapeId, (*sensorShape))) {
             (*amountGroundContact)--;
-			slogt("Player dynamic body contact amount updated: %d", *amountGroundContact);
+            slogt("Player dynamic body contact amount updated: %d", *amountGroundContact);
         }
     }
-    for (int i = 0; i < contactEvents.beginCount; ++i) {
-        b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
-        if ((beginEvent->shapeIdA.index1 == body->index1 ||
-             beginEvent->shapeIdB.index1 == body->index1) &&
-            (b2Body_GetType(b2Shape_GetBody(beginEvent->shapeIdA)) == b2_dynamicBody &&
-             b2Body_GetType(b2Shape_GetBody(beginEvent->shapeIdB)) == b2_dynamicBody)) {
+
+    for (int i = 0; i < sensorEvents.beginCount; i++) {
+        b2SensorBeginTouchEvent *beginEvent = sensorEvents.beginEvents + i;
+        if (B2_ID_EQUALS(beginEvent->sensorShapeId, (*sensorShape))) {
             (*amountGroundContact)++;
-			slogt("Player dynamic body contact amount updated: %d", *amountGroundContact);
+            slogt("Player dynamic body contact amount updated: %d", *amountGroundContact);
         }
     }
-	assert((*amountGroundContact) >= 0);
+    assert((*amountGroundContact) >= 0);
 }
 
 bool phy_isPlayerDead(WorldHandle handle) {
