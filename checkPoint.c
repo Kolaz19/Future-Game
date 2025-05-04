@@ -3,7 +3,7 @@
 #include "include/slog.h"
 #include <stdlib.h>
 
-#define CHECKPOINT_WAITTIME 1.0f
+#define CHECKPOINT_WAITTIME 0.2f
 
 typedef struct {
     int level;
