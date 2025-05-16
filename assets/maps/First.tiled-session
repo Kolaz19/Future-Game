@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map_part5.tmx",
+    "activeFile": "map_part1.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -14,22 +14,22 @@
         },
         "map_part1.tmx": {
             "expandedObjectLayers": [
+                4,
                 3,
-                2,
-                4
+                2
             ],
             "scale": 0.5,
-            "selectedLayer": 2,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 279,
-                "y": 719
+                "x": 346,
+                "y": 669
             }
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
+                4,
                 3,
-                2,
-                4
+                2
             ],
             "scale": 1,
             "selectedLayer": 1,
@@ -40,9 +40,9 @@
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
+                4,
                 3,
-                2,
-                4
+                2
             ],
             "scale": 3,
             "selectedLayer": 1,
@@ -53,15 +53,15 @@
         },
         "map_part4.tmx": {
             "expandedObjectLayers": [
+                4,
                 3,
-                2,
-                4
+                2
             ],
             "scale": 1.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 323.33333333333326,
-                "y": 53.666666666666686
+                "x": 279.66666666666663,
+                "y": 720.3333333333333
             }
         },
         "map_part5.tmx": {
@@ -73,7 +73,7 @@
             "selectedLayer": 2,
             "viewCenter": {
                 "x": 507.3333333333333,
-                "y": 833.6666666666665
+                "y": 833.6666666666666
             }
         }
     },
@@ -92,11 +92,11 @@
     ],
     "project": "First.tiled-project",
     "recentFiles": [
-        "map_part1.tmx",
-        "map_part2.tmx",
-        "map_part3.tmx",
-        "map_part4.tmx",
         "map_part5.tmx",
+        "map_part4.tmx",
+        "map_part3.tmx",
+        "map_part2.tmx",
+        "map_part1.tmx",
         "Tileset.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",

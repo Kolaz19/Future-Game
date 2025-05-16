@@ -1,13 +1,14 @@
 #include "include/animationPlayer.h"
 #include "include/animation.h"
+#include "include/raylib/raylib.h"
 #include "include/slog.h"
 #include <stdlib.h>
 
 #define CHAR_SPRITESHEET "assets/player.png"
-#define NEG_LIMIT_RUN -0.5f
-#define POS_LIMIT_RUN 0.5f
-#define NEG_LIMIT_JUMP -0.1f
-#define POS_LIMIT_JUMP 0.1f
+#define NEG_LIMIT_RUN -0.1f
+#define POS_LIMIT_RUN 0.1f
+#define NEG_LIMIT_JUMP -0.00000001f
+#define POS_LIMIT_JUMP 0.00000001f
 #define LIMIT_FALLING 10.0f
 
 typedef struct PlayerAnimations {
@@ -47,14 +48,14 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
         return;
     }
 
-    // Set correct state
     if (velocityY > LIMIT_FALLING) {
         plAnim->curAnimation = &plAnim->falling;
         if (plAnim->curAnimation != prevAnimation) {
             slogd("Animation switched to FALLING");
         }
-    } else if (hasGroundContact || (velocityY > NEG_LIMIT_JUMP && velocityY < POS_LIMIT_JUMP)) {
-        if (velocityX < NEG_LIMIT_RUN || velocityX > POS_LIMIT_RUN) {
+    } else if (hasGroundContact) {
+        if //((IsKeyDown(KEY_A) || IsKeyDown(KEY_D)) &&
+            (velocityX > POS_LIMIT_RUN || velocityX < NEG_LIMIT_RUN) {
             plAnim->curAnimation = &plAnim->running;
             if (plAnim->curAnimation != prevAnimation) {
                 slogd("Animation switched to RUNNING");
@@ -65,13 +66,13 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
                 slogd("Animation switched to IDLE");
             }
         }
-
     } else {
         plAnim->curAnimation = &plAnim->jumping;
         if (plAnim->curAnimation != prevAnimation) {
             slogd("Animation switched to JUMPING");
         }
     }
+
     // Set global flip state
     if (velocityX > POS_LIMIT_RUN) {
         plAnim->flip = false;

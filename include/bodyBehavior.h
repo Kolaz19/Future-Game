@@ -18,6 +18,7 @@ typedef struct PersistentUpdateData {
     b2BodyId *body;
     int status;
     float timer;
+	int counter;
     DynBodyUpdateModifier modifier;
 } UpdateData;
 

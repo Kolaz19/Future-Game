@@ -71,6 +71,7 @@ static void addToBag(Body **bodies, b2BodyId *entry, BodyType type, float width,
             // Initialize update function
             bodies[i]->updateData.status = UPDATE_STATUS_INIT;
             bodies[i]->updateData.timer = 0.0f;
+            bodies[i]->updateData.counter = 0;
             bodies[i]->updateData.body = &bodies[i]->body;
             bodies[i]->updateData.modifier = setUpdateFunction(id, &bodies[i]->update);
 
@@ -216,14 +217,19 @@ void phy_addPlayer(WorldHandle world, float posX, float posY) {
     playerBodyDef.position = (b2Vec2){TOWORLD(posX), TOWORLD(posY)};
 
     b2BodyId playerId = b2CreateBody(world->world, &playerBodyDef);
-    b2Polygon playerBox = b2MakeBox(TOWORLD(8.0f), TOWORLD(16.0f));
 
     b2ShapeDef playerShapeDef = b2DefaultShapeDef();
-    playerShapeDef.density = 20.0f;
+    playerShapeDef.density = 25.0f;
     playerShapeDef.friction = 0.1f;
-    b2ShapeId shapeId = b2CreatePolygonShape(playerId, &playerShapeDef, &playerBox);
+	b2Capsule capsuleId;  
+	capsuleId.radius = TOWORLD(8.0f);
+	capsuleId.center1.x = 0.0f;  
+	capsuleId.center1.y = TOWORLD(-8.0f);  
+	capsuleId.center2.x = 0.0f;  
+	capsuleId.center2.y = TOWORLD(8.0f);  
+	b2ShapeId shapeId = b2CreateCapsuleShape(playerId, &playerShapeDef, &capsuleId);
 
-    b2Polygon footBox = b2MakeOffsetBox(TOWORLD(7.5f), TOWORLD(1.0f), (b2Vec2){0.0f, TOWORLD(16.0f)}, (b2Rot){1.0f, 0.0f});
+    b2Polygon footBox = b2MakeOffsetBox(TOWORLD(3.0f), TOWORLD(1.0f), (b2Vec2){0.0f, TOWORLD(16.0f)}, (b2Rot){1.0f, 0.0f});
     playerShapeDef.density = 0.0f;
     playerShapeDef.isSensor = true;
     b2ShapeId footShapeId = b2CreatePolygonShape(playerId, &playerShapeDef, &footBox);

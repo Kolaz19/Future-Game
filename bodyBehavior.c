@@ -10,7 +10,7 @@
 #define RUNNING_FORCE 1000.0f
 #define VELOCITY_LIMIT 8
 #define JUMP_COOLDOWN_LIMIT 0.5f
-#define JUMP_FORCE -200.0f
+#define JUMP_FORCE -220.0f
 #define DYING_FALL_VELOCITY 22
 
 #define STATUS_INIT UPDATE_STATUS_INIT
@@ -23,7 +23,15 @@
 #define STATUS_LOCK_IN_PLACE 6
 #define STATUS_JUMP 7
 
+// typedef enum PlayerMovement {
+// NONE,
+// LEFT_MOVING,
+// RIGHT_MOVING,
+//}PlayerMovement;
+
 static float previousPlayerVelocityY = 0.0f;
+static float previousPlayerPosX = 0.0f;
+static bool previousMovement = false;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -38,6 +46,37 @@ static void slowDown(b2BodyId *body) {
     b2Body_SetLinearVelocity(*body, (b2Vec2){velocity.x * 0.7f, velocity.y});
 }
 
+static void updateDynamicGroundContact(b2BodyId *body, int *amountGroundContact) {
+    b2WorldId world = b2Body_GetWorld(*body);
+    b2ShapeId shapes[MAX_SHAPES_ATTACHED_TO_BODY];
+    b2ShapeId *sensorShape = NULL;
+    // Get foot sensor of character
+    int shapesStored = b2Body_GetShapes(*body, shapes, b2Body_GetShapeCount(*body));
+    for (int i = 0; i < shapesStored; i++) {
+        if (b2Shape_IsSensor(shapes[i])) {
+            sensorShape = shapes + i;
+        }
+    }
+
+    b2SensorEvents sensorEvents = b2World_GetSensorEvents(world);
+
+    for (int i = 0; i < sensorEvents.endCount; i++) {
+        b2SensorEndTouchEvent *endEvent = sensorEvents.endEvents + i;
+        if (B2_ID_EQUALS(endEvent->sensorShapeId, (*sensorShape))) {
+            (*amountGroundContact)--;
+            slogt("Player dynamic body contact amount updated: %d", *amountGroundContact);
+        }
+    }
+
+    for (int i = 0; i < sensorEvents.beginCount; i++) {
+        b2SensorBeginTouchEvent *beginEvent = sensorEvents.beginEvents + i;
+        if (B2_ID_EQUALS(beginEvent->sensorShapeId, (*sensorShape))) {
+            (*amountGroundContact)++;
+            slogt("Player dynamic body contact amount updated: %d", *amountGroundContact);
+        }
+    }
+}
+
 static bool contactBegin(b2BodyId *body) {
     b2WorldId world = b2Body_GetWorld(*body);
     b2ShapeId shapes[MAX_SHAPES_ATTACHED_TO_BODY];
@@ -50,26 +89,6 @@ static bool contactBegin(b2BodyId *body) {
         for (int k = 0; k < shapesStored; k++) {
             if (B2_ID_EQUALS(beginEvent->shapeIdA, shapes[k]) ||
                 B2_ID_EQUALS(beginEvent->shapeIdB, shapes[k])) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-static bool contactEnd(b2BodyId *body) {
-    b2WorldId world = b2Body_GetWorld(*body);
-    b2ShapeId shapes[MAX_SHAPES_ATTACHED_TO_BODY];
-    int shapesStored = b2Body_GetShapes(*body, shapes, b2Body_GetShapeCount(*body));
-    b2ContactEvents contactEvents = b2World_GetContactEvents(world);
-    // Loop through shape events
-    for (int i = 0; i < contactEvents.endCount; i++) {
-        b2ContactEndTouchEvent *endEvent = contactEvents.endEvents + i;
-        // Loop through all shapes of body
-        for (int k = 0; k < shapesStored; k++) {
-            if (B2_ID_EQUALS(endEvent->shapeIdA, shapes[k]) ||
-                B2_ID_EQUALS(endEvent->shapeIdB, shapes[k])) {
-                // Sensor (foot of player) should be ignored
                 return true;
             }
         }
@@ -165,12 +184,16 @@ void unstableUpdate(UpdateData *updateData) {
 void playerUpdate(UpdateData *updateData) {
     b2Vec2 forceToApply = {0.0f, 0.0f};
     b2Vec2 velocity = b2Body_GetLinearVelocity(*updateData->body);
+	b2Vec2 pos = b2Body_GetPosition(*updateData->body);
+    bool enableMovement = true;
     slogt("Velocity of player: X:%f Y:%f", velocity.x, velocity.y);
 
     // Check for death by falling
     if (updateData->status == STATUS_DEAD) {
         return;
     }
+
+
     if (velocity.y < 0.01f && previousPlayerVelocityY > DYING_FALL_VELOCITY) {
         updateData->status = STATUS_DEAD;
         updateData->timer = 0.0f;
@@ -186,26 +209,41 @@ void playerUpdate(UpdateData *updateData) {
             }
         }
         return;
-    } else {
-        previousPlayerVelocityY = velocity.y;
     }
 
     // Track if player is jumping
-    if (updateData->status == STATUS_JUMP && contactBegin(updateData->body)) {
+    updateDynamicGroundContact(updateData->body, &(updateData->counter));
+    if (previousPlayerPosX > pos.x - 0.01 && previousPlayerPosX < pos.x + 0.01 && previousMovement && updateData->counter == 0) {
+        enableMovement = false;
+    }
+    previousPlayerVelocityY = velocity.y;
+    previousPlayerPosX = pos.x;
+
+
+//    if (updateData->status == STATUS_JUMP && updateData->counter == 0 && contactBegin(updateData->body)) {
+//        enableMovement = true;
+//    } else if (updateData->counter > 0) {
+//        enableMovement = true;
+//    } else if (updateData->counter == 0) {
+//        enableMovement = false;
+//    }
+
+    if (updateData->counter > 0) {
         updateData->status = STATUS_INIT;
-    } else if (contactEnd(updateData->body)) {
+    } else {
         updateData->status = STATUS_JUMP;
     }
 
     // Only advance cooldown when player is on ground
-    if ((velocity.y > -0.1f && velocity.y < 0.1f) || updateData->status == STATUS_INIT) {
+    // if ((velocity.y > -0.1f && velocity.y < 0.1f) || updateData->status == STATUS_INIT) {
+    if (updateData->status == STATUS_INIT) {
         updateData->timer += GetFrameTime();
     } else {
         updateData->timer = 0.0f;
     }
 
-    // Jumping - either static or dynamic platform
-    bool groundContact = (velocity.y < 0.01f && velocity.y > -0.01f) || updateData->status == STATUS_INIT;
+    // bool groundContact = (velocity.y < 0.01f && velocity.y > -0.01f) || updateData->status == STATUS_INIT;
+    bool groundContact = updateData->status == STATUS_INIT;
     if (IsKeyDown(KEY_W) && groundContact && updateData->timer > JUMP_COOLDOWN_LIMIT) {
         b2Body_ApplyLinearImpulse(*updateData->body, (b2Vec2){0.0f, JUMP_FORCE}, (b2Vec2){0.0f, 0.0f}, true);
         updateData->timer = 0.0f;
@@ -213,17 +251,20 @@ void playerUpdate(UpdateData *updateData) {
 
     // Slow down when starting running in opposite direction
     // or when coming to halt
-    if (IsKeyDown(KEY_A)) {
+    if (IsKeyDown(KEY_A) && enableMovement) {
         if (velocity.x > 0) {
             slowDown(updateData->body);
         }
+		previousMovement = true;
         forceToApply.x = RUNNING_FORCE * -1;
-    } else if (IsKeyDown(KEY_D)) {
+    } else if (IsKeyDown(KEY_D) && enableMovement) {
         if (velocity.x < 0) {
             slowDown(updateData->body);
         }
+		previousMovement = true;
         forceToApply.x = RUNNING_FORCE;
     } else {
+		previousMovement = false;
         slowDown(updateData->body);
     }
 
