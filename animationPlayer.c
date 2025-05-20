@@ -5,8 +5,8 @@
 #include <stdlib.h>
 
 #define CHAR_SPRITESHEET "assets/player.png"
-#define NEG_LIMIT_RUN -0.1f
-#define POS_LIMIT_RUN 0.1f
+#define NEG_LIMIT_RUN -0.5f
+#define POS_LIMIT_RUN 0.5f
 #define NEG_LIMIT_JUMP -0.00000001f
 #define POS_LIMIT_JUMP 0.00000001f
 #define LIMIT_FALLING 10.0f
@@ -54,8 +54,8 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
             slogd("Animation switched to FALLING");
         }
     } else if (hasGroundContact) {
-        if //((IsKeyDown(KEY_A) || IsKeyDown(KEY_D)) &&
-            (velocityX > POS_LIMIT_RUN || velocityX < NEG_LIMIT_RUN) {
+        if ((IsKeyDown(KEY_A) || IsKeyDown(KEY_D)) &&
+            (velocityX > POS_LIMIT_RUN || velocityX < NEG_LIMIT_RUN)) {
             plAnim->curAnimation = &plAnim->running;
             if (plAnim->curAnimation != prevAnimation) {
                 slogd("Animation switched to RUNNING");

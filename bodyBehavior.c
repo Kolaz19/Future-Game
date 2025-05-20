@@ -11,7 +11,7 @@
 #define VELOCITY_LIMIT 8
 #define JUMP_COOLDOWN_LIMIT 0.5f
 #define JUMP_FORCE -220.0f
-#define DYING_FALL_VELOCITY 22
+#define DYING_FALL_VELOCITY 23
 
 #define STATUS_INIT UPDATE_STATUS_INIT
 #define STATUS_DEAD UPDATE_STATUS_DEAD
@@ -184,7 +184,7 @@ void unstableUpdate(UpdateData *updateData) {
 void playerUpdate(UpdateData *updateData) {
     b2Vec2 forceToApply = {0.0f, 0.0f};
     b2Vec2 velocity = b2Body_GetLinearVelocity(*updateData->body);
-	b2Vec2 pos = b2Body_GetPosition(*updateData->body);
+    b2Vec2 pos = b2Body_GetPosition(*updateData->body);
     bool enableMovement = true;
     slogt("Velocity of player: X:%f Y:%f", velocity.x, velocity.y);
 
@@ -193,8 +193,11 @@ void playerUpdate(UpdateData *updateData) {
         return;
     }
 
+    if (IsKeyDown(KEY_R)) {
+        previousPlayerVelocityY = 0.0f;
+    }
 
-    if (velocity.y < 0.01f && previousPlayerVelocityY > DYING_FALL_VELOCITY) {
+    if (velocity.y < (DYING_FALL_VELOCITY / 2.0f) && previousPlayerVelocityY > DYING_FALL_VELOCITY) {
         updateData->status = STATUS_DEAD;
         updateData->timer = 0.0f;
         previousPlayerVelocityY = 0.0f;
@@ -213,26 +216,18 @@ void playerUpdate(UpdateData *updateData) {
 
     // Track if player is jumping
     updateDynamicGroundContact(updateData->body, &(updateData->counter));
-    if (previousPlayerPosX > pos.x - 0.01 && previousPlayerPosX < pos.x + 0.01 && previousMovement && updateData->counter == 0) {
-        enableMovement = false;
-    }
-    previousPlayerVelocityY = velocity.y;
-    previousPlayerPosX = pos.x;
-
-
-//    if (updateData->status == STATUS_JUMP && updateData->counter == 0 && contactBegin(updateData->body)) {
-//        enableMovement = true;
-//    } else if (updateData->counter > 0) {
-//        enableMovement = true;
-//    } else if (updateData->counter == 0) {
-//        enableMovement = false;
-//    }
-
     if (updateData->counter > 0) {
         updateData->status = STATUS_INIT;
     } else {
         updateData->status = STATUS_JUMP;
     }
+
+    // Should player be able to move when on slope?
+    if (previousPlayerPosX > pos.x - 0.01 && previousPlayerPosX < pos.x + 0.01 && previousMovement && updateData->counter == 0) {
+        enableMovement = false;
+    }
+    previousPlayerVelocityY = velocity.y;
+    previousPlayerPosX = pos.x;
 
     // Only advance cooldown when player is on ground
     // if ((velocity.y > -0.1f && velocity.y < 0.1f) || updateData->status == STATUS_INIT) {
@@ -242,7 +237,6 @@ void playerUpdate(UpdateData *updateData) {
         updateData->timer = 0.0f;
     }
 
-    // bool groundContact = (velocity.y < 0.01f && velocity.y > -0.01f) || updateData->status == STATUS_INIT;
     bool groundContact = updateData->status == STATUS_INIT;
     if (IsKeyDown(KEY_W) && groundContact && updateData->timer > JUMP_COOLDOWN_LIMIT) {
         b2Body_ApplyLinearImpulse(*updateData->body, (b2Vec2){0.0f, JUMP_FORCE}, (b2Vec2){0.0f, 0.0f}, true);
@@ -255,16 +249,16 @@ void playerUpdate(UpdateData *updateData) {
         if (velocity.x > 0) {
             slowDown(updateData->body);
         }
-		previousMovement = true;
+        previousMovement = true;
         forceToApply.x = RUNNING_FORCE * -1;
     } else if (IsKeyDown(KEY_D) && enableMovement) {
         if (velocity.x < 0) {
             slowDown(updateData->body);
         }
-		previousMovement = true;
+        previousMovement = true;
         forceToApply.x = RUNNING_FORCE;
     } else {
-		previousMovement = false;
+        previousMovement = false;
         slowDown(updateData->body);
     }
 

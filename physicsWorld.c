@@ -144,7 +144,7 @@ void phy_addPlatform(WorldHandle world, Rectangle plat) {
     b2Polygon groundBox = b2MakeBox(TOWORLD(plat.width / 2), TOWORLD(plat.height / 2));
 
     b2ShapeDef groundShapeDef = b2DefaultShapeDef();
-    groundShapeDef.friction = 0.3f;
+    groundShapeDef.friction = 0.4f;
     b2ShapeId shapeId = b2CreatePolygonShape(groundId, &groundShapeDef, &groundBox);
     b2Shape_SetRestitution(shapeId, 0.0f);
     b2Shape_EnableContactEvents(shapeId, true);
@@ -161,7 +161,7 @@ void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
     b2Polygon dynamicBox = b2MakeBox(TOWORLD(plat.width / 2), TOWORLD(plat.height / 2));
 
     b2ShapeDef dynamicShapeDef = b2DefaultShapeDef();
-    dynamicShapeDef.friction = 0.4f;
+    dynamicShapeDef.friction = 0.5f;
     if (plat.width > 15.0f && plat.height > 15.0f) {
         dynamicShapeDef.density = 35.0f;
     } else {
