@@ -3,11 +3,15 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map_part1.tmx",
+    "activeFile": "map_part2.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
+        "Dark.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "Tileset.tsx": {
             "scaleInDock": 2,
             "scaleInEditor": 1
@@ -18,11 +22,11 @@
                 3,
                 2
             ],
-            "scale": 0.5,
-            "selectedLayer": 3,
+            "scale": 1,
+            "selectedLayer": -1,
             "viewCenter": {
-                "x": 346,
-                "y": 669
+                "x": 370,
+                "y": -287.5
             }
         },
         "map_part2.tmx": {
@@ -32,10 +36,10 @@
                 2
             ],
             "scale": 1,
-            "selectedLayer": 1,
+            "selectedLayer": -1,
             "viewCenter": {
-                "x": 279.5,
-                "y": 720.5
+                "x": 41,
+                "y": 154.5
             }
         },
         "map_part3.tmx": {
@@ -44,11 +48,11 @@
                 3,
                 2
             ],
-            "scale": 3,
-            "selectedLayer": 1,
+            "scale": 2,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 280.1666666666667,
-                "y": 720.1666666666666
+                "x": 296.5,
+                "y": 1500.25
             }
         },
         "map_part4.tmx": {
@@ -60,8 +64,8 @@
             "scale": 1.5,
             "selectedLayer": 3,
             "viewCenter": {
-                "x": 279.66666666666663,
-                "y": 720.3333333333333
+                "x": 280,
+                "y": 880.3333333333333
             }
         },
         "map_part5.tmx": {
@@ -72,8 +76,8 @@
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 507.3333333333333,
-                "y": 833.6666666666666
+                "x": 280,
+                "y": 720.3333333333333
             }
         }
     },
@@ -88,15 +92,17 @@
         "map_part2.tmx",
         "map_part3.tmx",
         "map_part4.tmx",
-        "map_part5.tmx"
+        "map_part5.tmx",
+        "Dark.tsx"
     ],
     "project": "First.tiled-project",
     "recentFiles": [
+        "map_part1.tmx",
+        "Dark.tsx",
         "map_part5.tmx",
         "map_part4.tmx",
         "map_part3.tmx",
         "map_part2.tmx",
-        "map_part1.tmx",
         "Tileset.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",

@@ -9,6 +9,7 @@
 
 #define RUNNING_FORCE 1000.0f
 #define VELOCITY_LIMIT 8
+#define MOVEMENT_BLOCK_THRESHOLD 0.01
 #define JUMP_COOLDOWN_LIMIT 0.5f
 #define JUMP_FORCE -220.0f
 #define DYING_FALL_VELOCITY 23
@@ -31,6 +32,7 @@
 
 static float previousPlayerVelocityY = 0.0f;
 static float previousPlayerPosX = 0.0f;
+static float previousPlayerPosY = 0.0f;
 static bool previousMovement = false;
 
 #pragma GCC diagnostic push
@@ -223,11 +225,14 @@ void playerUpdate(UpdateData *updateData) {
     }
 
     // Should player be able to move when on slope?
-    if (previousPlayerPosX > pos.x - 0.01 && previousPlayerPosX < pos.x + 0.01 && previousMovement && updateData->counter == 0) {
+    if (previousPlayerPosX > pos.x - MOVEMENT_BLOCK_THRESHOLD && previousPlayerPosX < pos.x + MOVEMENT_BLOCK_THRESHOLD &&
+        previousPlayerPosY > pos.y - MOVEMENT_BLOCK_THRESHOLD && previousPlayerPosY < pos.y + MOVEMENT_BLOCK_THRESHOLD &&
+        previousMovement && updateData->counter == 0) {
         enableMovement = false;
     }
     previousPlayerVelocityY = velocity.y;
     previousPlayerPosX = pos.x;
+    previousPlayerPosY = pos.y;
 
     // Only advance cooldown when player is on ground
     // if ((velocity.y > -0.1f && velocity.y < 0.1f) || updateData->status == STATUS_INIT) {
@@ -260,6 +265,10 @@ void playerUpdate(UpdateData *updateData) {
     } else {
         previousMovement = false;
         slowDown(updateData->body);
+    }
+
+    if (IsKeyDown(KEY_A) || IsKeyDown(KEY_D)) {
+        previousMovement = true;
     }
 
     if (velocity.x < VELOCITY_LIMIT && velocity.x > (VELOCITY_LIMIT * -1)) {
