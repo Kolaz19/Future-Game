@@ -26,7 +26,11 @@ PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
         {THIN_END_144X16, "assets/dynamicPlatforms/Plat7.png"},
         {JOINT_ONLY_RIGHT_208X16, "assets/dynamicPlatforms/Plat8.png"},
         {BIG_UPPER_BLOCK_64X112, "assets/dynamicPlatforms/Plat9.png"},
-        {SLIDER_128X16, "assets/dynamicPlatforms/Plat10.png"}
+        {SLIDER_128X16, "assets/dynamicPlatforms/Plat10.png"},
+        {ANKERED_160x16, "assets/dynamicPlatforms/Plat11.png"},
+        {ANKERED_144x16, "assets/dynamicPlatforms/Plat12.png"},
+        {STANDING_CAGE_16x176, "assets/dynamicPlatforms/Plat13.png"},
+        {ENERGY_BOXC_20x20, "assets/dynamicPlatforms/Plat14.png"}
     };
     int noElements = (sizeof(textureNames) / sizeof(TextureName));
 

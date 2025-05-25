@@ -130,6 +130,15 @@ void shiftLittleUpdate(UpdateData *updateData) {
     }
 }
 
+void fallFromStartUpdate(UpdateData *updateData) {
+    switch (updateData->status) {
+    case STATUS_INIT:
+        b2Body_SetType(*updateData->body, b2_dynamicBody);
+        updateData->status = STATUS_FREE_FALL;
+        break;
+    }
+}
+
 /*
  * Just break free when touched
  */
@@ -151,6 +160,17 @@ void justFallOnCollisionUpdate(UpdateData *updateData) {
 void unstableUpdate(UpdateData *updateData) {
     if (updateData->status == STATUS_FREE_FALL)
         return;
+
+	//Wait a bit before contact checking
+    if (updateData->modifier == WAIT) {
+		if (updateData->timer < 1.0f) {
+            updateData->timer += GetFrameTime();
+		} else {
+            updateData->timer = 0.0f;
+			updateData->modifier = DEFAULT;
+		}
+		return;
+    }
 
     const float unstableTime = 0.1f;
     const float smallStableTime = 1.4f;
@@ -233,7 +253,7 @@ void playerUpdate(UpdateData *updateData) {
     previousPlayerVelocityY = velocity.y;
 
     // Only advance cooldown when player is on ground
-	// or when player is stuck in jumping animation (between two objects jumping)
+    // or when player is stuck in jumping animation (between two objects jumping)
     if (updateData->status == STATUS_INIT || (previousPlayerPosX == pos.x && previousPlayerPosY == pos.y)) {
         updateData->timer += GetFrameTime();
     } else {
@@ -299,7 +319,16 @@ DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *upda
     case BIG_UPPER_BLOCK_64X112:
     case THIN_END_144X16:
     case JOINT_ONLY_RIGHT_208X16:
+    case ANKERED_144x16:
         *update = &unstableUpdate;
+        break;
+    case ANKERED_160x16:
+        *update = &unstableUpdate;
+        return WAIT;
+        break;
+    case ENERGY_BOXC_20x20:
+    case STANDING_CAGE_16x176:
+        *update = &fallFromStartUpdate;
         break;
     case PLAYER:
         *update = &playerUpdate;
