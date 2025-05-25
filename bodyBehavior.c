@@ -231,19 +231,19 @@ void playerUpdate(UpdateData *updateData) {
         enableMovement = false;
     }
     previousPlayerVelocityY = velocity.y;
-    previousPlayerPosX = pos.x;
-    previousPlayerPosY = pos.y;
 
     // Only advance cooldown when player is on ground
-    // if ((velocity.y > -0.1f && velocity.y < 0.1f) || updateData->status == STATUS_INIT) {
-    if (updateData->status == STATUS_INIT) {
+	// or when player is stuck in jumping animation (between two objects jumping)
+    if (updateData->status == STATUS_INIT || (previousPlayerPosX == pos.x && previousPlayerPosY == pos.y)) {
         updateData->timer += GetFrameTime();
     } else {
         updateData->timer = 0.0f;
     }
 
-    bool groundContact = updateData->status == STATUS_INIT;
-    if (IsKeyDown(KEY_W) && groundContact && updateData->timer > JUMP_COOLDOWN_LIMIT) {
+    previousPlayerPosX = pos.x;
+    previousPlayerPosY = pos.y;
+
+    if (IsKeyDown(KEY_W) && updateData->timer > JUMP_COOLDOWN_LIMIT) {
         b2Body_ApplyLinearImpulse(*updateData->body, (b2Vec2){0.0f, JUMP_FORCE}, (b2Vec2){0.0f, 0.0f}, true);
         updateData->timer = 0.0f;
     }
