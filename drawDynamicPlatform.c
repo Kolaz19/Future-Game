@@ -30,7 +30,10 @@ PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
         {ANKERED_160x16, "assets/dynamicPlatforms/Plat11.png"},
         {ANKERED_144x16, "assets/dynamicPlatforms/Plat12.png"},
         {STANDING_CAGE_16x176, "assets/dynamicPlatforms/Plat13.png"},
-        {ENERGY_BOXC_20x20, "assets/dynamicPlatforms/Plat14.png"}
+        {ENERGY_BOXC_20x20, "assets/dynamicPlatforms/Plat14.png"},
+        {CIRCLES16x32, "assets/dynamicPlatforms/Plat15.png"},
+        {CIRCLES_SINGLE, "assets/dynamicPlatforms/Plat16.png"},
+        {CIRCLES_TRIPPLE_WIDE, "assets/dynamicPlatforms/Plat17.png"}
     };
     int noElements = (sizeof(textureNames) / sizeof(TextureName));
 
