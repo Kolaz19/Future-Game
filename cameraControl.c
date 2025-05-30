@@ -5,16 +5,28 @@
 #define PLAYER_CENTER_OFFSET 50
 #define MAX_DISTANCE_STEP 0.1f
 
-void cam_initializeCamera(Camera2D *cam, int screenWidth, int screenHeight, int mapWidth, int startHeight) {
-    cam->zoom = (float)screenWidth / (float)mapWidth;
+void cam_initializeCamera(Camera2D *cam, int mapWidth, int startHeight) {
+    int windowWidth = GetScreenWidth();
+    int windowHeight = GetScreenHeight();
+    cam->zoom = (float)windowWidth / (float)mapWidth;
     cam->target.x = (float)mapWidth / 2.0f;
     cam->target.y = (float)startHeight;
-    cam->offset.x = (float)screenWidth / 2.0f;
-    cam->offset.y = (float)screenHeight / 2.0f;
+    cam->offset.x = (float)windowWidth / 2.0f;
+    cam->offset.y = (float)windowHeight / 2.0f;
     cam->rotation = 0.0f;
 }
 
-void cam_updateCamera(Camera2D *cam, float playerY) {
+void cam_updateCamera(Camera2D *cam, float playerY, int mapWidth) {
+    if (IsKeyPressed(KEY_F)) {
+        ToggleBorderlessWindowed();
+    }
+
+    int windowWidth = GetScreenWidth();
+    int windowHeight = GetScreenHeight();
+    cam->zoom = (float)windowWidth / (float)mapWidth;
+    cam->offset.x = (float)windowWidth / 2.0f;
+    cam->offset.y = (float)windowHeight / 2.0f;
+
     float *camY = &(cam->target.y);
     float camDist = 0.0f;
     bool lookDown = IsKeyDown(KEY_S);

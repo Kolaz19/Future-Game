@@ -15,8 +15,8 @@
 #include "include/raylib/raylib.h"
 #include "include/textDraw.h"
 
-#define SCREEN_WIDTH ((int)(1920 * 0.8))
-#define SCREEN_HEIGHT ((int)(1080 * 0.8))
+#define SCREEN_WIDTH ((int)(1920 * 0.5))
+#define SCREEN_HEIGHT ((int)(1080 * 0.5))
 
 // #define UTEST_EXE
 
@@ -30,6 +30,9 @@ int main(int argc, char *argv[]) {
 #endif
     initLogger(argc, argv);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Future");
+    SetWindowSize((int)((float)GetMonitorWidth(GetCurrentMonitor()) * 0.8f),
+                  (int)((float)GetMonitorHeight(GetCurrentMonitor()) * 0.8f));
+    SetWindowPosition(10, 10);
     SetTargetFPS(60);
 
     Checkpoint checkpoint = check_createCheckpoint();
@@ -53,13 +56,13 @@ int main(int argc, char *argv[]) {
     PlatformTextureHandle platTextHandle = platTex_createPlatformTextureHandle();
 
     Camera2D camera;
-    cam_initializeCamera(&camera, SCREEN_WIDTH, SCREEN_HEIGHT, (int)(map_getBoundaryFromCurrentMap(mapManager).width), 330);
+    cam_initializeCamera(&camera, (int)(map_getBoundaryFromCurrentMap(mapManager).width), 330);
 
     PlAnimation plAnim = panim_createAnimation();
     Vector2 forceOfCharacter;
 
     TextHandle textHandle = text_init();
-	text_activateLevelText(textHandle, 1);
+    text_activateLevelText(textHandle, 1);
 
     while (!WindowShouldClose()) {
 
@@ -76,8 +79,8 @@ int main(int argc, char *argv[]) {
         phy_updateDynamicGroundContact(playerBody, &amountDynamicGroundContact);
         panim_update(plAnim, forceOfCharacter.x, forceOfCharacter.y, amountDynamicGroundContact > 0);
         phy_updateWorld(worldHandle);
-        cam_updateCamera(&camera, playerRectangle.rectangle->y);
-		text_update(textHandle);
+        cam_updateCamera(&camera, playerRectangle.rectangle->y, (int)(map_getBoundaryFromCurrentMap(mapManager).width));
+        text_update(textHandle);
 
         if (IsKeyPressed(KEY_R)) {
             slogi("Player reset the level with checkpoint level %d", check_getCurrentLevel(checkpoint));
@@ -119,7 +122,7 @@ int main(int argc, char *argv[]) {
         }
         EndMode2D();
         DrawFPS(10, 10);
-		text_draw(textHandle);
+        text_draw(textHandle);
         // DrawText(TextFormat("Contact %d",amountDynamicGroundContact), 200, 10, 40, RAYWHITE);
         EndDrawing();
     }

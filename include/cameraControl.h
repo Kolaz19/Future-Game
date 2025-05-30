@@ -3,11 +3,11 @@
 
 #include "raylib/raylib.h"
 
-void cam_initializeCamera(Camera2D *cam, int screenWidth, int screenHeight, int mapWidth, int startHeight);
+void cam_initializeCamera(Camera2D *cam, int mapWidth, int startHeight);
 
 /*
  * Close distance between camera and player Y position
  */
-void cam_updateCamera(Camera2D *cam, float playerY);
+void cam_updateCamera(Camera2D *cam, float playerY, int mapWidth);
 
 #endif
