@@ -15,8 +15,9 @@ void check_free(Checkpoint cp);
  * Overwrite current checkpoint with next checkpoint
  * when player is under next checkpoint and stays at same
  * height for a specific amount of time
+ * @return If checkpoint was updated
  */
-void check_update(Checkpoint cp, float playerPosY);
+bool check_update(Checkpoint cp, float playerPosY);
 void check_setCurrentCheckpoint(Checkpoint cp,Rectangle *rect, int level);
 float check_getX(Checkpoint cp);
 float check_getY(Checkpoint cp);

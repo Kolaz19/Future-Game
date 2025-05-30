@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="35" height="90" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#000000" nextlayerid="6" nextobjectid="38">
+<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="35" height="90" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#000000" nextlayerid="6" nextobjectid="39">
  <tileset firstgid="1" source="Tileset.tsx"/>
  <tileset firstgid="652" source="Dark.tsx"/>
  <layer id="1" name="Kachelebene 1" width="35" height="90">
@@ -101,7 +101,7 @@
   <object id="16" name="3" x="448.771" y="816.625" width="32" height="32"/>
   <object id="23" name="4" x="431.921" y="1231.94" width="112" height="16"/>
  </objectgroup>
- <objectgroup id="2" name="Platforms" visible="0">
+ <objectgroup id="2" name="Platforms">
   <object id="1" x="80.0313" y="64" width="80" height="95.9915"/>
   <object id="2" x="223.93" y="192.015" width="319.974" height="15.9915"/>
   <object id="3" x="240.017" y="209.209" width="303.917" height="14.6437"/>
@@ -131,8 +131,9 @@
   <object id="35" x="47.9921" y="1392.05" width="16" height="48"/>
   <object id="36" x="80.0852" y="1392.04" width="16" height="48"/>
   <object id="37" x="16.0593" y="1392" width="16" height="48"/>
+  <object id="38" x="208" y="704" width="32" height="32"/>
  </objectgroup>
- <objectgroup id="3" name="Checkpoints" visible="0">
+ <objectgroup id="3" name="Checkpoints">
   <object id="9" x="455.326" y="159.689" width="16" height="32"/>
  </objectgroup>
 </map>

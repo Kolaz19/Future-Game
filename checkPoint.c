@@ -30,8 +30,8 @@ Checkpoint check_createCheckpoint(void) {
     Checkpoint cp = malloc(sizeof(Checkpoint_internal));
     cp->timer = 0.0f;
     cp->height = 0;
-    cp->current.level = 6;
-    cp->next.level = 6;
+    cp->current.level = 1;
+    cp->next.level = 1;
     return cp;
 }
 
@@ -67,11 +67,11 @@ float check_getY(Checkpoint cp) {
     return cp->current.posY;
 }
 
-void check_update(Checkpoint cp, float playerPosY) {
+bool check_update(Checkpoint cp, float playerPosY) {
     // Return when next checkpoint was not set
     //(Levels can have no checkpoints)
     if (cp->current.level == cp->next.level)
-        return;
+        return false;
 
     if (playerPosY > cp->next.posY) {
         cp->timer += GetFrameTime();
@@ -90,5 +90,7 @@ void check_update(Checkpoint cp, float playerPosY) {
         cp->current.posY = cp->next.posY;
         slogi("Checkpoint automatically set at level %d at pos(X:%f|Y:%f)",
               cp->current.level, cp->current.posX, cp->current.posY);
+		return true;
     }
+	return false;
 }

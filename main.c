@@ -13,6 +13,7 @@
 #include "include/mapManager.h"
 #include "include/physicsWorld.h"
 #include "include/raylib/raylib.h"
+#include "include/textDraw.h"
 
 #define SCREEN_WIDTH ((int)(1920 * 0.8))
 #define SCREEN_HEIGHT ((int)(1080 * 0.8))
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]) {
 
     phy_addPlayer(worldHandle, check_getX(checkpoint), check_getY(checkpoint));
     BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
-	int amountDynamicGroundContact = 0;
+    int amountDynamicGroundContact = 0;
 
     addLongWalls(worldHandle, mapManager);
     addPlatforms(worldHandle, mapManager, true);
@@ -57,26 +58,31 @@ int main(int argc, char *argv[]) {
     PlAnimation plAnim = panim_createAnimation();
     Vector2 forceOfCharacter;
 
-    while (!WindowShouldClose()) {
+    TextHandle textHandle = text_init();
+	text_activateLevelText(textHandle, 1);
 
+    while (!WindowShouldClose()) {
 
         // Player body was disabled - player is dead
         if (phy_isPlayerDead(worldHandle)) {
             panim_setDying(plAnim);
         } else {
             phy_getVelocity(playerBody, &forceOfCharacter.x, &forceOfCharacter.y);
-            check_update(checkpoint, playerRectangle.rectangle->y + playerRectangle.rectangle->height);
+            if (check_update(checkpoint, playerRectangle.rectangle->y + playerRectangle.rectangle->height)) {
+                text_activateLevelText(textHandle, check_getCurrentLevel(checkpoint));
+            }
         }
 
-		phy_updateDynamicGroundContact(playerBody, &amountDynamicGroundContact);
+        phy_updateDynamicGroundContact(playerBody, &amountDynamicGroundContact);
         panim_update(plAnim, forceOfCharacter.x, forceOfCharacter.y, amountDynamicGroundContact > 0);
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerRectangle.rectangle->y);
+		text_update(textHandle);
 
         if (IsKeyPressed(KEY_R)) {
-			slogi("Player reset the level with checkpoint level %d", check_getCurrentLevel(checkpoint));
+            slogi("Player reset the level with checkpoint level %d", check_getCurrentLevel(checkpoint));
             // Reset game and load at current checkpoint
-			amountDynamicGroundContact = 0;
+            amountDynamicGroundContact = 0;
             map_free(mapManager);
             phy_free(worldHandle);
             mapManager = map_createMapManager(check_getCurrentLevel(checkpoint));
@@ -111,10 +117,10 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < amountDynamicRecs; i++) {
             platTex_drawPlatform(platTextHandle, dynamicRectangles[i].id, dynamicRectangles[i].rectangle, *dynamicRectangles[i].rotation);
         }
-
         EndMode2D();
         DrawFPS(10, 10);
-		//DrawText(TextFormat("Contact %d",amountDynamicGroundContact), 200, 10, 40, RAYWHITE);
+		text_draw(textHandle);
+        // DrawText(TextFormat("Contact %d",amountDynamicGroundContact), 200, 10, 40, RAYWHITE);
         EndDrawing();
     }
 
@@ -166,21 +172,21 @@ void resetCheckpoint(Checkpoint checkpoint, MapManager mapManager) {
     Rectangle newCheckpoint;
 
     if (check_getCurrentLevel(checkpoint) == 1) {
-		//First level
-		//Set current checkpoint to first level
+        // First level
+        // Set current checkpoint to first level
         if (map_getRectanglesFromCurrentMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
             check_setCurrentCheckpoint(checkpoint, &newCheckpoint, map_getCurrentMapLevel(mapManager));
         } else {
             sloge("No checkpoint in first map");
         }
-		//Next checkpoint CAN have a checkpoint
+        // Next checkpoint CAN have a checkpoint
         if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
             check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
         } else {
             check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getCurrentMapLevel(mapManager));
         }
     } else {
-		//Second to n level -> Player spawns at top of nextMapLevel and not at currentMapLevel
+        // Second to n level -> Player spawns at top of nextMapLevel and not at currentMapLevel
         if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
             check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
             check_setCurrentCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
