@@ -2,11 +2,21 @@
 #include "include/raylib/raylib.h"
 #include <stdlib.h>
 
+#define AMOUNT_TEXTS 9
 #define MAX_R 255
 #define TIME_FULL_OPACITY 3.0f
 #define TIME_END 6.0f
 
+#define BASE_WIDTH 1920.0f
+
 #define LVL_INDX(x) ((x)-1)
+#define FONT_SIZE ((float)GetScreenWidth() * 4.0f / BASE_WIDTH)
+
+typedef struct TextEntity {
+    char *text;
+    /// Multiplier for screen size
+    Vector2 pos;
+} TextEntity;
 
 typedef struct TextDraw {
     Font font;
@@ -14,8 +24,17 @@ typedef struct TextDraw {
     float timer;
     bool userInputRegistered;
     int currentLevel;
-    char *texts[9];
+    TextEntity texts[AMOUNT_TEXTS];
 } TextDraw;
+
+static void setPos(Vector2 *pos, int lvl) {
+    switch (lvl) {
+    case 1:
+		pos->x = 0.05f;
+		pos->y = 0.05f;
+        break;
+    }
+}
 
 TextHandle text_init() {
     TextHandle text = malloc(sizeof(TextDraw));
@@ -29,15 +48,11 @@ TextHandle text_init() {
     text->color.b = DARKPURPLE.b;
     text->color.a = 0;
 
-    text->texts[LVL_INDX(1)] = "For three days,\nI wander these depths";
-    text->texts[LVL_INDX(2)] = "For three days,\nI wander these depths";
-    text->texts[LVL_INDX(3)] = "For three days,\nI wander these depths";
-    text->texts[LVL_INDX(4)] = "For three days,\nI wander these depths";
-    text->texts[LVL_INDX(5)] = "For three days,\nI wander these depths";
-    text->texts[LVL_INDX(6)] = "For three days,\nI wander these depths";
-    text->texts[LVL_INDX(7)] = "For three days,\nI wander these depths";
-    text->texts[LVL_INDX(8)] = "For three days,\nI wander these depths";
-    text->texts[LVL_INDX(9)] = "For three days,\nI wander these depths";
+    text->texts[LVL_INDX(1)].text = "For three days,\nI wander these depths";
+
+	for (int i = 0; i < AMOUNT_TEXTS; i++) {
+		setPos(&(text->texts[i].pos), i+1);
+	}
 
     return text;
 }
@@ -82,10 +97,14 @@ void text_update(TextHandle handle) {
 void text_draw(TextHandle handle) {
     if (handle->timer > TIME_END)
         return;
+
+    Vector2 pos = {.x = (float)GetScreenWidth() * handle->texts[LVL_INDX(handle->currentLevel)].pos.x,
+                   .y = (float)GetScreenHeight() * handle->texts[LVL_INDX(handle->currentLevel)].pos.y};
+
     DrawTextEx(handle->font,
-               handle->texts[LVL_INDX(handle->currentLevel)],
-               (Vector2){0.0f, 0.0f},
-               (float)handle->font.baseSize * 4.0f,
+               handle->texts[LVL_INDX(handle->currentLevel)].text,
+               pos,
+               (float)handle->font.baseSize * FONT_SIZE,
                2,
                handle->color);
 }
