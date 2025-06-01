@@ -5,9 +5,10 @@
 #define AMOUNT_TEXTS 9
 #define MAX_R 255
 
+#define TIME_FADE_IN_OPACITY 3.0f
 #define TIME_FULL_OPACITY 3.0f
-#define TIME_STAY_FULL 6.0f
-#define TIME_END 9.0f
+#define TIME_FADE_OUT_OPACITY 3.0f
+#define TIME_COMBINED (TIME_FADE_IN_OPACITY + TIME_FULL_OPACITY + TIME_FADE_OUT_OPACITY)
 
 #define BASE_WIDTH 1920.0f
 
@@ -40,7 +41,7 @@ static void setPos(Vector2 *pos, int lvl) {
 TextHandle text_init() {
     TextHandle text = malloc(sizeof(TextDraw));
     text->font = LoadFont("assets/pixelplay.png");
-    text->timer = TIME_END + 1.0f;
+    text->timer = TIME_COMBINED + 1.0f;
     text->currentLevel = 1;
 
     text->color.r = DARKPURPLE.r;
@@ -58,7 +59,7 @@ TextHandle text_init() {
 }
 
 bool text_active(TextHandle handle) {
-    return handle->timer <= TIME_END;
+    return handle->timer <= TIME_COMBINED;
 }
 
 void text_activateLevelText(TextHandle handle, int level) {
@@ -68,18 +69,16 @@ void text_activateLevelText(TextHandle handle, int level) {
 }
 
 /*
- * Build up opacity until TIME_FULL_OPACITY
- * Stay at full opacity until TIME_STAY_FULL
- * Loose opacity until TIME_END
+ * Build up opacity until TIME_FADE_IN_OPACITY
+ * Stay at full opacity until TIME_FULL_OPACITY
+ * Loose opacity until TIME_FADE_OUT_OPACITY
  */
 static unsigned char getOpacity(float timer) {
     unsigned int opa;
-    if (timer < TIME_FULL_OPACITY) {
-        opa = (unsigned int)(timer * MAX_R / TIME_FULL_OPACITY);
-    } else if (timer > TIME_STAY_FULL) {
-        opa = (unsigned int)(((TIME_END - TIME_STAY_FULL) -
-                              (timer - TIME_STAY_FULL)) *
-                             MAX_R / (TIME_END - TIME_STAY_FULL));
+    if (timer < TIME_FADE_IN_OPACITY) {
+        opa = (unsigned int)(timer * MAX_R / TIME_FADE_IN_OPACITY);
+    } else if (timer > TIME_FADE_IN_OPACITY + TIME_FULL_OPACITY) {
+		opa = (unsigned int)((TIME_COMBINED - timer) * MAX_R / TIME_FADE_OUT_OPACITY);
     } else {
         opa = MAX_R;
     }
@@ -88,7 +87,7 @@ static unsigned char getOpacity(float timer) {
 }
 
 void text_update(TextHandle handle) {
-    if (handle->timer > TIME_END)
+    if (handle->timer > TIME_COMBINED)
         return;
 
     handle->timer += GetFrameTime();
@@ -97,7 +96,7 @@ void text_update(TextHandle handle) {
 }
 
 void text_draw(TextHandle handle) {
-    if (handle->timer > TIME_END)
+    if (handle->timer > TIME_COMBINED)
         return;
 
     Vector2 pos = {.x = (float)GetScreenWidth() * handle->texts[LVL_INDX(handle->currentLevel)].pos.x,
