@@ -13,7 +13,7 @@
 #define BASE_WIDTH 1920.0f
 
 #define LVL_INDX(x) ((x)-1)
-#define FONT_SIZE ((float)GetScreenWidth() * 4.0f / BASE_WIDTH)
+#define FONT_SIZE ((float)GetScreenWidth() * 5.0f / BASE_WIDTH)
 
 typedef struct TextEntity {
     char *text;
@@ -40,7 +40,7 @@ static void setPos(Vector2 *pos, int lvl) {
 
 TextHandle text_init() {
     TextHandle text = malloc(sizeof(TextDraw));
-    text->font = LoadFont("assets/pixelplay.png");
+    text->font = LoadFont("assets/pixantiqua.png");		//2
     text->timer = TIME_COMBINED + 1.0f;
     text->currentLevel = 1;
 
