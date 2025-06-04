@@ -32,8 +32,12 @@ typedef struct TextDraw {
 static void setPos(Vector2 *pos, int lvl) {
     switch (lvl) {
     case 1:
-        pos->x = 0.05f;
+        pos->x = 0.4f;
         pos->y = 0.05f;
+        break;
+    case 2:
+        pos->x = 0.15f;
+        pos->y = 0.65f;
         break;
     }
 }
@@ -44,12 +48,20 @@ TextHandle text_init() {
     text->timer = TIME_COMBINED + 1.0f;
     text->currentLevel = 1;
 
-    text->color.r = DARKPURPLE.r;
-    text->color.g = DARKPURPLE.g;
-    text->color.b = DARKPURPLE.b;
+    //text->color.r = DARKPURPLE.r;
+    //text->color.g = DARKPURPLE.g;
+    //text->color.b = DARKPURPLE.b;
+    text->color.r = VIOLET.r;
+    text->color.g = VIOLET.g;
+    text->color.b = VIOLET.b;
     text->color.a = 0;
 
-    text->texts[LVL_INDX(1)].text = "For three days,\nI wander these depths";
+    text->texts[LVL_INDX(1)].text = "For three days now,\nI have been wandering these depths";
+    text->texts[LVL_INDX(2)].text = "";
+    text->texts[LVL_INDX(3)].text = "";
+    text->texts[LVL_INDX(4)].text = "";
+    text->texts[LVL_INDX(5)].text = "";
+    text->texts[LVL_INDX(6)].text = "";
 
     for (int i = 0; i < AMOUNT_TEXTS; i++) {
         setPos(&(text->texts[i].pos), i + 1);
