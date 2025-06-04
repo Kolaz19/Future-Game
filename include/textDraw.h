@@ -11,5 +11,6 @@ bool text_active(TextHandle handle);
 void text_activateLevelText(TextHandle handle, int level);
 void text_update(TextHandle handle);
 void text_draw(TextHandle handle);
+void text_free(TextHandle handle);
 
 #endif

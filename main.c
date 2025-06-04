@@ -131,6 +131,8 @@ int main(int argc, char *argv[]) {
     phy_free(worldHandle);
     check_free(checkpoint);
     panim_free(plAnim);
+	text_free(textHandle);
+	platTex_free(platTextHandle);
     CloseWindow();
     slog_destroy();
     return 0;

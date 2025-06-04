@@ -70,6 +70,11 @@ TextHandle text_init() {
     return text;
 }
 
+void text_free(TextHandle handle) {
+	UnloadFont(handle->font);
+	free(handle);
+}
+
 bool text_active(TextHandle handle) {
     return handle->timer <= TIME_COMBINED;
 }

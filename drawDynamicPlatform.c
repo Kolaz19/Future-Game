@@ -15,7 +15,7 @@ static void loadTexture(PlatformTextureHandle handle, int id, char *fileName) {
 
 PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
 
-	//Numbers have to match name of object in Dynamic layer
+    // Numbers have to match name of object in Dynamic layer
     TextureName textureNames[] = {
         {CIRCLES_32X16, "assets/dynamicPlatforms/Plat1.png"},
         {BASIC_96X16, "assets/dynamicPlatforms/Plat2.png"},
@@ -33,8 +33,7 @@ PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
         {ENERGY_BOXC_20x20, "assets/dynamicPlatforms/Plat14.png"},
         {CIRCLES16x32, "assets/dynamicPlatforms/Plat15.png"},
         {CIRCLES_SINGLE, "assets/dynamicPlatforms/Plat16.png"},
-        {CIRCLES_TRIPPLE_WIDE, "assets/dynamicPlatforms/Plat17.png"}
-    };
+        {CIRCLES_TRIPPLE_WIDE, "assets/dynamicPlatforms/Plat17.png"}};
     int noElements = (sizeof(textureNames) / sizeof(TextureName));
 
     Texture *handle = malloc((unsigned long)noElements * sizeof(Texture));
@@ -43,6 +42,10 @@ PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
     }
 
     return handle;
+}
+
+void platTex_free(PlatformTextureHandle handle) {
+    free(handle);
 }
 
 void platTex_drawPlatform(PlatformTextureHandle handle, int id, Rectangle *dest, float rot) {

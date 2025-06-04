@@ -5,5 +5,6 @@
 typedef struct Texture *PlatformTextureHandle;
 PlatformTextureHandle platTex_createPlatformTextureHandle(void);
 void platTex_drawPlatform(PlatformTextureHandle handle, int id, Rectangle *dest, float rot);
+void platTex_free(PlatformTextureHandle handle);
 
 #endif
