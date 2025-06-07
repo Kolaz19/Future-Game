@@ -2,7 +2,7 @@
 #include "include/raylib/raylib.h"
 #include <stdlib.h>
 
-#define AMOUNT_TEXTS 6
+#define AMOUNT_TEXTS 7
 #define MAX_R 255
 
 #define TIME_FADE_IN_OPACITY 3.0f
@@ -74,6 +74,7 @@ TextHandle text_init() {
     text->texts[LVL_INDX(4)].text = "Deep in the core, a glimmer of hope\nSadly not for me";
     text->texts[LVL_INDX(5)].text = "";
     text->texts[LVL_INDX(6)].text = "I wonder what they are doing on the surface right now";
+    text->texts[LVL_INDX(7)].text = "";
 
     for (int i = 0; i < AMOUNT_TEXTS; i++) {
         setPos(&(text->texts[i].pos), i + 1);

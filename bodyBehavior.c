@@ -323,9 +323,11 @@ DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *upda
     case CIRCLES16x32:
     case CIRCLES_SINGLE:
     case CIRCLES_TRIPPLE_WIDE:
+	case LONG_ONE_SIDED_240x16:
         *update = &unstableUpdate;
         break;
     case ANKERED_160x16:
+	case LONG_ONE_SIDED_208x16:
         *update = &unstableUpdate;
         return WAIT;
         break;

@@ -33,7 +33,9 @@ PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
         {ENERGY_BOXC_20x20, "assets/dynamicPlatforms/Plat14.png"},
         {CIRCLES16x32, "assets/dynamicPlatforms/Plat15.png"},
         {CIRCLES_SINGLE, "assets/dynamicPlatforms/Plat16.png"},
-        {CIRCLES_TRIPPLE_WIDE, "assets/dynamicPlatforms/Plat17.png"}};
+        {CIRCLES_TRIPPLE_WIDE, "assets/dynamicPlatforms/Plat17.png"},
+        {LONG_ONE_SIDED_240x16, "assets/dynamicPlatforms/Plat18.png"},
+        {LONG_ONE_SIDED_208x16, "assets/dynamicPlatforms/Plat19.png"}};
     int noElements = (sizeof(textureNames) / sizeof(TextureName));
 
     Texture *handle = malloc((unsigned long)noElements * sizeof(Texture));
