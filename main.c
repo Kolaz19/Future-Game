@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
     Vector2 forceOfCharacter;
 
     TextHandle textHandle = text_init();
-    text_activateLevelText(textHandle, 1);
+    text_activateLevelText(textHandle, check_getCurrentLevel(checkpoint));
 
     while (!WindowShouldClose()) {
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
             panim_setDying(plAnim);
         } else {
             phy_getVelocity(playerBody, &forceOfCharacter.x, &forceOfCharacter.y);
-            if (check_update(checkpoint, playerRectangle.rectangle->y + playerRectangle.rectangle->height)) {
+            if (check_update(checkpoint, playerRectangle.rectangle->y)) {
                 text_activateLevelText(textHandle, check_getCurrentLevel(checkpoint));
             }
         }
