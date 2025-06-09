@@ -2,6 +2,7 @@
 #include "include/animation.h"
 #include "include/raylib/raylib.h"
 #include "include/slog.h"
+#include "include/sounds.h"
 #include <stdlib.h>
 
 #define CHAR_SPRITESHEET "assets/player.png"
@@ -57,6 +58,7 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
         if ((IsKeyDown(KEY_A) || IsKeyDown(KEY_D)) &&
             (velocityX > POS_LIMIT_RUN || velocityX < NEG_LIMIT_RUN)) {
             plAnim->curAnimation = &plAnim->running;
+            sound_playFootstep();
             if (plAnim->curAnimation != prevAnimation) {
                 slogd("Animation switched to RUNNING");
             }
@@ -71,6 +73,15 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
         if (plAnim->curAnimation != prevAnimation) {
             slogd("Animation switched to JUMPING");
         }
+    }
+
+    if (plAnim->curAnimation != &plAnim->running) {
+        sound_resetFootstep();
+    }
+
+    if ((plAnim->curAnimation == &plAnim->running || plAnim->curAnimation == &plAnim->idle) &&
+        (prevAnimation == &plAnim->falling || prevAnimation == &plAnim->jumping)) {
+		sound_landing();
     }
 
     // Set global flip state

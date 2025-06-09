@@ -6,6 +6,7 @@
 #include "include/dynBodyDef.h"
 #include "include/raylib/raylib.h"
 #include "include/slog.h"
+#include "include/sounds.h"
 
 #define RUNNING_FORCE 1000.0f
 #define VELOCITY_LIMIT 8
@@ -161,15 +162,15 @@ void unstableUpdate(UpdateData *updateData) {
     if (updateData->status == STATUS_FREE_FALL)
         return;
 
-	//Wait a bit before contact checking
+    // Wait a bit before contact checking
     if (updateData->modifier == WAIT) {
-		if (updateData->timer < 1.0f) {
+        if (updateData->timer < 1.0f) {
             updateData->timer += GetFrameTime();
-		} else {
+        } else {
             updateData->timer = 0.0f;
-			updateData->modifier = DEFAULT;
-		}
-		return;
+            updateData->modifier = DEFAULT;
+        }
+        return;
     }
 
     const float unstableTime = 0.1f;
@@ -265,6 +266,7 @@ void playerUpdate(UpdateData *updateData) {
 
     if (IsKeyDown(KEY_W) && updateData->timer > JUMP_COOLDOWN_LIMIT) {
         b2Body_ApplyLinearImpulse(*updateData->body, (b2Vec2){0.0f, JUMP_FORCE}, (b2Vec2){0.0f, 0.0f}, true);
+        sound_playJump();
         updateData->timer = 0.0f;
     }
 
@@ -323,11 +325,11 @@ DynBodyUpdateModifier setUpdateFunction(int id, void (**update)(UpdateData *upda
     case CIRCLES16x32:
     case CIRCLES_SINGLE:
     case CIRCLES_TRIPPLE_WIDE:
-	case LONG_ONE_SIDED_240x16:
+    case LONG_ONE_SIDED_240x16:
         *update = &unstableUpdate;
         break;
     case ANKERED_160x16:
-	case LONG_ONE_SIDED_208x16:
+    case LONG_ONE_SIDED_208x16:
         *update = &unstableUpdate;
         return WAIT;
         break;

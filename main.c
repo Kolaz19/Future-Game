@@ -14,6 +14,7 @@
 #include "include/physicsWorld.h"
 #include "include/raylib/raylib.h"
 #include "include/textDraw.h"
+#include "include/sounds.h"
 
 #define SCREEN_WIDTH ((int)(1920 * 0.5))
 #define SCREEN_HEIGHT ((int)(1080 * 0.5))
@@ -63,6 +64,8 @@ int main(int argc, char *argv[]) {
 
     TextHandle textHandle = text_init();
     text_activateLevelText(textHandle, check_getCurrentLevel(checkpoint));
+
+	sound_init();
 
     while (!WindowShouldClose()) {
 
@@ -133,6 +136,7 @@ int main(int argc, char *argv[]) {
     panim_free(plAnim);
 	text_free(textHandle);
 	platTex_free(platTextHandle);
+	sound_free();
     CloseWindow();
     slog_destroy();
     return 0;
