@@ -25,12 +25,6 @@
 #define STATUS_LOCK_IN_PLACE 6
 #define STATUS_JUMP 7
 
-// typedef enum PlayerMovement {
-// NONE,
-// LEFT_MOVING,
-// RIGHT_MOVING,
-//}PlayerMovement;
-
 static float previousPlayerVelocityY = 0.0f;
 static float previousPlayerPosX = 0.0f;
 static float previousPlayerPosY = 0.0f;

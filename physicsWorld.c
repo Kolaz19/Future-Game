@@ -12,6 +12,7 @@
 #include "include/jointCreation.h"
 #include "include/raylib/pi.h"
 #include "include/slog.h"
+#include "include/sounds.h"
 
 #define CONV_VAL 20
 #define TOWORLD(x) ((x) / CONV_VAL)
@@ -42,6 +43,20 @@ static void updateRectangle(Body *body) {
     body->rectangle.x = TOPIXEL(vec.x) - (body->rectangle.width / 2);
     body->rectangle.y = TOPIXEL(vec.y) - (body->rectangle.height / 2);
     body->rotation = RAD2DEG * b2Rot_GetAngle(b2Body_GetRotation(body->body));
+}
+
+static void updatePlatformSound(WorldHandle handle) {
+
+    b2ContactEvents contactEvents = b2World_GetContactEvents(handle->world);
+    for (int i = 0; i < contactEvents.beginCount; i++) {
+        b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
+		b2BodyId bodyA = b2Shape_GetBody(beginEvent->shapeIdA);
+		b2BodyId bodyB = b2Shape_GetBody(beginEvent->shapeIdB);
+		//Check if no player
+		if (b2Body_GetShapeCount(bodyA) == 1 && b2Body_GetShapeCount(bodyB) == 1) {
+			sound_platforms();
+		}
+    }
 }
 
 /*
@@ -105,6 +120,7 @@ void phy_updateWorld(WorldHandle handle) {
                 &(handle->bag[i]->updateData));
         }
     }
+	updatePlatformSound(handle);
 }
 
 WorldHandle phy_createWorld(void) {
@@ -198,13 +214,13 @@ void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness) {
 
     b2BodyId wallLeftId = b2CreateBody(world->world, &wallLeftBodyDef);
     b2BodyId wallRightId = b2CreateBody(world->world, &wallRightBodyDef);
-    // TODO Clean transition between two walls
     b2Polygon wallBox = b2MakeBox(TOWORLD((float)wallThickness / 2), TOWORLD((float)boundary.height / 2));
 
     b2ShapeDef wallShapeDef = b2DefaultShapeDef();
     wallShapeDef.friction = 0.0f;
-    b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox);
-    b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox);
+	b2Shape_EnableContactEvents(b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox), true);
+	b2Shape_EnableContactEvents(b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox), true);
+
 
     addToBag(world->bag, &wallLeftId, WALL, (float)wallThickness, (float)boundary.height, UNDEFINED);
     addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)boundary.height, UNDEFINED);
@@ -314,6 +330,7 @@ void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundConta
     }
     assert((*amountGroundContact) >= 0);
 }
+
 
 bool phy_isPlayerDead(WorldHandle handle) {
     Body **bodies = handle->bag;
