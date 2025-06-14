@@ -9,8 +9,8 @@
  * Pitch is set randomly between that and 100
  */
 #define FOOTSTEP_RAND_PERC_START_PITCH 90
-#define PLATFORM_RAND_PERC_START_PITCH 60
-#define PLATFORM_RAND_PERC_END_PITCH 70
+#define PLATFORM_RAND_PERC_START_PITCH 80
+#define PLATFORM_RAND_PERC_END_PITCH 90
 
 /**
  * @brief Manage sounds during game
@@ -22,6 +22,7 @@ typedef struct SoundManager {
     Sound footsteps;
     Sound jump;
     Sound landing;
+	Sound death;
     Sound platforms[MAX_PLATFORM_SOUNDS];
     int curPlatformSoundIndex;
     float footstepsTimer;
@@ -32,15 +33,15 @@ static SoundManager manager;
 
 void sound_init(void) {
     InitAudioDevice();
-    manager.footsteps = LoadSound("assets/sounds/metal_footstep.mp3");
-    // SetSoundVolume(manager.footsteps, 0.3f);
-    manager.jump = LoadSoundAlias(manager.footsteps);
-    // SetSoundVolume(manager.jump, 0.3f);
-    SetSoundPitch(manager.jump, 1.9f);
-    SetSoundVolume(manager.jump, 0.5f);
-    manager.landing = LoadSoundAlias(manager.footsteps);
-    // SetSoundVolume(manager.landing, 0.3f);
-    SetSoundPitch(manager.landing, 1.5f);
+    manager.footsteps = LoadSound("assets/sounds/metal_footstep.wav");
+    SetSoundPitch(manager.jump, 1.5f);
+    manager.jump = LoadSound("assets/sounds/metal_jump.wav");
+    SetSoundVolume(manager.jump, 3.0f);
+    SetSoundPitch(manager.jump, 1.0f);
+    manager.landing = LoadSound("assets/sounds/metal_land.wav");
+    SetSoundVolume(manager.landing, 0.6f);
+    SetSoundPitch(manager.landing, 0.7f);
+    manager.death = LoadSound("assets/sounds/death.wav");
 
     for (int i = 0; i < MAX_PLATFORM_SOUNDS; i++) {
         if (i == 0) {
@@ -83,6 +84,9 @@ void sound_playJump(void) {
 
 void sound_landing(void) {
     PlaySound(manager.landing);
+}
+void sound_death(void) {
+    PlaySound(manager.death);
 }
 
 

@@ -20,5 +20,6 @@ void sound_resetFootstep(void);
 void sound_playJump(void);
 void sound_landing(void);
 void sound_platforms(void);
+void sound_death(void);
 
 #endif

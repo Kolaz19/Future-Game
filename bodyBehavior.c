@@ -215,6 +215,7 @@ void playerUpdate(UpdateData *updateData) {
     }
 
     if (velocity.y < (DYING_FALL_VELOCITY / 2.0f) && previousPlayerVelocityY > DYING_FALL_VELOCITY) {
+		sound_death();
         updateData->status = STATUS_DEAD;
         updateData->timer = 0.0f;
         previousPlayerVelocityY = 0.0f;

@@ -111,6 +111,7 @@ int main(int argc, char *argv[]) {
             phy_destroyObjectsAbove(worldHandle, map_getBoundaryFromCurrentMap(mapManager).y - 10.0f);
             addPlatforms(worldHandle, mapManager, false);
             amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
+			sound_resetSound();
             Rectangle newCheckpoint;
             if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
                 check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
