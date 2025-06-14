@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
     text_activateLevelText(textHandle, check_getCurrentLevel(checkpoint));
 
 	sound_init();
+	sound_resetSound();
 
     while (!WindowShouldClose()) {
 
@@ -102,6 +103,7 @@ int main(int argc, char *argv[]) {
             phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
             amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
             panim_setAlive(plAnim);
+			sound_resetSound();
         }
 
         if (map_update(mapManager, playerRectangle.rectangle->y)) {
