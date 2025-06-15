@@ -15,7 +15,6 @@ void sound_free(void);
  * calling this function
  */
 void sound_playFootstep(void);
-void sound_resetFootstep(void);
 void sound_playJump(void);
 void sound_landing(void);
 void sound_platforms(void);

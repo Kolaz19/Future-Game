@@ -58,7 +58,6 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
         if ((IsKeyDown(KEY_A) || IsKeyDown(KEY_D)) &&
             (velocityX > POS_LIMIT_RUN || velocityX < NEG_LIMIT_RUN)) {
             plAnim->curAnimation = &plAnim->running;
-            sound_playFootstep();
             if (plAnim->curAnimation != prevAnimation) {
                 slogd("Animation switched to RUNNING");
             }
@@ -73,10 +72,6 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
         if (plAnim->curAnimation != prevAnimation) {
             slogd("Animation switched to JUMPING");
         }
-    }
-
-    if (plAnim->curAnimation != &plAnim->running) {
-        sound_resetFootstep();
     }
 
     if ((plAnim->curAnimation == &plAnim->running || plAnim->curAnimation == &plAnim->idle) &&
@@ -102,7 +97,11 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
         anim_flipReset(plAnim->curAnimation, FLIPX);
     }
     anim_advanceAnimation(plAnim->curAnimation);
+    if (plAnim->curAnimation == &plAnim->running && anim_getCurrentFrame(plAnim->curAnimation) == 2) {
+		sound_playFootstep();
+	}
 }
+
 
 void panim_setDying(PlAnimation plAnim) {
     if (plAnim->curAnimation == &plAnim->dying)

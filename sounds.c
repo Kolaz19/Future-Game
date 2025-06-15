@@ -22,11 +22,10 @@ typedef struct SoundManager {
     Sound footsteps;
     Sound jump;
     Sound landing;
-	Sound death;
+    Sound death;
     Sound platforms[MAX_PLATFORM_SOUNDS];
     int curPlatformSoundIndex;
-    float footstepsTimer;
-	double timeStamp;
+    double timeStamp;
 } SoundManager;
 
 static SoundManager manager;
@@ -51,8 +50,7 @@ void sound_init(void) {
         }
     }
     manager.curPlatformSoundIndex = 0;
-    manager.footstepsTimer = 0.0f;
-	manager.timeStamp = GetTime();
+    manager.timeStamp = GetTime();
 }
 
 void sound_free(void) {
@@ -61,17 +59,9 @@ void sound_free(void) {
 }
 
 void sound_playFootstep(void) {
-    manager.footstepsTimer += GetFrameTime();
-    if (manager.footstepsTimer >= FOOTSTEPS_WAIT) {
-        int rand = GetRandomValue(FOOTSTEP_RAND_PERC_START_PITCH, 100);
-        SetSoundPitch(manager.footsteps, 1.0f * ((float)rand / 100));
-        PlaySound(manager.footsteps);
-        manager.footstepsTimer = 0.0f;
-    }
-}
-
-void sound_resetFootstep(void) {
-    manager.footstepsTimer = FOOTSTEPS_WAIT * 0.75f;
+    int rand = GetRandomValue(FOOTSTEP_RAND_PERC_START_PITCH, 100);
+    SetSoundPitch(manager.footsteps, 1.0f * ((float)rand / 100));
+    PlaySound(manager.footsteps);
 }
 
 void sound_playJump(void) {
@@ -85,11 +75,10 @@ void sound_death(void) {
     PlaySound(manager.death);
 }
 
-
 void sound_platforms(void) {
-	if (GetTime() - manager.timeStamp <= RESET_SEC_WAIT) {
-		return;
-	}
+    if (GetTime() - manager.timeStamp <= RESET_SEC_WAIT) {
+        return;
+    }
     int randPitch = GetRandomValue(PLATFORM_RAND_PERC_START_PITCH, PLATFORM_RAND_PERC_END_PITCH);
     SetSoundPitch(manager.platforms[manager.curPlatformSoundIndex], 1.0f * ((float)randPitch / 100));
     PlaySound(manager.platforms[manager.curPlatformSoundIndex]);
