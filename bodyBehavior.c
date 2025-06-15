@@ -24,6 +24,7 @@
 #define STATUS_SMALL_STABLE 5
 #define STATUS_LOCK_IN_PLACE 6
 #define STATUS_JUMP 7
+#define STATUS_PRE_FREE_FALL 8
 
 static float previousPlayerVelocityY = 0.0f;
 static float previousPlayerPosX = 0.0f;
@@ -125,12 +126,27 @@ void shiftLittleUpdate(UpdateData *updateData) {
     }
 }
 
+/*
+ * The only time where UserData is set
+ * Used to fix bug where spawning platforms
+ * would cause sound to play
+ */
 void fallFromStartUpdate(UpdateData *updateData) {
+    const float noSoundTimer = 0.5f;
+    static bool noSound = true;
     switch (updateData->status) {
     case STATUS_INIT:
+        b2Body_SetUserData(*updateData->body, &noSound);
         b2Body_SetType(*updateData->body, b2_dynamicBody);
-        updateData->status = STATUS_FREE_FALL;
+        updateData->status = STATUS_PRE_FREE_FALL;
         break;
+    case STATUS_PRE_FREE_FALL:
+        if (updateData->timer < noSoundTimer) {
+            updateData->timer += GetFrameTime();
+            return;
+        }
+        b2Body_SetUserData(*updateData->body, NULL);
+        updateData->status = STATUS_FREE_FALL;
     }
 }
 
@@ -215,7 +231,7 @@ void playerUpdate(UpdateData *updateData) {
     }
 
     if (velocity.y < (DYING_FALL_VELOCITY / 2.0f) && previousPlayerVelocityY > DYING_FALL_VELOCITY) {
-		sound_death();
+        sound_death();
         updateData->status = STATUS_DEAD;
         updateData->timer = 0.0f;
         previousPlayerVelocityY = 0.0f;

@@ -52,8 +52,13 @@ static void updatePlatformSound(WorldHandle handle) {
         b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
 		b2BodyId bodyA = b2Shape_GetBody(beginEvent->shapeIdA);
 		b2BodyId bodyB = b2Shape_GetBody(beginEvent->shapeIdB);
+		//Sound flag can be set in bodyBehavior = No Sound
+		bool *noSoundFlag = b2Body_GetUserData(bodyA);
+		if (noSoundFlag == NULL) {
+			noSoundFlag = b2Body_GetUserData(bodyB);
+		}
 		//Check if no player
-		if (b2Body_GetShapeCount(bodyA) == 1 && b2Body_GetShapeCount(bodyB) == 1) {
+		if (b2Body_GetShapeCount(bodyA) == 1 && b2Body_GetShapeCount(bodyB) == 1 && noSoundFlag == NULL) {
 			sound_platforms();
 		}
     }

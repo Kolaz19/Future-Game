@@ -14,7 +14,6 @@ void sound_free(void);
  * @brief Pause sounds of platforms for some time after 
  * calling this function
  */
-void sound_resetSound(void);
 void sound_playFootstep(void);
 void sound_resetFootstep(void);
 void sound_playJump(void);

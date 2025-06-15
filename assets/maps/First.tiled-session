@@ -19,8 +19,8 @@
         "map_part1.tmx": {
             "expandedObjectLayers": [
                 2,
-                3,
-                4
+                4,
+                3
             ],
             "scale": 3,
             "selectedLayer": 2,
@@ -45,8 +45,8 @@
         "map_part3.tmx": {
             "expandedObjectLayers": [
                 2,
-                3,
-                4
+                4,
+                3
             ],
             "scale": 4,
             "selectedLayer": 3,
@@ -58,8 +58,8 @@
         "map_part4.tmx": {
             "expandedObjectLayers": [
                 2,
-                3,
-                4
+                4,
+                3
             ],
             "scale": 4,
             "selectedLayer": 3,
@@ -85,11 +85,11 @@
                 3,
                 4
             ],
-            "scale": 1,
-            "selectedLayer": 0,
+            "scale": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 422.5,
-                "y": 357.5
+                "x": 277.75,
+                "y": 1399.25
             }
         },
         "map_part7.tmx": {
@@ -97,7 +97,7 @@
             "selectedLayer": 2,
             "viewCenter": {
                 "x": 205.25,
-                "y": -71.25
+                "y": -191.25
             }
         }
     },
@@ -113,7 +113,8 @@
         "map_part3.tmx",
         "map_part4.tmx",
         "map_part5.tmx",
-        "map_part6.tmx"
+        "map_part6.tmx",
+        "map_part7.tmx"
     ],
     "project": "First.tiled-project",
     "recentFiles": [
@@ -122,6 +123,7 @@
         "map_part3.tmx",
         "map_part4.tmx",
         "map_part5.tmx",
+        "map_part7.tmx",
         "map_part6.tmx",
         "Tileset.tsx",
         "Dark.tsx"

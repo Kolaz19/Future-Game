@@ -34,13 +34,13 @@ static SoundManager manager;
 void sound_init(void) {
     InitAudioDevice();
     manager.footsteps = LoadSound("assets/sounds/metal_footstep.wav");
-    SetSoundPitch(manager.jump, 1.5f);
+    SetSoundVolume(manager.footsteps, 0.8f);
     manager.jump = LoadSound("assets/sounds/metal_jump.wav");
     SetSoundVolume(manager.jump, 3.0f);
     SetSoundPitch(manager.jump, 1.0f);
     manager.landing = LoadSound("assets/sounds/metal_land.wav");
-    SetSoundVolume(manager.landing, 0.6f);
-    SetSoundPitch(manager.landing, 0.7f);
+    SetSoundVolume(manager.landing, 0.2f);
+    SetSoundPitch(manager.landing, 0.9f);
     manager.death = LoadSound("assets/sounds/death.wav");
 
     for (int i = 0; i < MAX_PLATFORM_SOUNDS; i++) {
@@ -58,10 +58,6 @@ void sound_init(void) {
 void sound_free(void) {
     UnloadSound(manager.footsteps);
     CloseAudioDevice();
-}
-
-void sound_resetSound(void) {
-	manager.timeStamp = GetTime();
 }
 
 void sound_playFootstep(void) {

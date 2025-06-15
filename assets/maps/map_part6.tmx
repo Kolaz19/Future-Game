@@ -98,11 +98,11 @@
  <objectgroup id="2" name="Dynamic">
   <object id="14" name="11" x="159.885" y="207.605" width="160" height="16"/>
   <object id="15" name="12" x="255.99" y="303.974" width="144" height="16"/>
-  <object id="19" name="13" x="399.995" y="352.016" width="16" height="176"/>
-  <object id="21" name="14" x="262.928" y="187.464" width="20" height="20"/>
-  <object id="23" name="14" x="291.182" y="187.447" width="20" height="20"/>
-  <object id="24" name="14" x="273" y="167.182" width="20" height="20"/>
-  <object id="25" name="14" x="158.182" y="187.273" width="20" height="20"/>
+  <object id="19" name="13" x="399.952" y="352.146" width="16" height="176"/>
+  <object id="21" name="14" x="263.553" y="188.214" width="20" height="20"/>
+  <object id="23" name="14" x="290.807" y="188.197" width="20" height="20"/>
+  <object id="24" name="14" x="276.75" y="168.557" width="20" height="20"/>
+  <object id="25" name="14" x="158.791" y="187.838" width="20" height="20"/>
   <object id="39" name="1" x="416" y="1184" width="32" height="16"/>
   <object id="40" name="15" x="448" y="688" width="16" height="32"/>
   <object id="41" name="15" x="448.063" y="1008.06" width="16" height="32"/>

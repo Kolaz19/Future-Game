@@ -66,7 +66,6 @@ int main(int argc, char *argv[]) {
     text_activateLevelText(textHandle, check_getCurrentLevel(checkpoint));
 
 	sound_init();
-	sound_resetSound();
 
     while (!WindowShouldClose()) {
 
@@ -103,7 +102,7 @@ int main(int argc, char *argv[]) {
             phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
             amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
             panim_setAlive(plAnim);
-			sound_resetSound();
+			//sound_resetSound();
         }
 
         if (map_update(mapManager, playerRectangle.rectangle->y)) {
@@ -111,7 +110,7 @@ int main(int argc, char *argv[]) {
             phy_destroyObjectsAbove(worldHandle, map_getBoundaryFromCurrentMap(mapManager).y - 10.0f);
             addPlatforms(worldHandle, mapManager, false);
             amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
-			sound_resetSound();
+			//sound_resetSound();
             Rectangle newCheckpoint;
             if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
                 check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
