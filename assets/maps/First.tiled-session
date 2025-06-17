@@ -18,8 +18,8 @@
         },
         "map_part1.tmx": {
             "expandedObjectLayers": [
-                2,
                 4,
+                2,
                 3
             ],
             "scale": 3,
@@ -31,9 +31,9 @@
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
+                4,
                 2,
-                3,
-                4
+                3
             ],
             "scale": 1,
             "selectedLayer": 1,
@@ -44,8 +44,8 @@
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
-                2,
                 4,
+                2,
                 3
             ],
             "scale": 4,
@@ -57,8 +57,8 @@
         },
         "map_part4.tmx": {
             "expandedObjectLayers": [
-                2,
                 4,
+                2,
                 3
             ],
             "scale": 4,
@@ -82,22 +82,22 @@
         },
         "map_part6.tmx": {
             "expandedObjectLayers": [
-                3,
-                4
+                4,
+                3
             ],
             "scale": 2,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 277.75,
-                "y": 1399.25
+                "x": 280.25,
+                "y": 720.25
             }
         },
         "map_part7.tmx": {
             "scale": 2,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 205.25,
-                "y": -191.25
+                "x": 280.25,
+                "y": 720.25
             }
         }
     },

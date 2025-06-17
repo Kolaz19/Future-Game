@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 #define CHAR_SPRITESHEET "assets/player.png"
+#define START_SEQUENCE 2
 #define NEG_LIMIT_RUN -0.5f
 #define POS_LIMIT_RUN 0.5f
 #define NEG_LIMIT_JUMP -0.00000001f
@@ -40,6 +41,7 @@ PlAnimation panim_createAnimation(void) {
 void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool hasGroundContact) {
     Animation *prevAnimation = plAnim->curAnimation;
     bool prevFlip = plAnim->flip;
+	double exeTime = GetTime();
 
     // Check death state set in setDying()
     if (plAnim->curAnimation == &plAnim->dying) {
@@ -55,7 +57,7 @@ void panim_update(PlAnimation plAnim, float velocityX, float velocityY, bool has
             slogd("Animation switched to FALLING");
         }
     } else if (hasGroundContact) {
-        if ((IsKeyDown(KEY_A) || IsKeyDown(KEY_D)) &&
+        if ((IsKeyDown(KEY_A) || IsKeyDown(KEY_D) || exeTime < START_SEQUENCE) &&
             (velocityX > POS_LIMIT_RUN || velocityX < NEG_LIMIT_RUN)) {
             plAnim->curAnimation = &plAnim->running;
             if (plAnim->curAnimation != prevAnimation) {

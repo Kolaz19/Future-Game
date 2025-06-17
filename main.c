@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 
     WorldHandle worldHandle = phy_createWorld();
 
-    phy_addPlayer(worldHandle, check_getX(checkpoint), check_getY(checkpoint));
+    phy_addPlayer(worldHandle, check_getX(checkpoint) - 150, check_getY(checkpoint) - 110);
     BodyIdReference playerBody = phy_getCharacterBodyIdReference(worldHandle);
     int amountDynamicGroundContact = 0;
 

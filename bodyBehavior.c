@@ -14,6 +14,7 @@
 #define JUMP_COOLDOWN_LIMIT 0.5f
 #define JUMP_FORCE -220.0f
 #define DYING_FALL_VELOCITY 23
+#define START_SEQUENCE 2
 
 #define STATUS_INIT UPDATE_STATUS_INIT
 #define STATUS_DEAD UPDATE_STATUS_DEAD
@@ -280,16 +281,18 @@ void playerUpdate(UpdateData *updateData) {
         sound_playJump();
         updateData->timer = 0.0f;
     }
+	
+	double exeTime = GetTime();
 
     // Slow down when starting running in opposite direction
     // or when coming to halt
-    if (IsKeyDown(KEY_A) && enableMovement) {
+    if ((IsKeyDown(KEY_A) && exeTime > START_SEQUENCE) && enableMovement) {
         if (velocity.x > 0) {
             slowDown(updateData->body);
         }
         previousMovement = true;
         forceToApply.x = RUNNING_FORCE * -1;
-    } else if (IsKeyDown(KEY_D) && enableMovement) {
+    } else if ((IsKeyDown(KEY_D) || exeTime < START_SEQUENCE) && enableMovement) {
         if (velocity.x < 0) {
             slowDown(updateData->body);
         }
@@ -300,7 +303,7 @@ void playerUpdate(UpdateData *updateData) {
         slowDown(updateData->body);
     }
 
-    if (IsKeyDown(KEY_A) || IsKeyDown(KEY_D)) {
+    if (IsKeyDown(KEY_A) || IsKeyDown(KEY_D) || exeTime < START_SEQUENCE) {
         previousMovement = true;
     }
 
