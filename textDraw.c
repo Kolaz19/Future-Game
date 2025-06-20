@@ -5,6 +5,7 @@
 #define AMOUNT_TEXTS 7
 #define MAX_R 255
 
+#define FIRST_TEXT_DELAY 1.8f
 #define TIME_FADE_IN_OPACITY 3.0f
 #define TIME_FULL_OPACITY 3.0f
 #define TIME_FADE_OUT_OPACITY 3.0f
@@ -26,6 +27,7 @@ typedef struct TextDraw {
     Color color;
     float timer;
     int currentLevel;
+	bool firstLevelDelayPassed;
     TextEntity texts[AMOUNT_TEXTS];
 } TextDraw;
 
@@ -58,11 +60,12 @@ TextHandle text_init() {
     TextHandle text = malloc(sizeof(TextDraw));
     text->font = LoadFont("assets/pixantiqua.png");
     text->timer = TIME_COMBINED + 1.0f;
-    text->currentLevel = 1;
+    text->currentLevel = 0;
+	text->firstLevelDelayPassed = false;
 
-    //text->color.r = DARKPURPLE.r;
-    //text->color.g = DARKPURPLE.g;
-    //text->color.b = DARKPURPLE.b;
+    // text->color.r = DARKPURPLE.r;
+    // text->color.g = DARKPURPLE.g;
+    // text->color.b = DARKPURPLE.b;
     text->color.r = VIOLET.r;
     text->color.g = VIOLET.g;
     text->color.b = VIOLET.b;
@@ -84,8 +87,8 @@ TextHandle text_init() {
 }
 
 void text_free(TextHandle handle) {
-	UnloadFont(handle->font);
-	free(handle);
+    UnloadFont(handle->font);
+    free(handle);
 }
 
 bool text_active(TextHandle handle) {
@@ -108,7 +111,7 @@ static unsigned char getOpacity(float timer) {
     if (timer < TIME_FADE_IN_OPACITY) {
         opa = (unsigned int)(timer * MAX_R / TIME_FADE_IN_OPACITY);
     } else if (timer > TIME_FADE_IN_OPACITY + TIME_FULL_OPACITY) {
-		opa = (unsigned int)((TIME_COMBINED - timer) * MAX_R / TIME_FADE_OUT_OPACITY);
+        opa = (unsigned int)((TIME_COMBINED - timer) * MAX_R / TIME_FADE_OUT_OPACITY);
     } else {
         opa = MAX_R;
     }
@@ -121,6 +124,13 @@ void text_update(TextHandle handle) {
         return;
 
     handle->timer += GetFrameTime();
+	if (!handle->firstLevelDelayPassed) {
+		if (handle->timer > FIRST_TEXT_DELAY) {
+			handle->firstLevelDelayPassed = true;
+			handle->timer = 0.0f;
+		}
+		return;
+	}
 
     handle->color.a = getOpacity(handle->timer);
 }

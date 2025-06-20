@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map_part6.tmx",
+    "activeFile": "map_part1.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -18,21 +18,21 @@
         },
         "map_part1.tmx": {
             "expandedObjectLayers": [
-                4,
                 2,
+                4,
                 3
             ],
-            "scale": 3,
+            "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 280.1666666666667,
-                "y": 719.8333333333333
+                "x": 279.66666666666663,
+                "y": 719.6666666666666
             }
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
-                4,
                 2,
+                4,
                 3
             ],
             "scale": 1,
@@ -44,8 +44,8 @@
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
-                4,
                 2,
+                4,
                 3
             ],
             "scale": 4,
@@ -57,8 +57,8 @@
         },
         "map_part4.tmx": {
             "expandedObjectLayers": [
-                4,
                 2,
+                4,
                 3
             ],
             "scale": 4,
@@ -118,13 +118,13 @@
     ],
     "project": "First.tiled-project",
     "recentFiles": [
-        "map_part1.tmx",
-        "map_part2.tmx",
-        "map_part3.tmx",
-        "map_part4.tmx",
-        "map_part5.tmx",
         "map_part7.tmx",
         "map_part6.tmx",
+        "map_part5.tmx",
+        "map_part4.tmx",
+        "map_part3.tmx",
+        "map_part2.tmx",
+        "map_part1.tmx",
         "Tileset.tsx",
         "Dark.tsx"
     ],
