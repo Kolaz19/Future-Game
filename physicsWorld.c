@@ -69,42 +69,23 @@ static void updatePlatformSound(WorldHandle handle) {
             if (noSoundFlag == NULL) {
                 sound_platforms();
             }
-		} else {
-            if (b2Body_GetShapeCount(bodyA) == 1) {
-                for (int i = 0; i < BAG_SIZE; i++) {
-                    if (handle->bag[i] != NULL && handle->bag[i]->type == DYNAMIC_PLATFORM && B2_ID_EQUALS(bodyA, handle->bag[i]->body)) {
-                        if ((handle->bag[i]->previousPosition.x > handle->bag[i]->rectangle.x + TOWORLD(2.0f) || handle->bag[i]->previousPosition.x < handle->bag[i]->rectangle.x - TOWORLD(2.0f)) ||
-                            (handle->bag[i]->previousPosition.y > handle->bag[i]->rectangle.y + TOWORLD(2.0f) || handle->bag[i]->previousPosition.y < handle->bag[i]->rectangle.y - TOWORLD(2.0f))) {
-                            //sound_platformsMoving();
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < BAG_SIZE; i++) {
-                    if (handle->bag[i] != NULL && handle->bag[i]->type == DYNAMIC_PLATFORM && B2_ID_EQUALS(bodyB, handle->bag[i]->body)) {
-                        if ((handle->bag[i]->previousPosition.x > handle->bag[i]->rectangle.x + TOWORLD(2.0f) || handle->bag[i]->previousPosition.x < handle->bag[i]->rectangle.x - TOWORLD(2.0f)) ||
-                            (handle->bag[i]->previousPosition.y > handle->bag[i]->rectangle.y + TOWORLD(2.0f) || handle->bag[i]->previousPosition.y < handle->bag[i]->rectangle.y - TOWORLD(2.0f))) {
-                            //sound_platformsMoving();
-                        }
-                    }
-                }
-            }
         }
     }
 
-	/*
-    for (int i = 0; i < BAG_SIZE; i++) {
-        if (handle->bag[i] != NULL && handle->bag[i]->type == DYNAMIC_PLATFORM) {
-            b2ShapeId shape;
-            b2Body_GetShapes(handle->bag[i]->body, &shape, 1);
-            int cap = b2Shape_GetContactCapacity(shape);
-            if (cap != 0 && ((handle->bag[i]->previousPosition.x != handle->bag[i]->rectangle.x) ||
-                             (handle->bag[i]->previousPosition.y != handle->bag[i]->rectangle.y))) {
-                sound_platformsMoving();
-            }
+	// If we need constant contact in future
+    /*
+for (int i = 0; i < BAG_SIZE; i++) {
+    if (handle->bag[i] != NULL && handle->bag[i]->type == DYNAMIC_PLATFORM) {
+        b2ShapeId shape;
+        b2Body_GetShapes(handle->bag[i]->body, &shape, 1);
+        int cap = b2Shape_GetContactCapacity(shape);
+        if (cap != 0 && ((handle->bag[i]->previousPosition.x != handle->bag[i]->rectangle.x) ||
+                         (handle->bag[i]->previousPosition.y != handle->bag[i]->rectangle.y))) {
+            sound_platformsMoving();
         }
     }
-	*/
+}
+    */
 }
 
 /*

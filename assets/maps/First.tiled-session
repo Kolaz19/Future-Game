@@ -18,22 +18,22 @@
         },
         "map_part1.tmx": {
             "expandedObjectLayers": [
-                2,
+                3,
                 4,
-                3
+                2
             ],
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 232.3333333333333,
-                "y": 936.3333333333333
+                "x": 279.66666666666663,
+                "y": 719.6666666666666
             }
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
-                2,
+                3,
                 4,
-                3
+                2
             ],
             "scale": 1,
             "selectedLayer": 1,
@@ -44,9 +44,9 @@
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
-                2,
+                3,
                 4,
-                3
+                2
             ],
             "scale": 4,
             "selectedLayer": 3,
@@ -57,9 +57,9 @@
         },
         "map_part4.tmx": {
             "expandedObjectLayers": [
-                2,
+                3,
                 4,
-                3
+                2
             ],
             "scale": 4,
             "selectedLayer": 3,
@@ -70,8 +70,8 @@
         },
         "map_part5.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 1,
             "selectedLayer": 0,
@@ -82,8 +82,8 @@
         },
         "map_part6.tmx": {
             "expandedObjectLayers": [
-                4,
-                3
+                3,
+                4
             ],
             "scale": 2,
             "selectedLayer": 1,
@@ -93,11 +93,11 @@
             }
         },
         "map_part7.tmx": {
-            "scale": 2,
+            "scale": 0.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 280.25,
-                "y": 840.25
+                "x": 851,
+                "y": 1053
             }
         }
     },

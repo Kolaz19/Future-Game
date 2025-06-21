@@ -53,6 +53,10 @@ static void setPos(Vector2 *pos, int lvl) {
         pos->x = 0.10f;
         pos->y = 0.70f;
         break;
+    case 7:
+        pos->x = 0.05f;
+        pos->y = 0.70f;
+        break;
     }
 }
 
@@ -77,7 +81,7 @@ TextHandle text_init() {
     text->texts[LVL_INDX(4)].text = "Deep in the core, a glimmer of hope\nSadly not for me";
     text->texts[LVL_INDX(5)].text = "";
     text->texts[LVL_INDX(6)].text = "I wonder what they are doing on the surface right now";
-    text->texts[LVL_INDX(7)].text = "";
+    text->texts[LVL_INDX(7)].text = "I am getting\ncloser to\nthe core\nI can feel it";
 
     for (int i = 0; i < AMOUNT_TEXTS; i++) {
         setPos(&(text->texts[i].pos), i + 1);
