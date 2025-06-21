@@ -16,24 +16,32 @@
             "scaleInDock": 3,
             "scaleInEditor": 1
         },
+        "map_last.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 269.6666666666667,
+                "y": 149.66666666666663
+            }
+        },
         "map_part1.tmx": {
             "expandedObjectLayers": [
-                3,
+                2,
                 4,
-                2
+                3
             ],
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 279.66666666666663,
+                "x": 279.6666666666667,
                 "y": 719.6666666666666
             }
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
-                3,
+                2,
                 4,
-                2
+                3
             ],
             "scale": 1,
             "selectedLayer": 1,
@@ -44,9 +52,9 @@
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
-                3,
+                2,
                 4,
-                2
+                3
             ],
             "scale": 4,
             "selectedLayer": 3,
@@ -57,9 +65,9 @@
         },
         "map_part4.tmx": {
             "expandedObjectLayers": [
-                3,
+                2,
                 4,
-                2
+                3
             ],
             "scale": 4,
             "selectedLayer": 3,
@@ -70,8 +78,8 @@
         },
         "map_part5.tmx": {
             "expandedObjectLayers": [
-                3,
-                2
+                2,
+                3
             ],
             "scale": 1,
             "selectedLayer": 0,
@@ -82,8 +90,8 @@
         },
         "map_part6.tmx": {
             "expandedObjectLayers": [
-                3,
-                4
+                4,
+                3
             ],
             "scale": 2,
             "selectedLayer": 1,
@@ -93,11 +101,11 @@
             }
         },
         "map_part7.tmx": {
-            "scale": 0.5,
-            "selectedLayer": 2,
+            "scale": 1,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 851,
-                "y": 1053
+                "x": 507.5,
+                "y": 1253.5
             }
         }
     },

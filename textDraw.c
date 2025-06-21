@@ -2,7 +2,7 @@
 #include "include/raylib/raylib.h"
 #include <stdlib.h>
 
-#define AMOUNT_TEXTS 7
+#define AMOUNT_TEXTS 8
 #define MAX_R 255
 
 #define FIRST_TEXT_DELAY 1.8f
@@ -82,6 +82,7 @@ TextHandle text_init() {
     text->texts[LVL_INDX(5)].text = "";
     text->texts[LVL_INDX(6)].text = "I wonder what they are doing on the surface right now";
     text->texts[LVL_INDX(7)].text = "I am getting\ncloser to\nthe core\nI can feel it";
+    text->texts[LVL_INDX(8)].text = "";
 
     for (int i = 0; i < AMOUNT_TEXTS; i++) {
         setPos(&(text->texts[i].pos), i + 1);

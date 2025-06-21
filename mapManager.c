@@ -18,6 +18,7 @@ typedef struct Manager {
 
 static const char *mapNamePrefix = "assets/maps/map_part";
 static const char *mapNameSuffix = ".tmx";
+static const char *mapLastName = "assets/maps/map_last.tmx";
 
 static void setMapFileName(int level, char *mapName) {
     char *curChar = mapName;
@@ -42,12 +43,15 @@ static void setMapFileName(int level, char *mapName) {
 }
 
 static bool loadMap(TmxMap **map, int level) {
-    if (level > LASTLEVEL) {
-        slogw("Attempted to load last map (Number:%d)", level);
-        return false;
-    }
     char mapFileName[MAPNAME_MAXLEN];
-    setMapFileName(level, mapFileName);
+    if (level == LASTLEVEL + 1) {
+		strncpy(mapFileName, mapLastName, strlen(mapLastName)+1);
+    } else if (level <= LASTLEVEL) {
+    	setMapFileName(level, mapFileName);
+	} else {
+        slogi("Attempted to load last map (Number:%d)", level);
+		return false;
+	}
     *map = LoadTMX(mapFileName);
     return true;
 }
