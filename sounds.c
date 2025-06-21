@@ -11,6 +11,8 @@
 #define FOOTSTEP_RAND_PERC_START_PITCH 90
 #define PLATFORM_RAND_PERC_START_PITCH 80
 #define PLATFORM_RAND_PERC_END_PITCH 90
+#define SCRATCH_RAND_PERC_START_PITCH 100
+#define SCRATCH_RAND_PERC_END_PITCH 180
 
 /**
  * @brief Manage sounds during game
@@ -23,8 +25,10 @@ typedef struct SoundManager {
     Sound jump;
     Sound landing;
     Sound death;
+    Sound scratching;
     Sound platforms[MAX_PLATFORM_SOUNDS];
     int curPlatformSoundIndex;
+    int curPlatformScratchSoundIndex;
     double timeStamp;
 } SoundManager;
 
@@ -41,6 +45,9 @@ void sound_init(void) {
     SetSoundVolume(manager.landing, 0.2f);
     SetSoundPitch(manager.landing, 0.9f);
     manager.death = LoadSound("assets/sounds/death.wav");
+    SetSoundPitch(manager.landing, 0.6f);
+    manager.scratching = LoadSound("assets/sounds/metal_scratch.mp3");
+    SetSoundVolume(manager.scratching, 0.5f);
 
     for (int i = 0; i < MAX_PLATFORM_SOUNDS; i++) {
         if (i == 0) {
@@ -49,7 +56,9 @@ void sound_init(void) {
             manager.platforms[i] = LoadSoundAlias(manager.platforms[0]);
         }
     }
+
     manager.curPlatformSoundIndex = 0;
+    manager.curPlatformScratchSoundIndex = 0;
     manager.timeStamp = GetTime();
 }
 
@@ -73,6 +82,15 @@ void sound_landing(void) {
 }
 void sound_death(void) {
     PlaySound(manager.death);
+}
+
+void sound_platformsMoving(void) {
+    if (IsSoundPlaying(manager.scratching))
+        return;
+
+    int randPitch = GetRandomValue(SCRATCH_RAND_PERC_START_PITCH, SCRATCH_RAND_PERC_END_PITCH);
+    SetSoundPitch(manager.scratching, 1.0f * ((float)randPitch / 100));
+    PlaySound(manager.scratching);
 }
 
 void sound_platforms(void) {

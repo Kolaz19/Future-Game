@@ -1,4 +1,5 @@
 #include "include/physicsWorld.h"
+#include "include/box2d/id.h"
 #include "include/dynBodyDef.h"
 #include <assert.h>
 #include <stdlib.h>
@@ -18,10 +19,16 @@
 #define TOWORLD(x) ((x) / CONV_VAL)
 #define TOPIXEL(x) ((x) * CONV_VAL)
 
+typedef struct {
+    float x;
+    float y;
+} Vec2;
+
 typedef struct Body {
     b2BodyId body;
-    int id;              /// Further specification of BodyType, can be 0
-    Rectangle rectangle; /// Is always in pixel dimension
+    int id;                /// Further specification of BodyType, can be 0
+    Rectangle rectangle;   /// Is always in pixel dimension
+    Vec2 previousPosition; /// Needed to check if body was moved
     BodyType type;
     float rotation;
     UpdateData updateData; /// Is passed to update function every frame
@@ -50,18 +57,54 @@ static void updatePlatformSound(WorldHandle handle) {
     b2ContactEvents contactEvents = b2World_GetContactEvents(handle->world);
     for (int i = 0; i < contactEvents.beginCount; i++) {
         b2ContactBeginTouchEvent *beginEvent = contactEvents.beginEvents + i;
-		b2BodyId bodyA = b2Shape_GetBody(beginEvent->shapeIdA);
-		b2BodyId bodyB = b2Shape_GetBody(beginEvent->shapeIdB);
-		//Sound flag can be set in bodyBehavior = No Sound
-		bool *noSoundFlag = b2Body_GetUserData(bodyA);
-		if (noSoundFlag == NULL) {
-			noSoundFlag = b2Body_GetUserData(bodyB);
-		}
-		//Check if no player
-		if (b2Body_GetShapeCount(bodyA) == 1 && b2Body_GetShapeCount(bodyB) == 1 && noSoundFlag == NULL) {
-			sound_platforms();
-		}
+        b2BodyId bodyA = b2Shape_GetBody(beginEvent->shapeIdA);
+        b2BodyId bodyB = b2Shape_GetBody(beginEvent->shapeIdB);
+        // Sound flag can be set in bodyBehavior = No Sound
+        bool *noSoundFlag = b2Body_GetUserData(bodyA);
+        if (noSoundFlag == NULL) {
+            noSoundFlag = b2Body_GetUserData(bodyB);
+        }
+        // Check if no player
+        if (b2Body_GetShapeCount(bodyA) == 1 && b2Body_GetShapeCount(bodyB) == 1) {
+            if (noSoundFlag == NULL) {
+                sound_platforms();
+            }
+		} else {
+            if (b2Body_GetShapeCount(bodyA) == 1) {
+                for (int i = 0; i < BAG_SIZE; i++) {
+                    if (handle->bag[i] != NULL && handle->bag[i]->type == DYNAMIC_PLATFORM && B2_ID_EQUALS(bodyA, handle->bag[i]->body)) {
+                        if ((handle->bag[i]->previousPosition.x > handle->bag[i]->rectangle.x + TOWORLD(2.0f) || handle->bag[i]->previousPosition.x < handle->bag[i]->rectangle.x - TOWORLD(2.0f)) ||
+                            (handle->bag[i]->previousPosition.y > handle->bag[i]->rectangle.y + TOWORLD(2.0f) || handle->bag[i]->previousPosition.y < handle->bag[i]->rectangle.y - TOWORLD(2.0f))) {
+                            //sound_platformsMoving();
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < BAG_SIZE; i++) {
+                    if (handle->bag[i] != NULL && handle->bag[i]->type == DYNAMIC_PLATFORM && B2_ID_EQUALS(bodyB, handle->bag[i]->body)) {
+                        if ((handle->bag[i]->previousPosition.x > handle->bag[i]->rectangle.x + TOWORLD(2.0f) || handle->bag[i]->previousPosition.x < handle->bag[i]->rectangle.x - TOWORLD(2.0f)) ||
+                            (handle->bag[i]->previousPosition.y > handle->bag[i]->rectangle.y + TOWORLD(2.0f) || handle->bag[i]->previousPosition.y < handle->bag[i]->rectangle.y - TOWORLD(2.0f))) {
+                            //sound_platformsMoving();
+                        }
+                    }
+                }
+            }
+        }
     }
+
+	/*
+    for (int i = 0; i < BAG_SIZE; i++) {
+        if (handle->bag[i] != NULL && handle->bag[i]->type == DYNAMIC_PLATFORM) {
+            b2ShapeId shape;
+            b2Body_GetShapes(handle->bag[i]->body, &shape, 1);
+            int cap = b2Shape_GetContactCapacity(shape);
+            if (cap != 0 && ((handle->bag[i]->previousPosition.x != handle->bag[i]->rectangle.x) ||
+                             (handle->bag[i]->previousPosition.y != handle->bag[i]->rectangle.y))) {
+                sound_platformsMoving();
+            }
+        }
+    }
+	*/
 }
 
 /*
@@ -116,6 +159,15 @@ void phy_destroyObjectsAbove(WorldHandle handle, float posY) {
     }
 }
 
+static void setPreviousPosition(WorldHandle handle) {
+    for (int i = 0; i < BAG_SIZE; i++) {
+        if (handle->bag[i] != NULL) {
+            handle->bag[i]->previousPosition.x = handle->bag[i]->rectangle.x;
+            handle->bag[i]->previousPosition.y = handle->bag[i]->rectangle.y;
+        }
+    }
+}
+
 void phy_updateWorld(WorldHandle handle) {
     b2World_Step(handle->world, 1.0f / 60.0f, 4);
     for (int i = 0; i < BAG_SIZE; i++) {
@@ -125,7 +177,8 @@ void phy_updateWorld(WorldHandle handle) {
                 &(handle->bag[i]->updateData));
         }
     }
-	updatePlatformSound(handle);
+    updatePlatformSound(handle);
+    setPreviousPosition(handle);
 }
 
 WorldHandle phy_createWorld(void) {
@@ -223,9 +276,8 @@ void phy_addWalls(WorldHandle world, Rectangle boundary, int wallThickness) {
 
     b2ShapeDef wallShapeDef = b2DefaultShapeDef();
     wallShapeDef.friction = 0.0f;
-	b2Shape_EnableContactEvents(b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox), true);
-	b2Shape_EnableContactEvents(b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox), true);
-
+    b2Shape_EnableContactEvents(b2CreatePolygonShape(wallRightId, &wallShapeDef, &wallBox), true);
+    b2Shape_EnableContactEvents(b2CreatePolygonShape(wallLeftId, &wallShapeDef, &wallBox), true);
 
     addToBag(world->bag, &wallLeftId, WALL, (float)wallThickness, (float)boundary.height, UNDEFINED);
     addToBag(world->bag, &wallRightId, WALL, (float)wallThickness, (float)boundary.height, UNDEFINED);
@@ -242,13 +294,13 @@ void phy_addPlayer(WorldHandle world, float posX, float posY) {
     b2ShapeDef playerShapeDef = b2DefaultShapeDef();
     playerShapeDef.density = 25.0f;
     playerShapeDef.friction = 0.1f;
-	b2Capsule capsuleId;  
-	capsuleId.radius = TOWORLD(8.0f);
-	capsuleId.center1.x = 0.0f;  
-	capsuleId.center1.y = TOWORLD(-8.0f);  
-	capsuleId.center2.x = 0.0f;  
-	capsuleId.center2.y = TOWORLD(8.0f);  
-	b2ShapeId shapeId = b2CreateCapsuleShape(playerId, &playerShapeDef, &capsuleId);
+    b2Capsule capsuleId;
+    capsuleId.radius = TOWORLD(8.0f);
+    capsuleId.center1.x = 0.0f;
+    capsuleId.center1.y = TOWORLD(-8.0f);
+    capsuleId.center2.x = 0.0f;
+    capsuleId.center2.y = TOWORLD(8.0f);
+    b2ShapeId shapeId = b2CreateCapsuleShape(playerId, &playerShapeDef, &capsuleId);
 
     b2Polygon footBox = b2MakeOffsetBox(TOWORLD(3.0f), TOWORLD(1.0f), (b2Vec2){0.0f, TOWORLD(16.0f)}, (b2Rot){1.0f, 0.0f});
     playerShapeDef.density = 0.0f;
@@ -307,7 +359,7 @@ void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundConta
     b2WorldId world = b2Body_GetWorld(*body);
     b2ShapeId shapes[MAX_SHAPES_ATTACHED_TO_BODY];
     b2ShapeId *sensorShape = NULL;
-	//Get foot sensor of character
+    // Get foot sensor of character
     int shapesStored = b2Body_GetShapes(*body, shapes, b2Body_GetShapeCount(*body));
     for (int i = 0; i < shapesStored; i++) {
         if (b2Shape_IsSensor(shapes[i])) {
@@ -335,7 +387,6 @@ void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundConta
     }
     assert((*amountGroundContact) >= 0);
 }
-
 
 bool phy_isPlayerDead(WorldHandle handle) {
     Body **bodies = handle->bag;

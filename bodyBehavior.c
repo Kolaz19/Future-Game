@@ -115,6 +115,7 @@ void shiftLittleUpdate(UpdateData *updateData) {
             b2Body_ApplyTorque(*updateData->body, -30000.0f, true);
         }
         updateData->status = STATUS_UNSTABLE;
+		sound_platformsMoving();
         break;
     case STATUS_UNSTABLE:
         if (updateData->timer < unstableTime) {
@@ -161,6 +162,7 @@ void justFallOnCollisionUpdate(UpdateData *updateData) {
     if (contactBegin(updateData->body)) {
         b2Body_SetType(*updateData->body, b2_dynamicBody);
         updateData->status = STATUS_FREE_FALL;
+		sound_platformsMoving();
     }
 }
 
@@ -194,6 +196,7 @@ void unstableUpdate(UpdateData *updateData) {
     case STATUS_CONTACT:
         b2Body_SetType(*updateData->body, b2_dynamicBody);
         updateData->status = STATUS_UNSTABLE;
+		sound_platformsMoving();
         break;
     case STATUS_UNSTABLE:
         if (updateData->timer < unstableTime) {
