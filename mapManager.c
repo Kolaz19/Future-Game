@@ -14,7 +14,6 @@ typedef struct Manager {
 
 #define MAPNAME_MAXLEN 27
 #define OBJ_MAX_NAMELEN 20
-#define LASTLEVEL 7
 
 static const char *mapNamePrefix = "assets/maps/map_part";
 static const char *mapNameSuffix = ".tmx";
@@ -42,18 +41,15 @@ static void setMapFileName(int level, char *mapName) {
     strncpy(curChar, mapNameSuffix, suffixLen);
 }
 
-static bool loadMap(TmxMap **map, int level) {
+static void loadMap(TmxMap **map, int level) {
     char mapFileName[MAPNAME_MAXLEN];
-    if (level == LASTLEVEL + 1) {
-		strncpy(mapFileName, mapLastName, strlen(mapLastName)+1);
-    } else if (level <= LASTLEVEL) {
-    	setMapFileName(level, mapFileName);
-	} else {
-        slogi("Attempted to load last map (Number:%d)", level);
-		return false;
-	}
+    setMapFileName(level, mapFileName);
     *map = LoadTMX(mapFileName);
-    return true;
+    if (*map == NULL) {
+        slogi("Attempted to load last map (Number:%d)", level);
+        strncpy(mapFileName, mapLastName, strlen(mapLastName) + 1);
+        *map = LoadTMX(mapFileName);
+    }
 }
 
 void map_draw(MapManager manager, Camera2D *cam) {
@@ -86,11 +82,8 @@ bool map_update(MapManager manager, float playerY) {
         manager->curMap = manager->nextMap;
         manager->curMapLevel++;
         manager->nextMap = NULL;
-        if (loadMap(&(manager->nextMap), manager->curMapLevel + 1)) {
-            return true;
-        } else {
-            return false;
-        }
+        loadMap(&(manager->nextMap), manager->curMapLevel + 1);
+        return true;
     } else {
         return false;
     }
