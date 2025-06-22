@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="35" height="90" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="3">
+<map version="1.10" tiledversion="1.11.1" orientation="orthogonal" renderorder="right-down" width="35" height="90" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="6">
  <tileset firstgid="1" source="Tileset.tsx"/>
  <layer id="1" name="Kachelebene 1" width="35" height="90">
   <data encoding="csv">
@@ -7,8 +7,8 @@
 529,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
 529,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
 529,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
-529,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,529,
 529,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
+529,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,528,529,
 529,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
 529,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
 529,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,529,
@@ -98,7 +98,10 @@
  <objectgroup id="2" name="Checkpoints">
   <object id="2" x="480" y="32" width="16" height="32"/>
  </objectgroup>
+ <objectgroup id="4" name="Diamond">
+  <object id="5" x="96" y="16" width="64" height="64"/>
+ </objectgroup>
  <objectgroup id="3" name="Platforms">
-  <object id="1" x="16" y="64" width="528" height="16"/>
+  <object id="1" x="16" y="80" width="528" height="16"/>
  </objectgroup>
 </map>

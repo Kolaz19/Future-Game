@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map_part7.tmx",
+    "activeFile": "map_last.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -13,12 +13,12 @@
             "scaleInEditor": 1
         },
         "Tileset.tsx": {
-            "scaleInDock": 3,
+            "scaleInDock": 1.5,
             "scaleInEditor": 1
         },
         "map_last.tmx": {
             "scale": 1.5,
-            "selectedLayer": 2,
+            "selectedLayer": 1,
             "viewCenter": {
                 "x": 269.6666666666667,
                 "y": 149.66666666666663
@@ -26,22 +26,22 @@
         },
         "map_part1.tmx": {
             "expandedObjectLayers": [
-                2,
                 4,
-                3
+                3,
+                2
             ],
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 279.6666666666667,
+                "x": 279.66666666666663,
                 "y": 719.6666666666666
             }
         },
         "map_part2.tmx": {
             "expandedObjectLayers": [
-                2,
                 4,
-                3
+                3,
+                2
             ],
             "scale": 1,
             "selectedLayer": 1,
@@ -52,9 +52,9 @@
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
-                2,
                 4,
-                3
+                3,
+                2
             ],
             "scale": 4,
             "selectedLayer": 3,
@@ -65,9 +65,9 @@
         },
         "map_part4.tmx": {
             "expandedObjectLayers": [
-                2,
                 4,
-                3
+                3,
+                2
             ],
             "scale": 4,
             "selectedLayer": 3,
@@ -78,8 +78,8 @@
         },
         "map_part5.tmx": {
             "expandedObjectLayers": [
-                2,
-                3
+                3,
+                2
             ],
             "scale": 1,
             "selectedLayer": 0,
@@ -104,8 +104,8 @@
             "scale": 1,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 507.5,
-                "y": 1253.5
+                "x": 279.5,
+                "y": 720.5
             }
         }
     },
@@ -122,7 +122,8 @@
         "map_part4.tmx",
         "map_part5.tmx",
         "map_part6.tmx",
-        "map_part7.tmx"
+        "map_part7.tmx",
+        "map_last.tmx"
     ],
     "project": "First.tiled-project",
     "recentFiles": [
@@ -133,6 +134,7 @@
         "map_part5.tmx",
         "map_part6.tmx",
         "map_part7.tmx",
+        "map_last.tmx",
         "Tileset.tsx",
         "Dark.tsx"
     ],

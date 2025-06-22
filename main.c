@@ -9,12 +9,13 @@
 #include "include/animationPlayer.h"
 #include "include/cameraControl.h"
 #include "include/checkPoint.h"
+#include "include/diamond.h"
 #include "include/drawDynamicPlatform.h"
 #include "include/mapManager.h"
 #include "include/physicsWorld.h"
 #include "include/raylib/raylib.h"
-#include "include/textDraw.h"
 #include "include/sounds.h"
+#include "include/textDraw.h"
 
 #define SCREEN_WIDTH ((int)(1920 * 0.5))
 #define SCREEN_HEIGHT ((int)(1080 * 0.5))
@@ -65,7 +66,9 @@ int main(int argc, char *argv[]) {
     TextHandle textHandle = text_init();
     text_activateLevelText(textHandle, check_getCurrentLevel(checkpoint));
 
-	sound_init();
+    sound_init();
+
+    Diamond diamond;
 
     while (!WindowShouldClose()) {
 
@@ -84,6 +87,7 @@ int main(int argc, char *argv[]) {
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerRectangle.rectangle->y, (int)(map_getBoundaryFromCurrentMap(mapManager).width));
         text_update(textHandle);
+        if (diamond != NULL) dia_update(diamond);
 
         if (IsKeyPressed(KEY_R)) {
             slogi("Player reset the level with checkpoint level %d", check_getCurrentLevel(checkpoint));
@@ -102,7 +106,13 @@ int main(int argc, char *argv[]) {
             phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
             amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
             panim_setAlive(plAnim);
-			//sound_resetSound();
+
+            if (diamond != NULL) {
+                Rectangle diamondRect;
+                if (map_getRectanglesFromNextMap(mapManager, "Diamond", &diamondRect, NULL)) {
+                    dia_setPos(diamond, diamondRect.x, diamondRect.y);
+                }
+            }
         }
 
         if (map_update(mapManager, playerRectangle.rectangle->y)) {
@@ -110,10 +120,13 @@ int main(int argc, char *argv[]) {
             phy_destroyObjectsAbove(worldHandle, map_getBoundaryFromCurrentMap(mapManager).y - 10.0f);
             addPlatforms(worldHandle, mapManager, false);
             amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
-			//sound_resetSound();
             Rectangle newCheckpoint;
             if (map_getRectanglesFromNextMap(mapManager, "Checkpoints", &newCheckpoint, NULL) == 1) {
                 check_setNextCheckpoint(checkpoint, &newCheckpoint, map_getNextMapLevel(mapManager));
+            }
+            Rectangle diamondRect;
+            if (map_getRectanglesFromNextMap(mapManager, "Diamond", &diamondRect, NULL)) {
+                diamond = dia_createDiamond(diamondRect.x, diamondRect.y);
             }
         }
 
@@ -125,6 +138,7 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < amountDynamicRecs; i++) {
             platTex_drawPlatform(platTextHandle, dynamicRectangles[i].id, dynamicRectangles[i].rectangle, *dynamicRectangles[i].rotation);
         }
+        if (diamond != NULL) dia_draw(diamond);
         EndMode2D();
         DrawFPS(10, 10);
         text_draw(textHandle);
@@ -136,9 +150,9 @@ int main(int argc, char *argv[]) {
     phy_free(worldHandle);
     check_free(checkpoint);
     panim_free(plAnim);
-	text_free(textHandle);
-	platTex_free(platTextHandle);
-	sound_free();
+    text_free(textHandle);
+    platTex_free(platTextHandle);
+    sound_free();
     CloseWindow();
     slog_destroy();
     return 0;
