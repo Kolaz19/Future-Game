@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
 
     sound_init();
 
-    Diamond diamond;
+    Diamond diamond = NULL;
 
     while (!WindowShouldClose()) {
 
