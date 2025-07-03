@@ -48,28 +48,41 @@ void dia_free(Diamond diamond) {
 }
 
 static void moveUpAndDown(float *posY, DiamondUpDownMovement *movement) {
-	// Get distance
+    // Get distance
     float distanceToTravel = *posY - movement->basePosY;
     if (distanceToTravel < 0) distanceToTravel = distanceToTravel * -1;
-	// Get percentage (Closer to base = higher)
+    // Get percentage (Closer to base = higher)
     distanceToTravel = (BASELINE_RADIUS - distanceToTravel) * 100 / BASELINE_RADIUS;
-	// Calculate real value
-	distanceToTravel = distanceToTravel * UP_DOWN_SPEED * GetFrameTime();
-	// Never go below this value
+    // Calculate real value
+    distanceToTravel = distanceToTravel * UP_DOWN_SPEED * GetFrameTime();
+    // Never go below this value
     if (distanceToTravel < UP_DOWN_MIN_SPEED) distanceToTravel = UP_DOWN_MIN_SPEED;
 
-	if (movement->up) {
-		*posY -= distanceToTravel;
-		if (*posY < movement->basePosY - BASELINE_RADIUS) movement->up = false;
-	} else {
-		*posY += distanceToTravel;
-		if (*posY > movement->basePosY + BASELINE_RADIUS) movement->up = true;
-	}
+    if (movement->up) {
+        *posY -= distanceToTravel;
+        if (*posY < movement->basePosY - BASELINE_RADIUS) movement->up = false;
+    } else {
+        *posY += distanceToTravel;
+        if (*posY > movement->basePosY + BASELINE_RADIUS) movement->up = true;
+    }
 }
 
-void dia_update(Diamond diamond) {
+static bool isTouching(Diamond diamond, float playerX, float playerY) {
+    if ((diamond->pos.x < playerX && diamond->pos.x + 64 > playerX) &&
+        (diamond->pos.y < playerY && diamond->pos.y + 64 > playerY)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void dia_update(Diamond diamond, float playerX, float playerY) {
+
     if (!diamond->wasTouched) {
         moveUpAndDown(&diamond->pos.y, &diamond->upDownMovement);
+    	diamond->wasTouched = isTouching(diamond, playerX, playerY);
+    } else {
+		diamond->pos.y -= 0.5f;
     }
     anim_advanceAnimation(&diamond->animation);
 }
