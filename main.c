@@ -87,7 +87,11 @@ int main(int argc, char *argv[]) {
         phy_updateWorld(worldHandle);
         cam_updateCamera(&camera, playerRectangle.rectangle->y, (int)(map_getBoundaryFromCurrentMap(mapManager).width));
         text_update(textHandle);
-        if (diamond != NULL) dia_update(diamond, playerRectangle.rectangle->x, playerRectangle.rectangle->y);
+        if (diamond != NULL) {
+            if (dia_update(diamond, playerRectangle.rectangle) == ABSORBING) {
+                phy_disablePlayer(worldHandle);
+            }
+        }
 
         if (IsKeyPressed(KEY_R)) {
             slogi("Player reset the level with checkpoint level %d", check_getCurrentLevel(checkpoint));
@@ -151,7 +155,7 @@ int main(int argc, char *argv[]) {
     check_free(checkpoint);
     panim_free(plAnim);
     text_free(textHandle);
-	dia_free(diamond);
+    dia_free(diamond);
     platTex_free(platTextHandle);
     sound_free();
     CloseWindow();

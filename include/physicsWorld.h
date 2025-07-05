@@ -84,4 +84,5 @@ void phy_setPosition(BodyIdReference body, float posX, float posY);
  * Read player update flag for dying
  */
 bool phy_isPlayerDead(WorldHandle handle);
+void phy_disablePlayer(WorldHandle handle);
 #endif

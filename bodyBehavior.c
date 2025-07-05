@@ -18,6 +18,7 @@
 
 #define STATUS_INIT UPDATE_STATUS_INIT
 #define STATUS_DEAD UPDATE_STATUS_DEAD
+#define STATUS_DISABLE UPDATE_STATUS_DISABLE
 #define STATUS_CONTACT 1
 #define STATUS_WAS_CONTACT 2
 #define STATUS_FREE_FALL 3
@@ -226,7 +227,7 @@ void playerUpdate(UpdateData *updateData) {
     slogt("Velocity of player: X:%f Y:%f", velocity.x, velocity.y);
 
     // Check for death by falling
-    if (updateData->status == STATUS_DEAD) {
+    if (updateData->status == STATUS_DEAD || updateData->status == STATUS_DISABLE) {
         return;
     }
 

@@ -9,6 +9,8 @@
 #define BASELINE_RADIUS 7.0f
 #define UP_DOWN_SPEED 0.3f
 #define UP_DOWN_MIN_SPEED 0.03f
+#define DESTINATION_WIDTH (64.0 * 2.0f)
+#define DESTINATION_HEIGHT (64.0 * 2.0f)
 
 typedef struct DiamondUpDownMovement {
     float basePosY;
@@ -16,30 +18,33 @@ typedef struct DiamondUpDownMovement {
 } DiamondUpDownMovement;
 
 struct DiamondData {
-    Rectangle pos;
+    // Real presentation of diamond core
+    Rectangle rectangle;
+    float absorbingPosXShift;
     Spritesheet sheet;
     Animation animation;
-    bool wasTouched;
     DiamondUpDownMovement upDownMovement;
+    DStatus status;
 };
 
 Diamond dia_createDiamond(float startX, float startY) {
     Diamond diamond = malloc(sizeof(struct DiamondData));
     diamond->sheet = anim_loadSpritesheet(FILE_NAME, 4, 1);
     diamond->animation = anim_createAnimation(&diamond->sheet, 1, 4, 0.2f, LOOP);
-    diamond->pos.x = startX;
-    diamond->pos.y = startY;
+    diamond->rectangle.x = startX;
+    diamond->rectangle.y = startY;
     diamond->upDownMovement.basePosY = startY;
     diamond->upDownMovement.up = true;
-    diamond->pos.width = 64.0f * 2.0f;
-    diamond->pos.height = 64.0f * 2.0f;
-    diamond->wasTouched = false;
+    diamond->rectangle.width = 10.0f * 2.0f;
+    diamond->rectangle.height = 22.0 * 2.0f;
+    diamond->status = INIT;
+    diamond->absorbingPosXShift = diamond->rectangle.x - 80.0f;
     return diamond;
 }
 
 void dia_setPos(Diamond diamond, float posX, float posY) {
-    diamond->pos.x = posX;
-    diamond->pos.y = posY;
+    diamond->rectangle.x = posX;
+    diamond->rectangle.y = posY;
 }
 
 void dia_free(Diamond diamond) {
@@ -67,26 +72,34 @@ static void moveUpAndDown(float *posY, DiamondUpDownMovement *movement) {
     }
 }
 
-static bool isTouching(Diamond diamond, float playerX, float playerY) {
-    if ((diamond->pos.x < playerX && diamond->pos.x + 64 > playerX) &&
-        (diamond->pos.y < playerY && diamond->pos.y + 64 > playerY)) {
-        return true;
-    } else {
-        return false;
+DStatus dia_update(Diamond diamond, Rectangle *player) {
+    switch (diamond->status) {
+    case INIT:
+        moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
+        if (CheckCollisionRecs(diamond->rectangle, *player)) diamond->status = ABSORBING;
+        break;
+    case ABSORBING:
+        if (diamond->rectangle.x > diamond->absorbingPosXShift) {
+        	diamond->rectangle.x -= 0.2f;
+        }
+        moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
+        break;
+    case FREE:
+        diamond->rectangle.y -= 0.5f;
+        break;
     }
-}
 
-void dia_update(Diamond diamond, float playerX, float playerY) {
-
-    if (!diamond->wasTouched) {
-        moveUpAndDown(&diamond->pos.y, &diamond->upDownMovement);
-    	diamond->wasTouched = isTouching(diamond, playerX, playerY);
-    } else {
-		diamond->pos.y -= 0.5f;
-    }
     anim_advanceAnimation(&diamond->animation);
+    return diamond->status;
 }
 
 void dia_draw(Diamond diamond) {
-    anim_drawAnimation(&diamond->animation, &diamond->pos, &(Vector2){0.0f, 0.0f}, 0.0f);
+    anim_drawAnimation(&diamond->animation,
+                       &(Rectangle){diamond->rectangle.x, diamond->rectangle.y, DESTINATION_WIDTH, DESTINATION_HEIGHT},
+                       &(Vector2){56.0f, 44.0f}, 0.0f);
+    // DrawRectangle((int)diamond->rectangle.x, (int)diamond->rectangle.y, 10*2, 22*2, BLUE);
+}
+
+DStatus dia_getStatus(Diamond diamond) {
+    return diamond->status;
 }

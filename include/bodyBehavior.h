@@ -27,6 +27,7 @@ typedef struct PersistentUpdateData {
 
 #define UPDATE_STATUS_INIT 0
 #define UPDATE_STATUS_DEAD 9
+#define UPDATE_STATUS_DISABLE 60
 
 /*
  * Set update function for a dynamic body

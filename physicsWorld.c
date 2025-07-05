@@ -369,6 +369,15 @@ void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundConta
     assert((*amountGroundContact) >= 0);
 }
 
+void phy_disablePlayer(WorldHandle handle) {
+    Body **bodies = handle->bag;
+    for (int i = 0; i < BAG_SIZE; i++) {
+        if (bodies[i] != NULL && bodies[i]->type == CHARACTER) {
+            bodies[i]->updateData.status = UPDATE_STATUS_DISABLE;
+        }
+    }
+}
+
 bool phy_isPlayerDead(WorldHandle handle) {
     Body **bodies = handle->bag;
     for (int i = 0; i < BAG_SIZE; i++) {
