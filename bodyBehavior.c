@@ -13,7 +13,8 @@
 #define MOVEMENT_BLOCK_THRESHOLD 0.01
 #define JUMP_COOLDOWN_LIMIT 0.5f
 #define JUMP_FORCE -220.0f
-#define DYING_FALL_VELOCITY 23
+//#define DYING_FALL_VELOCITY 23
+#define DYING_FALL_VELOCITY 203
 #define START_SEQUENCE 2
 
 #define STATUS_INIT UPDATE_STATUS_INIT
@@ -228,6 +229,7 @@ void playerUpdate(UpdateData *updateData) {
 
     // Check for death by falling
     if (updateData->status == STATUS_DEAD || updateData->status == STATUS_DISABLE) {
+        slowDown(updateData->body);
         return;
     }
 

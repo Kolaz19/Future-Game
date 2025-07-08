@@ -5,6 +5,7 @@
 
 typedef enum DiamondStatus {
     INIT,
+    ABSORBING_POSITIONING,
     ABSORBING,
     FREE,
 } DStatus;

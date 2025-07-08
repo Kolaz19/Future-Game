@@ -1,5 +1,6 @@
 #include "include/diamond.h"
 #include "include/animation.h"
+#include "include/diamondParticles.h"
 #include "include/raylib/raylib.h"
 #include <stdlib.h>
 
@@ -7,7 +8,7 @@
 #define START_X 140.f
 #define START_Y 140.f
 #define BASELINE_RADIUS 7.0f
-#define UP_DOWN_SPEED 0.3f
+#define UP_DOWN_SPEED 0.1f
 #define UP_DOWN_MIN_SPEED 0.03f
 #define DESTINATION_WIDTH (64.0 * 2.0f)
 #define DESTINATION_HEIGHT (64.0 * 2.0f)
@@ -25,6 +26,8 @@ struct DiamondData {
     Animation animation;
     DiamondUpDownMovement upDownMovement;
     DStatus status;
+    ParticleHandler particles;
+    float particlesLifetime;
 };
 
 Diamond dia_createDiamond(float startX, float startY) {
@@ -39,6 +42,8 @@ Diamond dia_createDiamond(float startX, float startY) {
     diamond->rectangle.height = 22.0 * 2.0f;
     diamond->status = INIT;
     diamond->absorbingPosXShift = diamond->rectangle.x - 80.0f;
+    diamond->particles = NULL;
+    diamond->particlesLifetime = 0.0f;
     return diamond;
 }
 
@@ -49,6 +54,9 @@ void dia_setPos(Diamond diamond, float posX, float posY) {
 
 void dia_free(Diamond diamond) {
     anim_unloadSpritesheet(&diamond->sheet);
+	if (diamond->particles != NULL) {
+		diap_free(diamond->particles);
+	}
     free(diamond);
 }
 
@@ -76,13 +84,23 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
     switch (diamond->status) {
     case INIT:
         moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
-        if (CheckCollisionRecs(diamond->rectangle, *player)) diamond->status = ABSORBING;
+        if (CheckCollisionRecs(diamond->rectangle, *player)) diamond->status = ABSORBING_POSITIONING;
+        break;
+    case ABSORBING_POSITIONING:
+        if (diamond->rectangle.x > diamond->absorbingPosXShift) {
+            diamond->rectangle.x -= 0.2f;
+        } else {
+            diamond->status = ABSORBING;
+            diamond->particles = diap_init((int)player->x, (int)player->y, (int)(player->y + player->height));
+        }
         break;
     case ABSORBING:
-        if (diamond->rectangle.x > diamond->absorbingPosXShift) {
-        	diamond->rectangle.x -= 0.2f;
-        }
         moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
+        diap_update(diamond->particles,
+                    diamond->particlesLifetime,
+                    (int)diamond->rectangle.x + 10,
+                    (int)diamond->rectangle.y + 22);
+        diamond->particlesLifetime += GetFrameTime();
         break;
     case FREE:
         diamond->rectangle.y -= 0.5f;
@@ -97,6 +115,9 @@ void dia_draw(Diamond diamond) {
     anim_drawAnimation(&diamond->animation,
                        &(Rectangle){diamond->rectangle.x, diamond->rectangle.y, DESTINATION_WIDTH, DESTINATION_HEIGHT},
                        &(Vector2){56.0f, 44.0f}, 0.0f);
+    if (diamond->status == ABSORBING) {
+        diap_drawParticles(diamond->particles);
+    }
     // DrawRectangle((int)diamond->rectangle.x, (int)diamond->rectangle.y, 10*2, 22*2, BLUE);
 }
 

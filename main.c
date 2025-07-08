@@ -88,7 +88,8 @@ int main(int argc, char *argv[]) {
         cam_updateCamera(&camera, playerRectangle.rectangle->y, (int)(map_getBoundaryFromCurrentMap(mapManager).width));
         text_update(textHandle);
         if (diamond != NULL) {
-            if (dia_update(diamond, playerRectangle.rectangle) == ABSORBING) {
+            if (dia_update(diamond, playerRectangle.rectangle) == ABSORBING_POSITIONING ||
+                dia_update(diamond, playerRectangle.rectangle) == ABSORBING) {
                 phy_disablePlayer(worldHandle);
             }
         }
