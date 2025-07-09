@@ -3,8 +3,9 @@
 #include "include/raylib/raymath.h"
 #include <stdlib.h>
 
-#define NUMBER_OF_PARTICLES 20
+#define NUMBER_OF_PARTICLES 30
 #define SPAWN_DELAY_MAX 1.5f
+#define PARTICLE_SPEED 0.2f
 
 typedef enum Direction {
     UP,
@@ -22,7 +23,7 @@ ParticleHandler diap_init(int xStart, int yUpStart, int yDownStart) {
     ParticleHandler particles = malloc(sizeof(struct DiamondParticle) * NUMBER_OF_PARTICLES);
     float time = 0.0f;
     for (int i = 0; i < NUMBER_OF_PARTICLES; i++) {
-        time += (float)GetRandomValue(0, (int)((time + SPAWN_DELAY_MAX) * 100)) / 100.0f;
+        time += (float)GetRandomValue(0, (int)(SPAWN_DELAY_MAX * 100)) / 100.0f;
         particles[i].startLife = time;
 
         particles[i].pos.x = (float)xStart;
@@ -42,7 +43,7 @@ void diap_update(ParticleHandler handler, float lifetime, int diaPosX, int diaPo
 	for (int i = 0; i < NUMBER_OF_PARTICLES; i++) {
 		if (handler[i].startLife <= lifetime) {
 			handler[i].active = true;
-			handler[i].pos = Vector2MoveTowards(handler[i].pos, diamond, 0.10f);
+			handler[i].pos = Vector2MoveTowards(handler[i].pos, diamond, PARTICLE_SPEED);
 		}
 	}
 }

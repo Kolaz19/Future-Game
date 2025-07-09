@@ -12,6 +12,8 @@
 #define UP_DOWN_MIN_SPEED 0.03f
 #define DESTINATION_WIDTH (64.0 * 2.0f)
 #define DESTINATION_HEIGHT (64.0 * 2.0f)
+#define TRAVEL_DISTANCE 100.0f
+#define TRAVEL_SPEED 0.4f
 
 typedef struct DiamondUpDownMovement {
     float basePosY;
@@ -41,7 +43,7 @@ Diamond dia_createDiamond(float startX, float startY) {
     diamond->rectangle.width = 10.0f * 2.0f;
     diamond->rectangle.height = 22.0 * 2.0f;
     diamond->status = INIT;
-    diamond->absorbingPosXShift = diamond->rectangle.x - 80.0f;
+    diamond->absorbingPosXShift = diamond->rectangle.x - TRAVEL_DISTANCE;
     diamond->particles = NULL;
     diamond->particlesLifetime = 0.0f;
     return diamond;
@@ -87,8 +89,9 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
         if (CheckCollisionRecs(diamond->rectangle, *player)) diamond->status = ABSORBING_POSITIONING;
         break;
     case ABSORBING_POSITIONING:
+        moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
         if (diamond->rectangle.x > diamond->absorbingPosXShift) {
-            diamond->rectangle.x -= 0.2f;
+            diamond->rectangle.x -= TRAVEL_SPEED;
         } else {
             diamond->status = ABSORBING;
             diamond->particles = diap_init((int)player->x, (int)player->y, (int)(player->y + player->height));
