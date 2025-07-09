@@ -12,7 +12,7 @@
 #define UP_DOWN_MIN_SPEED 0.03f
 #define DESTINATION_WIDTH (64.0 * 2.0f)
 #define DESTINATION_HEIGHT (64.0 * 2.0f)
-#define TRAVEL_DISTANCE 100.0f
+#define TRAVEL_DISTANCE 150.0f
 #define TRAVEL_SPEED 0.4f
 
 typedef struct DiamondUpDownMovement {
