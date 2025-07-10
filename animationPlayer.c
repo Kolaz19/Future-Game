@@ -21,6 +21,7 @@ typedef struct PlayerAnimations {
     Animation falling;
     Animation jumping;
     Animation dying;
+	Color color;
     bool flip;
 } PlayerAnimations;
 
@@ -35,6 +36,7 @@ PlAnimation panim_createAnimation(void) {
     anim_startAnimation(&plAnim->dying);
     plAnim->curAnimation = &plAnim->idle;
     plAnim->flip = false;
+	plAnim->color = WHITE;
     return plAnim;
 }
 
@@ -121,7 +123,11 @@ void panim_setAlive(PlAnimation plAnim) {
 }
 
 void panim_draw(PlAnimation plAnim, float posX, float posY) {
-    anim_drawAnimation(plAnim->curAnimation, &(Rectangle){posX, posY, 32.0f, 32.0f}, &(Vector2){8.0f, 0.0f}, 0.0f);
+    anim_drawAnimationEx(plAnim->curAnimation, &(Rectangle){posX, posY, 32.0f, 32.0f}, &(Vector2){8.0f, 0.0f}, 0.0f, plAnim->color);
+}
+
+void panim_setOpacity(PlAnimation plAnim, float opacity) {
+	plAnim->color = ColorAlpha(plAnim->color, opacity);
 }
 
 void panim_free(PlAnimation plAnim) {

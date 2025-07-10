@@ -17,5 +17,6 @@ void panim_draw(PlAnimation plAnim, float posX, float posY);
 void panim_free(PlAnimation plAnim);
 void panim_setDying(PlAnimation plAnim);
 void panim_setAlive(PlAnimation plAnim);
+void panim_setOpacity(PlAnimation plAnim, float opacity);
 
 #endif

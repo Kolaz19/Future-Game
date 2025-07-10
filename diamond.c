@@ -2,6 +2,7 @@
 #include "include/animation.h"
 #include "include/diamondParticles.h"
 #include "include/raylib/raylib.h"
+#include <stdbool.h>
 #include <stdlib.h>
 
 #define FILE_NAME "assets/YellowDiamond.png"
@@ -56,9 +57,9 @@ void dia_setPos(Diamond diamond, float posX, float posY) {
 
 void dia_free(Diamond diamond) {
     anim_unloadSpritesheet(&diamond->sheet);
-	if (diamond->particles != NULL) {
-		diap_free(diamond->particles);
-	}
+    if (diamond->particles != NULL) {
+        diap_free(diamond->particles);
+    }
     free(diamond);
 }
 
@@ -104,6 +105,12 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
                     (int)diamond->rectangle.x + 10,
                     (int)diamond->rectangle.y + 22);
         diamond->particlesLifetime += GetFrameTime();
+        if (diap_percentageFinished(diamond->particles) == 100) {
+            diamond->status = PREPARING_LIFTOFF;
+        }
+        break;
+    case PREPARING_LIFTOFF:
+        moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
         break;
     case FREE:
         diamond->rectangle.y -= 0.5f;
@@ -114,6 +121,10 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
     return diamond->status;
 }
 
+int dia_particlePercentageFinished(Diamond diamond) {
+	return diamond->particles == NULL ? 0 : diap_percentageFinished(diamond->particles);
+}
+
 void dia_draw(Diamond diamond) {
     anim_drawAnimation(&diamond->animation,
                        &(Rectangle){diamond->rectangle.x, diamond->rectangle.y, DESTINATION_WIDTH, DESTINATION_HEIGHT},
@@ -122,8 +133,4 @@ void dia_draw(Diamond diamond) {
         diap_drawParticles(diamond->particles);
     }
     // DrawRectangle((int)diamond->rectangle.x, (int)diamond->rectangle.y, 10*2, 22*2, BLUE);
-}
-
-DStatus dia_getStatus(Diamond diamond) {
-    return diamond->status;
 }

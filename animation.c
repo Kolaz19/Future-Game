@@ -157,6 +157,28 @@ void anim_drawAnimation(Animation *animation, Rectangle *destination,
         *origin, rotation, WHITE);
 }
 
+void anim_drawAnimationEx(Animation *animation, Rectangle *destination,
+                        Vector2 *origin, float rotation, Color color) {
+    if (!animation->isPlaying) {
+        return;
+    }
+
+    DrawTexturePro(
+        animation->spriteSheet->texture,
+        (Rectangle){animation->origin.x, animation->origin.y,
+                    animation->flipX == true ? animation->origin.width * -1
+                                             : animation->origin.width,
+                    animation->flipY == true ? animation->origin.height * -1
+                                             : animation->origin.height},
+        (Rectangle){
+            animation->flipX == true ? destination->x + animation->flipShiftX
+                                     : destination->x,
+            animation->flipY == true ? destination->y + animation->flipShiftY
+                                     : destination->y,
+            destination->width, destination->height},
+        *origin, rotation, color);
+}
+
 /*
  * Calculate the origin rectangle based on the width/height and the
  * amount of frames on the x-asix on the original texture.

@@ -19,6 +19,7 @@
 
 #define SCREEN_WIDTH ((int)(1920 * 0.5))
 #define SCREEN_HEIGHT ((int)(1080 * 0.5))
+#define MAX_OPACITY 255
 
 // #define UTEST_EXE
 
@@ -88,9 +89,12 @@ int main(int argc, char *argv[]) {
         cam_updateCamera(&camera, playerRectangle.rectangle->y, (int)(map_getBoundaryFromCurrentMap(mapManager).width));
         text_update(textHandle);
         if (diamond != NULL) {
-            if (dia_update(diamond, playerRectangle.rectangle) == ABSORBING_POSITIONING ||
-                dia_update(diamond, playerRectangle.rectangle) == ABSORBING) {
+            DStatus status = dia_update(diamond, playerRectangle.rectangle);
+            int percentage = 100 - dia_particlePercentageFinished(diamond);
+            panim_setOpacity(plAnim, (float)percentage / 100.0f);
+            if (status == ABSORBING_POSITIONING || status == ABSORBING) {
                 phy_disablePlayer(worldHandle);
+            } else if (status == PREPARING_LIFTOFF) {
             }
         }
 

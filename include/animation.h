@@ -58,6 +58,8 @@ Animation anim_createAnimation(Spritesheet *spriteSheet, int startFrame,
                                AnimationType type);
 void anim_drawAnimation(Animation *animation, Rectangle *destination,
                         Vector2 *origin, float rotation);
+void anim_drawAnimationEx(Animation *animation, Rectangle *destination,
+                        Vector2 *origin, float rotation, Color color);
 
 /// Update animation (based on frameDuration)
 void anim_advanceAnimation(Animation *animation);

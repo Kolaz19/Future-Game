@@ -3,9 +3,9 @@
 #include "include/raylib/raymath.h"
 #include <stdlib.h>
 
-#define NUMBER_OF_PARTICLES 50
-#define SPAWN_DELAY_MAX 0.8f
-#define PARTICLE_SPEED 0.5f
+#define NUMBER_OF_PARTICLES 20
+#define SPAWN_DELAY_MAX 0.5f
+#define PARTICLE_SPEED 1.0f
 
 #define MAX_OFFSET_X 10
 #define MAX_OFFSET_Y 25
@@ -72,6 +72,16 @@ void diap_update(ParticleHandler handler, float lifetime, int diaPosX, int diaPo
             handler[i].pos = Vector2MoveTowards(handler[i].pos, diamondOffset, PARTICLE_SPEED);
         }
     }
+}
+
+int diap_percentageFinished(ParticleHandler handler) {
+	int amount = 0;
+    for (int i = 0; i < NUMBER_OF_PARTICLES; i++) {
+        if (handler[i].color.a == 0) {
+			amount++;
+		}
+	}
+	return (int)(amount * 100 / NUMBER_OF_PARTICLES);
 }
 
 void diap_drawParticles(ParticleHandler handler) {
