@@ -125,6 +125,10 @@ int dia_particlePercentageFinished(Diamond diamond) {
 	return diamond->particles == NULL ? 0 : diap_percentageFinished(diamond->particles);
 }
 
+int dia_particlePercentageActive(Diamond diamond) {
+	return diamond->particles == NULL ? 0 : diap_percentageActive(diamond->particles);
+}
+
 void dia_draw(Diamond diamond) {
     anim_drawAnimation(&diamond->animation,
                        &(Rectangle){diamond->rectangle.x, diamond->rectangle.y, DESTINATION_WIDTH, DESTINATION_HEIGHT},

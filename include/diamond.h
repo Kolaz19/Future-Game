@@ -18,5 +18,6 @@ DStatus dia_update(Diamond diamond, Rectangle *player);
 void dia_draw(Diamond diamond);
 void dia_setPos(Diamond diamond, float posX, float posY);
 int dia_particlePercentageFinished(Diamond diamond);
+int dia_particlePercentageActive(Diamond diamond);
 
 #endif

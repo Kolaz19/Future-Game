@@ -10,4 +10,5 @@ void diap_free(ParticleHandler handler);
 void diap_update(ParticleHandler handler, float lifetime, int diaPosX, int diaPosY);
 void diap_drawParticles(ParticleHandler handler);
 int diap_percentageFinished(ParticleHandler handler);
+int diap_percentageActive(ParticleHandler handler);
 #endif

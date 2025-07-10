@@ -84,6 +84,16 @@ int diap_percentageFinished(ParticleHandler handler) {
 	return (int)(amount * 100 / NUMBER_OF_PARTICLES);
 }
 
+int diap_percentageActive(ParticleHandler handler) {
+	int amount = 0;
+    for (int i = 0; i < NUMBER_OF_PARTICLES; i++) {
+        if (handler[i].active == true) {
+			amount++;
+		}
+	}
+	return (int)(amount * 100 / NUMBER_OF_PARTICLES);
+}
+
 void diap_drawParticles(ParticleHandler handler) {
     for (int i = 0; i < NUMBER_OF_PARTICLES; i++) {
         if (handler[i].active) {

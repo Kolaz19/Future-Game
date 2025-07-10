@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
         text_update(textHandle);
         if (diamond != NULL) {
             DStatus status = dia_update(diamond, playerRectangle.rectangle);
-            int percentage = 100 - dia_particlePercentageFinished(diamond);
+            int percentage = 100 - dia_particlePercentageActive(diamond);
             panim_setOpacity(plAnim, (float)percentage / 100.0f);
             if (status == ABSORBING_POSITIONING || status == ABSORBING) {
                 phy_disablePlayer(worldHandle);
