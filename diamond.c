@@ -16,6 +16,9 @@
 #define TRAVEL_DISTANCE 150.0f
 #define TRAVEL_SPEED 0.4f
 
+#define MAX_COLOR 255
+#define MIN_COLOR 190
+
 typedef struct DiamondUpDownMovement {
     float basePosY;
     bool up;
@@ -31,6 +34,7 @@ struct DiamondData {
     DStatus status;
     ParticleHandler particles;
     float particlesLifetime;
+    Color color;
 };
 
 Diamond dia_createDiamond(float startX, float startY) {
@@ -47,6 +51,7 @@ Diamond dia_createDiamond(float startX, float startY) {
     diamond->absorbingPosXShift = diamond->rectangle.x - TRAVEL_DISTANCE;
     diamond->particles = NULL;
     diamond->particlesLifetime = 0.0f;
+    diamond->color = WHITE;
     return diamond;
 }
 
@@ -105,9 +110,13 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
                     (int)diamond->rectangle.x + 10,
                     (int)diamond->rectangle.y + 22);
         diamond->particlesLifetime += GetFrameTime();
-        if (diap_percentageFinished(diamond->particles) == 100) {
+        int percentage = diap_percentageFinished(diamond->particles);
+        if (percentage == 100) {
             diamond->status = PREPARING_LIFTOFF;
-        }
+        } else {
+            percentage = 100 - percentage;
+            diamond->color.g = (unsigned char)(MIN_COLOR + (int)((float)(MAX_COLOR - MIN_COLOR) * (float)percentage / 100.0f));
+		}
         break;
     case PREPARING_LIFTOFF:
         moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
@@ -122,17 +131,17 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
 }
 
 int dia_particlePercentageFinished(Diamond diamond) {
-	return diamond->particles == NULL ? 0 : diap_percentageFinished(diamond->particles);
+    return diamond->particles == NULL ? 0 : diap_percentageFinished(diamond->particles);
 }
 
 int dia_particlePercentageActive(Diamond diamond) {
-	return diamond->particles == NULL ? 0 : diap_percentageActive(diamond->particles);
+    return diamond->particles == NULL ? 0 : diap_percentageActive(diamond->particles);
 }
 
 void dia_draw(Diamond diamond) {
-    anim_drawAnimation(&diamond->animation,
-                       &(Rectangle){diamond->rectangle.x, diamond->rectangle.y, DESTINATION_WIDTH, DESTINATION_HEIGHT},
-                       &(Vector2){56.0f, 44.0f}, 0.0f);
+    anim_drawAnimationEx(&diamond->animation,
+                         &(Rectangle){diamond->rectangle.x, diamond->rectangle.y, DESTINATION_WIDTH, DESTINATION_HEIGHT},
+                         &(Vector2){56.0f, 44.0f}, 0.0f, diamond->color);
     if (diamond->status == ABSORBING) {
         diap_drawParticles(diamond->particles);
     }
