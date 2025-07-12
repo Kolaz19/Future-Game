@@ -3,7 +3,7 @@
 #include "include/raylib/raymath.h"
 #include <stdlib.h>
 
-#define NUMBER_OF_PARTICLES 20
+#define NUMBER_OF_PARTICLES 30
 #define SPAWN_DELAY_MAX 0.5f
 #define PARTICLE_SPEED 1.0f
 

@@ -112,14 +112,14 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
         diamond->particlesLifetime += GetFrameTime();
         int percentage = diap_percentageFinished(diamond->particles);
         if (percentage == 100) {
-            diamond->status = PREPARING_LIFTOFF;
+            diamond->status = LIFTOFF;
         } else {
             percentage = 100 - percentage;
             diamond->color.g = (unsigned char)(MIN_COLOR + (int)((float)(MAX_COLOR - MIN_COLOR) * (float)percentage / 100.0f));
 		}
         break;
-    case PREPARING_LIFTOFF:
-        moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
+    case LIFTOFF:
+        diamond->rectangle.y -= 0.5f;
         break;
     case FREE:
         diamond->rectangle.y -= 0.5f;
@@ -128,6 +128,10 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
 
     anim_advanceAnimation(&diamond->animation);
     return diamond->status;
+}
+
+float* dia_getDiamondYCoordinate(Diamond diamond) {
+	return &diamond->rectangle.y;
 }
 
 int dia_particlePercentageFinished(Diamond diamond) {

@@ -7,7 +7,7 @@ typedef enum DiamondStatus {
     INIT,
     ABSORBING_POSITIONING,
     ABSORBING,
-	PREPARING_LIFTOFF,
+	LIFTOFF,
     FREE,
 } DStatus;
 
@@ -19,5 +19,6 @@ void dia_draw(Diamond diamond);
 void dia_setPos(Diamond diamond, float posX, float posY);
 int dia_particlePercentageFinished(Diamond diamond);
 int dia_particlePercentageActive(Diamond diamond);
+float* dia_getDiamondYCoordinate(Diamond diamond);
 
 #endif

@@ -60,6 +60,8 @@ int main(int argc, char *argv[]) {
 
     Camera2D camera;
     cam_initializeCamera(&camera, (int)(map_getBoundaryFromCurrentMap(mapManager).width), 330);
+	float *yToFollow = &(playerRectangle.rectangle->y);
+
 
     PlAnimation plAnim = panim_createAnimation();
     Vector2 forceOfCharacter;
@@ -70,6 +72,7 @@ int main(int argc, char *argv[]) {
     sound_init();
 
     Diamond diamond = NULL;
+	bool resetEnabled = true;
 
     while (!WindowShouldClose()) {
 
@@ -86,19 +89,21 @@ int main(int argc, char *argv[]) {
         phy_updateDynamicGroundContact(playerBody, &amountDynamicGroundContact);
         panim_update(plAnim, forceOfCharacter.x, forceOfCharacter.y, amountDynamicGroundContact > 0);
         phy_updateWorld(worldHandle);
-        cam_updateCamera(&camera, playerRectangle.rectangle->y, (int)(map_getBoundaryFromCurrentMap(mapManager).width));
+        cam_updateCamera(&camera, *yToFollow, (int)(map_getBoundaryFromCurrentMap(mapManager).width));
         text_update(textHandle);
         if (diamond != NULL) {
             DStatus status = dia_update(diamond, playerRectangle.rectangle);
             int percentage = 100 - dia_particlePercentageActive(diamond);
             panim_setOpacity(plAnim, (float)percentage / 100.0f);
             if (status == ABSORBING_POSITIONING || status == ABSORBING) {
+				resetEnabled = false;
                 phy_disablePlayer(worldHandle);
-            } else if (status == PREPARING_LIFTOFF) {
+            } else if (status == LIFTOFF) {
+				yToFollow = dia_getDiamondYCoordinate(diamond);
             }
         }
 
-        if (IsKeyPressed(KEY_R)) {
+        if (IsKeyPressed(KEY_R) && resetEnabled) {
             slogi("Player reset the level with checkpoint level %d", check_getCurrentLevel(checkpoint));
             // Reset game and load at current checkpoint
             amountDynamicGroundContact = 0;
@@ -113,6 +118,7 @@ int main(int argc, char *argv[]) {
             addLongWalls(worldHandle, mapManager);
             addPlatforms(worldHandle, mapManager, true);
             phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
+			yToFollow = &(playerRectangle.rectangle->y);
             amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
             panim_setAlive(plAnim);
 
@@ -160,7 +166,9 @@ int main(int argc, char *argv[]) {
     check_free(checkpoint);
     panim_free(plAnim);
     text_free(textHandle);
-    dia_free(diamond);
+    if (diamond != NULL) {
+        dia_free(diamond);
+    }
     platTex_free(platTextHandle);
     sound_free();
     CloseWindow();
