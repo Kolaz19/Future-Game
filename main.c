@@ -72,6 +72,7 @@ int main(int argc, char *argv[]) {
     sound_init();
 
     Diamond diamond = NULL;
+	float endCamPosition = 0.0f;
 	bool resetEnabled = true;
 
     while (!WindowShouldClose()) {
@@ -98,8 +99,12 @@ int main(int argc, char *argv[]) {
             if (status == ABSORBING_POSITIONING || status == ABSORBING) {
 				resetEnabled = false;
                 phy_disablePlayer(worldHandle);
-            } else if (status == LIFTOFF) {
 				yToFollow = dia_getDiamondYCoordinate(diamond);
+            } else if (status == LIFTOFF) {
+				if (dia_enoughDistanceTraveled(diamond) && endCamPosition == 0.0f) {
+					endCamPosition = *dia_getDiamondYCoordinate(diamond);
+					yToFollow = &endCamPosition;
+				}
             }
         }
 

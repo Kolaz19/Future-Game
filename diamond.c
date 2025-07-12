@@ -2,7 +2,6 @@
 #include "include/animation.h"
 #include "include/diamondParticles.h"
 #include "include/raylib/raylib.h"
-#include <stdbool.h>
 #include <stdlib.h>
 
 #define FILE_NAME "assets/YellowDiamond.png"
@@ -15,6 +14,8 @@
 #define DESTINATION_HEIGHT (64.0 * 2.0f)
 #define TRAVEL_DISTANCE 150.0f
 #define TRAVEL_SPEED 0.4f
+
+#define LIFTOFF_MAX_DISTANCE 1300.0f
 
 #define MAX_COLOR 255
 #define MIN_COLOR 190
@@ -34,6 +35,7 @@ struct DiamondData {
     DStatus status;
     ParticleHandler particles;
     float particlesLifetime;
+	float yStartBeforeLiftoff;
     Color color;
 };
 
@@ -113,6 +115,7 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
         int percentage = diap_percentageFinished(diamond->particles);
         if (percentage == 100) {
             diamond->status = LIFTOFF;
+            diamond->yStartBeforeLiftoff = diamond->rectangle.y;
         } else {
             percentage = 100 - percentage;
             diamond->color.g = (unsigned char)(MIN_COLOR + (int)((float)(MAX_COLOR - MIN_COLOR) * (float)percentage / 100.0f));
@@ -132,6 +135,10 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
 
 float* dia_getDiamondYCoordinate(Diamond diamond) {
 	return &diamond->rectangle.y;
+}
+
+bool dia_enoughDistanceTraveled(Diamond diamond) {
+	return diamond->yStartBeforeLiftoff - diamond->rectangle.y > LIFTOFF_MAX_DISTANCE;
 }
 
 int dia_particlePercentageFinished(Diamond diamond) {

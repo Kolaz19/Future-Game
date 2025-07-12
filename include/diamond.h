@@ -2,6 +2,7 @@
 #define DIAMOND_H
 
 #include "raylib/rectangle.h"
+#include <stdbool.h>
 
 typedef enum DiamondStatus {
     INIT,
@@ -20,5 +21,6 @@ void dia_setPos(Diamond diamond, float posX, float posY);
 int dia_particlePercentageFinished(Diamond diamond);
 int dia_particlePercentageActive(Diamond diamond);
 float* dia_getDiamondYCoordinate(Diamond diamond);
+bool dia_enoughDistanceTraveled(Diamond diamond);
 
 #endif
