@@ -20,5 +20,7 @@ void sound_landing(void);
 void sound_platforms(void);
 void sound_death(void);
 void sound_platformsMoving(void);
+void sound_blop(void);
+void sound_ascend(void);
 
 #endif

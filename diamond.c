@@ -2,6 +2,7 @@
 #include "include/animation.h"
 #include "include/diamondParticles.h"
 #include "include/raylib/raylib.h"
+#include "include/sounds.h"
 #include <stdlib.h>
 
 #define FILE_NAME "assets/YellowDiamond.png"
@@ -116,6 +117,7 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
         if (percentage == 100) {
             diamond->status = LIFTOFF;
             diamond->yStartBeforeLiftoff = diamond->rectangle.y;
+			sound_ascend();
         } else {
             percentage = 100 - percentage;
             diamond->color.g = (unsigned char)(MIN_COLOR + (int)((float)(MAX_COLOR - MIN_COLOR) * (float)percentage / 100.0f));

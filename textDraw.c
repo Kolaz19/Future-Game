@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #define AMOUNT_TEXTS 8
-#define AMOUNT_TEXTS_CREDITS 3
+#define AMOUNT_TEXTS_CREDITS 4
 #define MAX_R 255
 
 #define FIRST_TEXT_DELAY 1.8f
@@ -11,7 +11,7 @@
 #define TIME_FULL_OPACITY 3.0f
 #define TIME_FADE_OUT_OPACITY 3.0f
 #define TIME_COMBINED (TIME_FADE_IN_OPACITY + TIME_FULL_OPACITY + TIME_FADE_OUT_OPACITY)
-#define TIME_CREDITS_DELAY 3.0f
+#define TIME_CREDITS_DELAY 6.0f
 
 #define BASE_WIDTH 1920.0f
 
@@ -68,15 +68,19 @@ static void setPos(Vector2 *pos, int lvl) {
 static void setPosCredits(Vector2 *pos, int index) {
     switch (index) {
     case 0:
-        pos->x = 0.5f;
+        pos->x = 0.55f;
         pos->y = 0.5f;
         break;
     case 1:
-        pos->x = 0.5f;
-        pos->y = 0.5f;
+        pos->x = 0.4f;
+        pos->y = 0.8f;
         break;
     case 2:
-        pos->x = 0.5f;
+        pos->x = 0.8f;
+        pos->y = 0.3f;
+        break;
+    case 3:
+        pos->x = 0.2f;
         pos->y = 0.5f;
         break;
 	}
@@ -111,9 +115,10 @@ TextHandle text_init() {
     text->texts[LVL_INDX(7)].text = "I am getting\ncloser to\nthe core\nI can feel it";
     text->texts[LVL_INDX(8)].text = "";
 
-	text->credits[0].text = "EndCredits1";
-	text->credits[1].text = "EndCredits2";
-	text->credits[2].text = "EndCredits3";
+	text->credits[0].text = "Finally";
+	text->credits[1].text = "I want to\ngo home now...";
+	text->credits[2].text = "...and sleep";
+	text->credits[3].text = "Thanks for playing my little game!";
 
     for (int i = 0; i < AMOUNT_TEXTS; i++) {
         setPos(&(text->texts[i].pos), i + 1);
@@ -169,7 +174,7 @@ void text_update(TextHandle handle) {
     if (handle->timer > TIME_COMBINED) {
 		if (handle->playCredits && handle->endCreditsDelayTimer < TIME_CREDITS_DELAY) {
     		handle->endCreditsDelayTimer += GetFrameTime();
-		} else if (handle->playCredits && handle->currentCreditsIndex != (sizeof(handle->credits) / sizeof(struct TextEntity)) - 1) {
+		} else if (handle->playCredits && handle->currentCreditsIndex != AMOUNT_TEXTS_CREDITS-1) {
     		handle->endCreditsDelayTimer = 0.0f;
 			handle->timer = 0.0f;
 			handle->color.a = 0;

@@ -1,6 +1,7 @@
 #include "include/diamondParticles.h"
 #include "include/raylib/raylib.h"
 #include "include/raylib/raymath.h"
+#include "include/sounds.h"
 #include <stdlib.h>
 
 #define NUMBER_OF_PARTICLES 30
@@ -60,7 +61,10 @@ void diap_update(ParticleHandler handler, float lifetime, int diaPosX, int diaPo
     Vector2 diamondOffset;
     for (int i = 0; i < NUMBER_OF_PARTICLES; i++) {
         if (handler[i].startLife <= lifetime) {
-            handler[i].active = true;
+            if (!handler[i].active) {
+                handler[i].active = true;
+				sound_blop();
+            }
             diamondOffset = Vector2Add(diamond, handler[i].targetOffset);
 
             // Stayed in same x-place since last frame
@@ -75,23 +79,23 @@ void diap_update(ParticleHandler handler, float lifetime, int diaPosX, int diaPo
 }
 
 int diap_percentageFinished(ParticleHandler handler) {
-	int amount = 0;
+    int amount = 0;
     for (int i = 0; i < NUMBER_OF_PARTICLES; i++) {
         if (handler[i].color.a == 0) {
-			amount++;
-		}
-	}
-	return (int)(amount * 100 / NUMBER_OF_PARTICLES);
+            amount++;
+        }
+    }
+    return (int)(amount * 100 / NUMBER_OF_PARTICLES);
 }
 
 int diap_percentageActive(ParticleHandler handler) {
-	int amount = 0;
+    int amount = 0;
     for (int i = 0; i < NUMBER_OF_PARTICLES; i++) {
         if (handler[i].active == true) {
-			amount++;
-		}
-	}
-	return (int)(amount * 100 / NUMBER_OF_PARTICLES);
+            amount++;
+        }
+    }
+    return (int)(amount * 100 / NUMBER_OF_PARTICLES);
 }
 
 void diap_drawParticles(ParticleHandler handler) {

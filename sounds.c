@@ -27,6 +27,8 @@ typedef struct SoundManager {
     Sound death;
     Sound scratching;
     Sound platforms[MAX_PLATFORM_SOUNDS];
+	Sound blop;
+	Sound ascend;
     int curPlatformSoundIndex;
     int curPlatformScratchSoundIndex;
     double timeStamp;
@@ -48,6 +50,11 @@ void sound_init(void) {
     SetSoundPitch(manager.landing, 0.6f);
     manager.scratching = LoadSound("assets/sounds/metal_scratch.mp3");
     SetSoundVolume(manager.scratching, 0.5f);
+    manager.blop = LoadSound("assets/sounds/blop.wav");
+    SetSoundVolume(manager.blop, 0.5f);
+    manager.ascend = LoadSound("assets/sounds/ascend.wav");
+    SetSoundVolume(manager.ascend, 0.5f);
+    SetSoundPitch(manager.ascend, 0.6f);
 
     for (int i = 0; i < MAX_PLATFORM_SOUNDS; i++) {
         if (i == 0) {
@@ -91,6 +98,14 @@ void sound_platformsMoving(void) {
     int randPitch = GetRandomValue(SCRATCH_RAND_PERC_START_PITCH, SCRATCH_RAND_PERC_END_PITCH);
     SetSoundPitch(manager.scratching, 1.0f * ((float)randPitch / 100));
     PlaySound(manager.scratching);
+}
+
+void sound_blop(void) {
+    PlaySound(manager.blop);
+}
+
+void sound_ascend(void) {
+    PlaySound(manager.ascend);
 }
 
 void sound_platforms(void) {
