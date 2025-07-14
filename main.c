@@ -60,8 +60,7 @@ int main(int argc, char *argv[]) {
 
     Camera2D camera;
     cam_initializeCamera(&camera, (int)(map_getBoundaryFromCurrentMap(mapManager).width), 330);
-	float *yToFollow = &(playerRectangle.rectangle->y);
-
+    float *yToFollow = &(playerRectangle.rectangle->y);
 
     PlAnimation plAnim = panim_createAnimation();
     Vector2 forceOfCharacter;
@@ -72,8 +71,8 @@ int main(int argc, char *argv[]) {
     sound_init();
 
     Diamond diamond = NULL;
-	float endCamPosition = 0.0f;
-	bool resetEnabled = true;
+    float endCamPosition = 0.0f;
+    bool resetEnabled = true;
 
     while (!WindowShouldClose()) {
 
@@ -97,14 +96,15 @@ int main(int argc, char *argv[]) {
             int percentage = 100 - dia_particlePercentageActive(diamond);
             panim_setOpacity(plAnim, (float)percentage / 100.0f);
             if (status == ABSORBING_POSITIONING || status == ABSORBING) {
-				resetEnabled = false;
+                resetEnabled = false;
                 phy_disablePlayer(worldHandle);
-				yToFollow = dia_getDiamondYCoordinate(diamond);
+                yToFollow = dia_getDiamondYCoordinate(diamond);
             } else if (status == LIFTOFF) {
-				if (dia_enoughDistanceTraveled(diamond) && endCamPosition == 0.0f) {
-					endCamPosition = *dia_getDiamondYCoordinate(diamond);
-					yToFollow = &endCamPosition;
-				}
+                text_activateCredits(textHandle);
+                if (dia_enoughDistanceTraveled(diamond) && endCamPosition == 0.0f) {
+                    endCamPosition = *dia_getDiamondYCoordinate(diamond);
+                    yToFollow = &endCamPosition;
+                }
             }
         }
 
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
             addLongWalls(worldHandle, mapManager);
             addPlatforms(worldHandle, mapManager, true);
             phy_getBodyRectReferences(worldHandle, &playerRectangle, CHARACTER);
-			yToFollow = &(playerRectangle.rectangle->y);
+            yToFollow = &(playerRectangle.rectangle->y);
             amountDynamicRecs = phy_getBodyRectReferences(worldHandle, dynamicRectangles, DYNAMIC_PLATFORM);
             panim_setAlive(plAnim);
 
@@ -162,6 +162,7 @@ int main(int argc, char *argv[]) {
         EndMode2D();
         DrawFPS(10, 10);
         text_draw(textHandle);
+        text_draw_credits(textHandle);
         // DrawText(TextFormat("Contact %d",amountDynamicGroundContact), 200, 10, 40, RAYWHITE);
         EndDrawing();
     }

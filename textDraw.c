@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #define AMOUNT_TEXTS 8
+#define AMOUNT_TEXTS_CREDITS 3
 #define MAX_R 255
 
 #define FIRST_TEXT_DELAY 1.8f
@@ -10,6 +11,7 @@
 #define TIME_FULL_OPACITY 3.0f
 #define TIME_FADE_OUT_OPACITY 3.0f
 #define TIME_COMBINED (TIME_FADE_IN_OPACITY + TIME_FULL_OPACITY + TIME_FADE_OUT_OPACITY)
+#define TIME_CREDITS_DELAY 3.0f
 
 #define BASE_WIDTH 1920.0f
 
@@ -29,6 +31,10 @@ typedef struct TextDraw {
     int currentLevel;
 	bool firstLevelDelayPassed;
     TextEntity texts[AMOUNT_TEXTS];
+    TextEntity credits[AMOUNT_TEXTS_CREDITS];
+	bool playCredits;
+	int currentCreditsIndex;
+	float endCreditsDelayTimer;
 } TextDraw;
 
 static void setPos(Vector2 *pos, int lvl) {
@@ -59,6 +65,23 @@ static void setPos(Vector2 *pos, int lvl) {
         break;
     }
 }
+static void setPosCredits(Vector2 *pos, int index) {
+    switch (index) {
+    case 0:
+        pos->x = 0.5f;
+        pos->y = 0.5f;
+        break;
+    case 1:
+        pos->x = 0.5f;
+        pos->y = 0.5f;
+        break;
+    case 2:
+        pos->x = 0.5f;
+        pos->y = 0.5f;
+        break;
+	}
+}
+
 
 TextHandle text_init() {
     TextHandle text = malloc(sizeof(TextDraw));
@@ -66,6 +89,10 @@ TextHandle text_init() {
     text->timer = TIME_COMBINED + 1.0f;
     text->currentLevel = 0;
 	text->firstLevelDelayPassed = false;
+
+	text->playCredits = false;
+	text->currentCreditsIndex = 0;
+	text->endCreditsDelayTimer = 0;
 
     // text->color.r = DARKPURPLE.r;
     // text->color.g = DARKPURPLE.g;
@@ -84,8 +111,15 @@ TextHandle text_init() {
     text->texts[LVL_INDX(7)].text = "I am getting\ncloser to\nthe core\nI can feel it";
     text->texts[LVL_INDX(8)].text = "";
 
+	text->credits[0].text = "EndCredits1";
+	text->credits[1].text = "EndCredits2";
+	text->credits[2].text = "EndCredits3";
+
     for (int i = 0; i < AMOUNT_TEXTS; i++) {
         setPos(&(text->texts[i].pos), i + 1);
+    }
+    for (int i = 0; i < AMOUNT_TEXTS_CREDITS; i++) {
+        setPosCredits(&(text->credits[i].pos), i);
     }
 
     return text;
@@ -102,6 +136,13 @@ bool text_active(TextHandle handle) {
 
 void text_activateLevelText(TextHandle handle, int level) {
     handle->currentLevel = level;
+    handle->timer = 0.0f;
+    handle->color.a = 0;
+}
+
+void text_activateCredits(TextHandle handle) {
+	if (handle->playCredits) return;
+	handle->playCredits = true;
     handle->timer = 0.0f;
     handle->color.a = 0;
 }
@@ -125,8 +166,17 @@ static unsigned char getOpacity(float timer) {
 }
 
 void text_update(TextHandle handle) {
-    if (handle->timer > TIME_COMBINED)
+    if (handle->timer > TIME_COMBINED) {
+		if (handle->playCredits && handle->endCreditsDelayTimer < TIME_CREDITS_DELAY) {
+    		handle->endCreditsDelayTimer += GetFrameTime();
+		} else if (handle->playCredits && handle->currentCreditsIndex != (sizeof(handle->credits) / sizeof(struct TextEntity)) - 1) {
+    		handle->endCreditsDelayTimer = 0.0f;
+			handle->timer = 0.0f;
+			handle->color.a = 0;
+			handle->currentCreditsIndex++;
+		}
         return;
+	}
 
     handle->timer += GetFrameTime();
 	if (!handle->firstLevelDelayPassed) {
@@ -141,7 +191,7 @@ void text_update(TextHandle handle) {
 }
 
 void text_draw(TextHandle handle) {
-    if (handle->timer > TIME_COMBINED)
+    if (handle->timer > TIME_COMBINED || handle->playCredits)
         return;
 
     Vector2 pos = {.x = (float)GetScreenWidth() * handle->texts[LVL_INDX(handle->currentLevel)].pos.x,
@@ -149,6 +199,21 @@ void text_draw(TextHandle handle) {
 
     DrawTextEx(handle->font,
                handle->texts[LVL_INDX(handle->currentLevel)].text,
+               pos,
+               (float)handle->font.baseSize * FONT_SIZE,
+               2,
+               handle->color);
+}
+
+void text_draw_credits(TextHandle handle) {
+    if (!handle->playCredits || handle->timer > TIME_COMBINED)
+        return;
+
+    Vector2 pos = {.x = (float)GetScreenWidth() * handle->credits[handle->currentCreditsIndex].pos.x,
+                   .y = (float)GetScreenHeight() * handle->credits[handle->currentCreditsIndex].pos.y};
+
+    DrawTextEx(handle->font,
+               handle->credits[handle->currentCreditsIndex].text,
                pos,
                (float)handle->font.baseSize * FONT_SIZE,
                2,
