@@ -1,4 +1,5 @@
 #include "include/drawDynamicPlatform.h"
+#include "include/bodyBehavior.h"
 #include "include/dynBodyDef.h"
 #include <stdlib.h>
 
@@ -35,7 +36,10 @@ PlatformTextureHandle platTex_createPlatformTextureHandle(void) {
         {CIRCLES_SINGLE, "assets/dynamicPlatforms/Plat16.png"},
         {CIRCLES_TRIPPLE_WIDE, "assets/dynamicPlatforms/Plat17.png"},
         {LONG_ONE_SIDED_240x16, "assets/dynamicPlatforms/Plat18.png"},
-        {LONG_ONE_SIDED_208x16, "assets/dynamicPlatforms/Plat19.png"}};
+        {LONG_ONE_SIDED_208x16, "assets/dynamicPlatforms/Plat19.png"},
+        {BROKEN_BLOCK, "assets/dynamicPlatforms/Plat20.png"},
+        {LEFT_SIDE_BRIDGE_COLLAPSE, "assets/dynamicPlatforms/Plat21.png"},
+        {RIGHT_SIDE_BRIDGE_COLLAPSE, "assets/dynamicPlatforms/Plat22.png"}};
     int noElements = (sizeof(textureNames) / sizeof(TextureName));
 
     Texture *handle = malloc((unsigned long)noElements * sizeof(Texture));

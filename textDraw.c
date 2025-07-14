@@ -140,6 +140,7 @@ bool text_active(TextHandle handle) {
 }
 
 void text_activateLevelText(TextHandle handle, int level) {
+	if (level > AMOUNT_TEXTS) return;
     handle->currentLevel = level;
     handle->timer = 0.0f;
     handle->color.a = 0;
