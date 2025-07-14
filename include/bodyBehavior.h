@@ -12,7 +12,7 @@ typedef enum DynBodyUpdateModifier {
     DEFAULT,
     LEFT,
     RIGHT,
-	WAIT
+	WAIT,
 }DynBodyUpdateModifier;
 
 typedef struct PersistentUpdateData {

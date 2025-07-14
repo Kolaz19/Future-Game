@@ -211,6 +211,7 @@ void phy_addDynamic(WorldHandle world, Rectangle plat, int id) {
     b2BodyDef dynamicBodyDef = b2DefaultBodyDef();
     dynamicBodyDef.position = (b2Vec2){TOWORLD(plat.x + plat.width / 2), TOWORLD(plat.y + plat.height / 2)};
     dynamicBodyDef.type = b2_staticBody;
+	dynamicBodyDef.linearDamping = 0.1f;
 
     b2BodyId dynamicId = b2CreateBody(world->world, &dynamicBodyDef);
     b2Polygon dynamicBox = b2MakeBox(TOWORLD(plat.width / 2), TOWORLD(plat.height / 2));

@@ -6,6 +6,7 @@
 #define TOWORLD(x) ((x) / CONV_VAL)
 #define TOPIXEL(x) ((x) * CONV_VAL)
 
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 int noCreation(JointCreationContext *context) { return 0; }
