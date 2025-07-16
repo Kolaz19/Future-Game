@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "map_part9.tmx",
+    "activeFile": "map_part12.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -27,34 +27,66 @@
         "map_part1.tmx": {
             "expandedObjectLayers": [
                 2,
-                4,
+                3,
+                4
+            ],
+            "scale": 1.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 279.3333333333333,
+                "y": 719.6666666666666
+            }
+        },
+        "map_part10.tmx": {
+            "expandedObjectLayers": [
+                2,
                 3
             ],
             "scale": 1.5,
             "selectedLayer": 2,
             "viewCenter": {
-                "x": 279.66666666666663,
-                "y": 719.6666666666666
+                "x": 494.66666666666663,
+                "y": 13.666666666666629
             }
         },
-        "map_part2.tmx": {
+        "map_part11.tmx": {
             "expandedObjectLayers": [
-                4,
                 2,
                 3
             ],
             "scale": 1,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 261,
+                "y": 167.5
+            }
+        },
+        "map_part12.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 417.3333333333333,
+                "y": 1155.3333333333333
+            }
+        },
+        "map_part2.tmx": {
+            "expandedObjectLayers": [
+                2,
+                3,
+                4
+            ],
+            "scale": 1,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 279.5,
-                "y": 720.5
+                "x": 279,
+                "y": 840.5
             }
         },
         "map_part3.tmx": {
             "expandedObjectLayers": [
-                4,
                 2,
-                3
+                3,
+                4
             ],
             "scale": 4,
             "selectedLayer": 3,
@@ -65,9 +97,9 @@
         },
         "map_part4.tmx": {
             "expandedObjectLayers": [
-                4,
                 2,
-                3
+                3,
+                4
             ],
             "scale": 1.5,
             "selectedLayer": 3,
@@ -91,8 +123,8 @@
         "map_part6.tmx": {
             "expandedObjectLayers": [
                 2,
-                4,
-                3
+                3,
+                4
             ],
             "scale": 2,
             "selectedLayer": 1,
@@ -103,8 +135,8 @@
         },
         "map_part7.tmx": {
             "expandedObjectLayers": [
-                4,
-                3
+                3,
+                4
             ],
             "scale": 2,
             "selectedLayer": 0,
@@ -116,22 +148,27 @@
         "map_part8.tmx": {
             "expandedObjectLayers": [
                 2,
-                4,
-                3
+                3,
+                4
             ],
             "scale": 1.5,
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 332,
-                "y": 1110.3333333333333
+                "y": 1430.3333333333333
             }
         },
         "map_part9.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 0,
+            "expandedObjectLayers": [
+                2,
+                3,
+                4
+            ],
+            "scale": 2,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 378,
-                "y": 227.66666666666663
+                "x": 262.5,
+                "y": 220.75
             }
         }
     },
@@ -151,7 +188,10 @@
         "map_part7.tmx",
         "map_last.tmx",
         "map_part8.tmx",
-        "map_part9.tmx"
+        "map_part9.tmx",
+        "map_part10.tmx",
+        "map_part11.tmx",
+        "map_part12.tmx"
     ],
     "project": "First.tiled-project",
     "recentFiles": [
@@ -165,8 +205,8 @@
         "map_last.tmx",
         "map_part8.tmx",
         "map_part9.tmx",
-        "Tileset.tsx",
-        "Dark.tsx"
+        "map_part10.tmx",
+        "map_part11.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.margin": 1,
