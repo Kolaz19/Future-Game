@@ -7,7 +7,7 @@
 
 // If true, output is only made to console
 // Full logging is enabled
-#define DEBUG true
+#define DEBUG false
 
 static void customLog(int msgType, const char *text, va_list args) {
     char buffer[256];

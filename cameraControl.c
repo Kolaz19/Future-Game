@@ -1,5 +1,6 @@
 #include "include/cameraControl.h"
 #include "include/raylib/raylib.h"
+#include <stdlib.h>
 
 #define MAX_DISTANCE 100
 #define PLAYER_CENTER_OFFSET 50

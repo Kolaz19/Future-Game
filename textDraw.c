@@ -2,7 +2,7 @@
 #include "include/raylib/raylib.h"
 #include <stdlib.h>
 
-#define AMOUNT_TEXTS 8
+#define AMOUNT_TEXTS 13
 #define AMOUNT_TEXTS_CREDITS 4
 #define MAX_R 255
 
@@ -29,12 +29,12 @@ typedef struct TextDraw {
     Color color;
     float timer;
     int currentLevel;
-	bool firstLevelDelayPassed;
+    bool firstLevelDelayPassed;
     TextEntity texts[AMOUNT_TEXTS];
     TextEntity credits[AMOUNT_TEXTS_CREDITS];
-	bool playCredits;
-	int currentCreditsIndex;
-	float endCreditsDelayTimer;
+    bool playCredits;
+    int currentCreditsIndex;
+    float endCreditsDelayTimer;
 } TextDraw;
 
 static void setPos(Vector2 *pos, int lvl) {
@@ -63,6 +63,14 @@ static void setPos(Vector2 *pos, int lvl) {
         pos->x = 0.05f;
         pos->y = 0.70f;
         break;
+    case 8:
+        pos->x = 0.15f;
+        pos->y = 0.50f;
+        break;
+    case 11:
+        pos->x = 0.70f;
+        pos->y = 0.20f;
+        break;
     }
 }
 static void setPosCredits(Vector2 *pos, int index) {
@@ -83,20 +91,19 @@ static void setPosCredits(Vector2 *pos, int index) {
         pos->x = 0.2f;
         pos->y = 0.5f;
         break;
-	}
+    }
 }
-
 
 TextHandle text_init() {
     TextHandle text = malloc(sizeof(TextDraw));
     text->font = LoadFont("assets/pixantiqua.png");
     text->timer = TIME_COMBINED + 1.0f;
     text->currentLevel = 0;
-	text->firstLevelDelayPassed = false;
+    text->firstLevelDelayPassed = false;
 
-	text->playCredits = false;
-	text->currentCreditsIndex = 0;
-	text->endCreditsDelayTimer = 0;
+    text->playCredits = false;
+    text->currentCreditsIndex = 0;
+    text->endCreditsDelayTimer = 0;
 
     // text->color.r = DARKPURPLE.r;
     // text->color.g = DARKPURPLE.g;
@@ -113,12 +120,17 @@ TextHandle text_init() {
     text->texts[LVL_INDX(5)].text = "";
     text->texts[LVL_INDX(6)].text = "I wonder what they are doing on the surface right now";
     text->texts[LVL_INDX(7)].text = "I am getting\ncloser to\nthe core\nI can feel it";
-    text->texts[LVL_INDX(8)].text = "";
+    text->texts[LVL_INDX(8)].text = "It is getting colder\nand colder";
+    text->texts[LVL_INDX(9)].text = "";
+    text->texts[LVL_INDX(10)].text = "";
+    text->texts[LVL_INDX(11)].text = "I am sorry";
+    text->texts[LVL_INDX(12)].text = "";
+    text->texts[LVL_INDX(13)].text = "";
 
-	text->credits[0].text = "Finally";
-	text->credits[1].text = "I want to\ngo home now...";
-	text->credits[2].text = "...and sleep";
-	text->credits[3].text = "Thanks for playing my little game!";
+    text->credits[0].text = "Finally";
+    text->credits[1].text = "I want to\ngo home now...";
+    text->credits[2].text = "...and sleep";
+    text->credits[3].text = "Thanks for playing my little game!";
 
     for (int i = 0; i < AMOUNT_TEXTS; i++) {
         setPos(&(text->texts[i].pos), i + 1);
@@ -140,15 +152,21 @@ bool text_active(TextHandle handle) {
 }
 
 void text_activateLevelText(TextHandle handle, int level) {
-	if (level > AMOUNT_TEXTS) return;
+    if (level > AMOUNT_TEXTS) return;
     handle->currentLevel = level;
     handle->timer = 0.0f;
     handle->color.a = 0;
 }
 
 void text_activateCredits(TextHandle handle) {
-	if (handle->playCredits) return;
-	handle->playCredits = true;
+    if (handle->playCredits) return;
+
+    // Yellow
+    handle->color.r = 242;
+    handle->color.g = 202;
+    handle->color.b = 38;
+
+    handle->playCredits = true;
     handle->timer = 0.0f;
     handle->color.a = 0;
 }
@@ -173,25 +191,25 @@ static unsigned char getOpacity(float timer) {
 
 void text_update(TextHandle handle) {
     if (handle->timer > TIME_COMBINED) {
-		if (handle->playCredits && handle->endCreditsDelayTimer < TIME_CREDITS_DELAY) {
-    		handle->endCreditsDelayTimer += GetFrameTime();
-		} else if (handle->playCredits && handle->currentCreditsIndex != AMOUNT_TEXTS_CREDITS-1) {
-    		handle->endCreditsDelayTimer = 0.0f;
-			handle->timer = 0.0f;
-			handle->color.a = 0;
-			handle->currentCreditsIndex++;
-		}
+        if (handle->playCredits && handle->endCreditsDelayTimer < TIME_CREDITS_DELAY) {
+            handle->endCreditsDelayTimer += GetFrameTime();
+        } else if (handle->playCredits && handle->currentCreditsIndex != AMOUNT_TEXTS_CREDITS - 1) {
+            handle->endCreditsDelayTimer = 0.0f;
+            handle->timer = 0.0f;
+            handle->color.a = 0;
+            handle->currentCreditsIndex++;
+        }
         return;
-	}
+    }
 
     handle->timer += GetFrameTime();
-	if (!handle->firstLevelDelayPassed) {
-		if (handle->timer > FIRST_TEXT_DELAY) {
-			handle->firstLevelDelayPassed = true;
-			handle->timer = 0.0f;
-		}
-		return;
-	}
+    if (!handle->firstLevelDelayPassed) {
+        if (handle->timer > FIRST_TEXT_DELAY) {
+            handle->firstLevelDelayPassed = true;
+            handle->timer = 0.0f;
+        }
+        return;
+    }
 
     handle->color.a = getOpacity(handle->timer);
 }
