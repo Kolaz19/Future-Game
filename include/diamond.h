@@ -9,7 +9,6 @@ typedef enum DiamondStatus {
     ABSORBING_POSITIONING,
     ABSORBING,
 	LIFTOFF,
-    FREE,
 } DStatus;
 
 typedef struct DiamondData* Diamond;

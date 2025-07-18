@@ -1,4 +1,5 @@
 #include "include/diamond.h"
+#include "include/slog.h"
 #include "include/animation.h"
 #include "include/diamondParticles.h"
 #include "include/raylib/raylib.h"
@@ -95,7 +96,10 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
     switch (diamond->status) {
     case INIT:
         moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
-        if (CheckCollisionRecs(diamond->rectangle, *player)) diamond->status = ABSORBING_POSITIONING;
+        if (CheckCollisionRecs(diamond->rectangle, *player)) {
+			diamond->status = ABSORBING_POSITIONING;
+			slogi("Diamond: Switch to ABSORBING - POSITION");
+		}
         break;
     case ABSORBING_POSITIONING:
         moveUpAndDown(&diamond->rectangle.y, &diamond->upDownMovement);
@@ -103,6 +107,7 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
             diamond->rectangle.x -= TRAVEL_SPEED;
         } else {
             diamond->status = ABSORBING;
+			slogi("Diamond: Switch to ABSORBING");
             diamond->particles = diap_init((int)player->x, (int)player->y, (int)(player->y + player->height));
         }
         break;
@@ -116,6 +121,7 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
         int percentage = diap_percentageFinished(diamond->particles);
         if (percentage == 100) {
             diamond->status = LIFTOFF;
+			slogi("Diamond: Switch to LIFTOFF");
             diamond->yStartBeforeLiftoff = diamond->rectangle.y;
 			sound_ascend();
         } else {
@@ -124,9 +130,6 @@ DStatus dia_update(Diamond diamond, Rectangle *player) {
 		}
         break;
     case LIFTOFF:
-        diamond->rectangle.y -= 0.5f;
-        break;
-    case FREE:
         diamond->rectangle.y -= 0.5f;
         break;
     }

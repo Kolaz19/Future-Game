@@ -1,6 +1,7 @@
 #include "include/diamondParticles.h"
 #include "include/raylib/raylib.h"
 #include "include/raylib/raymath.h"
+#include "include/slog.h"
 #include "include/sounds.h"
 #include <stdlib.h>
 
@@ -64,6 +65,7 @@ void diap_update(ParticleHandler handler, float lifetime, int diaPosX, int diaPo
             if (!handler[i].active) {
                 handler[i].active = true;
 				sound_blop();
+				slogd("Diamond particle (index %d) released", i);
             }
             diamondOffset = Vector2Add(diamond, handler[i].targetOffset);
 

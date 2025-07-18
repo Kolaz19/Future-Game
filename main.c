@@ -2,7 +2,6 @@
 #include "include/customLogging.h"
 #include "include/slog.h"
 #include "include/utest.h"
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 

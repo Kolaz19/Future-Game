@@ -2,7 +2,6 @@
 #include "include/mapManager.h"
 #include "include/raytmx/raytmx.h"
 #include "include/slog.h"
-#include <assert.h>
 #include <string.h>
 
 typedef struct Manager {

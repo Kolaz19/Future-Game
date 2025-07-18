@@ -1,7 +1,6 @@
 #include "include/physicsWorld.h"
 #include "include/box2d/id.h"
 #include "include/dynBodyDef.h"
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -45,7 +44,6 @@ struct World {
  * Convert world dimension to pixel dimension for rectangle
  */
 static void updateRectangle(Body *body) {
-    assert(body != NULL);
     b2Vec2 vec = b2Body_GetPosition(body->body);
     body->rectangle.x = TOPIXEL(vec.x) - (body->rectangle.width / 2);
     body->rectangle.y = TOPIXEL(vec.y) - (body->rectangle.height / 2);
@@ -348,7 +346,6 @@ void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundConta
             sensorShape = shapes + i;
         }
     }
-    assert(sensorShape != NULL);
 
     b2SensorEvents sensorEvents = b2World_GetSensorEvents(world);
 
@@ -367,7 +364,6 @@ void phy_updateDynamicGroundContact(BodyIdReference body, int *amountGroundConta
             slogt("Player dynamic body contact amount updated: %d", *amountGroundContact);
         }
     }
-    assert((*amountGroundContact) >= 0);
 }
 
 void phy_disablePlayer(WorldHandle handle) {
