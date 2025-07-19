@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
             if (status == ABSORBING_POSITIONING || status == ABSORBING) {
 				if (speedrunTimer == 0) {
 					speedrunTimer = GetTime();
-					text_activateScore(textHandle);
+					text_activateScore(textHandle, speedrunTimer);
 				}
                 resetEnabled = false;
                 phy_disablePlayer(worldHandle);

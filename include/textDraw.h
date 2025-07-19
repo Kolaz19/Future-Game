@@ -14,7 +14,7 @@ void text_draw(TextHandle handle);
 void text_free(TextHandle handle);
 void text_draw_credits(TextHandle handle);
 void text_activateCredits(TextHandle handle);
-void text_activateScore(TextHandle handle);
+void text_activateScore(TextHandle handle, double timer);
 void text_draw_score(TextHandle handle, double timer);
 
 #endif

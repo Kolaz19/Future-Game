@@ -89,7 +89,7 @@ static void setPosCredits(Vector2 *pos, int index) {
         pos->y = 0.3f;
         break;
     case 3:
-        pos->x = 0.2f;
+        pos->x = 0.25f;
         pos->y = 0.5f;
         break;
     }
@@ -175,8 +175,12 @@ void text_activateCredits(TextHandle handle) {
     handle->color.a = 0;
 }
 
-void text_activateScore(TextHandle handle) {
+void text_activateScore(TextHandle handle, double timer) {
     if (handle->showScore) return;
+
+	if (timer < 220) {
+		handle->credits[0].text = "Wtf??? 0__0\nPlEaSE sloW DOwn a BIT!\nYoU are goiNG t00 fast!!!";
+	}
 
     handle->showScore = true;
 }
