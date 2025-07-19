@@ -13,6 +13,7 @@ typedef struct Manager {
 
 #define MAPNAME_MAXLEN 27
 #define OBJ_MAX_NAMELEN 20
+#define MAX_LVL 13
 
 static const char *mapNamePrefix = "assets/maps/map_part";
 static const char *mapNameSuffix = ".tmx";
@@ -43,7 +44,7 @@ static void setMapFileName(int level, char *mapName) {
 static void loadMap(TmxMap **map, int level) {
     char mapFileName[MAPNAME_MAXLEN];
     setMapFileName(level, mapFileName);
-    *map = LoadTMX(mapFileName);
+    if (level <= MAX_LVL) *map = LoadTMX(mapFileName);
     if (*map == NULL) {
         slogi("Attempted to load last map (Number:%d)", level);
         strncpy(mapFileName, mapLastName, strlen(mapLastName) + 1);
@@ -121,7 +122,7 @@ static int getRectanglesFromObjectLayer(const TmxMap *map, int mapStartY, const 
     }
 
     if (matchingLayer == NULL) {
-        sloge("No layer with name %s found", layerName);
+        slogw("No layer with name %s found", layerName);
         return 0;
     }
 

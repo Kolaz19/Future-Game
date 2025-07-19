@@ -33,6 +33,7 @@ typedef struct TextDraw {
     TextEntity texts[AMOUNT_TEXTS];
     TextEntity credits[AMOUNT_TEXTS_CREDITS];
     bool playCredits;
+	bool showScore;
     int currentCreditsIndex;
     float endCreditsDelayTimer;
 } TextDraw;
@@ -104,6 +105,7 @@ TextHandle text_init() {
     text->playCredits = false;
     text->currentCreditsIndex = 0;
     text->endCreditsDelayTimer = 0;
+	text->showScore = false;
 
     // text->color.r = DARKPURPLE.r;
     // text->color.g = DARKPURPLE.g;
@@ -161,6 +163,8 @@ void text_activateLevelText(TextHandle handle, int level) {
 void text_activateCredits(TextHandle handle) {
     if (handle->playCredits) return;
 
+	handle->showScore = false;
+
     // Yellow
     handle->color.r = 242;
     handle->color.g = 202;
@@ -169,6 +173,12 @@ void text_activateCredits(TextHandle handle) {
     handle->playCredits = true;
     handle->timer = 0.0f;
     handle->color.a = 0;
+}
+
+void text_activateScore(TextHandle handle) {
+    if (handle->showScore) return;
+
+    handle->showScore = true;
 }
 
 /*
@@ -242,4 +252,10 @@ void text_draw_credits(TextHandle handle) {
                (float)handle->font.baseSize * FONT_SIZE,
                2,
                handle->color);
+}
+
+void text_draw_score(TextHandle handle, double timer) {
+	if (!handle->showScore) return;
+
+	DrawText(TextFormat("%.2fs", timer), 5, 2, 10, RAYWHITE);
 }

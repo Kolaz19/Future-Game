@@ -72,6 +72,7 @@ int main(int argc, char *argv[]) {
     Diamond diamond = NULL;
     float endCamPosition = 0.0f;
     bool resetEnabled = true;
+	double speedrunTimer = 0;
 
     while (!WindowShouldClose()) {
 
@@ -95,6 +96,10 @@ int main(int argc, char *argv[]) {
             int percentage = 100 - dia_particlePercentageActive(diamond);
             panim_setOpacity(plAnim, (float)percentage / 100.0f);
             if (status == ABSORBING_POSITIONING || status == ABSORBING) {
+				if (speedrunTimer == 0) {
+					speedrunTimer = GetTime();
+					text_activateScore(textHandle);
+				}
                 resetEnabled = false;
                 phy_disablePlayer(worldHandle);
                 yToFollow = dia_getDiamondYCoordinate(diamond);
@@ -159,9 +164,9 @@ int main(int argc, char *argv[]) {
         }
         if (diamond != NULL) dia_draw(diamond);
         EndMode2D();
-        DrawFPS(10, 10);
         text_draw(textHandle);
         text_draw_credits(textHandle);
+        text_draw_score(textHandle, speedrunTimer);
         // DrawText(TextFormat("Contact %d",amountDynamicGroundContact), 200, 10, 40, RAYWHITE);
         EndDrawing();
     }
