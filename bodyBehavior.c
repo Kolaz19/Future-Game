@@ -281,7 +281,7 @@ void playerUpdate(UpdateData *updateData) {
     previousPlayerPosX = pos.x;
     previousPlayerPosY = pos.y;
 
-    if (IsKeyDown(KEY_W) && updateData->timer > JUMP_COOLDOWN_LIMIT) {
+    if ((IsKeyDown(KEY_W) || IsKeyDown(KEY_SPACE)) && updateData->timer > JUMP_COOLDOWN_LIMIT) {
         b2Body_ApplyLinearImpulse(*updateData->body, (b2Vec2){0.0f, JUMP_FORCE}, (b2Vec2){0.0f, 0.0f}, true);
         sound_playJump();
         updateData->timer = 0.0f;

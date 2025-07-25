@@ -68,6 +68,14 @@ static void setPos(Vector2 *pos, int lvl) {
         pos->x = 0.15f;
         pos->y = 0.50f;
         break;
+    case 9:
+        pos->x = 0.15f;
+        pos->y = 0.70f;
+        break;
+    case 10:
+        pos->x = 0.55f;
+        pos->y = 0.40f;
+        break;
     case 11:
         pos->x = 0.70f;
         pos->y = 0.20f;
@@ -116,15 +124,15 @@ TextHandle text_init() {
     text->color.a = 0;
 
     text->texts[LVL_INDX(1)].text = "For three days now,\nI have been wandering these depths";
-    text->texts[LVL_INDX(2)].text = "Metal and rust as my only friends\nThe smell makes me dizzy";
+    text->texts[LVL_INDX(2)].text = "Metal and rust as my only friends\nI miss the smell of honey";
     text->texts[LVL_INDX(3)].text = "So much trust in that little figure";
     text->texts[LVL_INDX(4)].text = "Deep in the core, a glimmer of hope\nSadly not for me";
     text->texts[LVL_INDX(5)].text = "";
     text->texts[LVL_INDX(6)].text = "I wonder what they are doing on the surface right now";
     text->texts[LVL_INDX(7)].text = "I am getting\ncloser to\nthe core\nI can feel it";
     text->texts[LVL_INDX(8)].text = "It is getting colder\nand colder";
-    text->texts[LVL_INDX(9)].text = "";
-    text->texts[LVL_INDX(10)].text = "";
+    text->texts[LVL_INDX(9)].text = "I miss him\nMy soulmate\nA struggler like me";
+    text->texts[LVL_INDX(10)].text = "He was here before me\n20 years and 3 months ago";
     text->texts[LVL_INDX(11)].text = "I am sorry";
     text->texts[LVL_INDX(12)].text = "";
     text->texts[LVL_INDX(13)].text = "";
@@ -178,8 +186,8 @@ void text_activateCredits(TextHandle handle) {
 void text_activateScore(TextHandle handle, double timer) {
     if (handle->showScore) return;
 
-	if (timer < 220) {
-		handle->credits[0].text = "Wtf??? 0__0\nPlEaSE sloW DOwn a BIT!\nYoU are goiNG t00 fast!!!";
+	if (timer < 203.12f) {
+		handle->credits[0].text = "You are even faster\nthan the legend HonigEis?\nImpossible!";
 	}
 
     handle->showScore = true;
