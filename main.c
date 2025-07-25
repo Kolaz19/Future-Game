@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
     return utest_main(0, NULL);
 #endif
     initLogger(argc, argv);
+	SetConfigFlags(FLAG_WINDOW_HIGHDPI);
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Future");
     SetWindowSize((int)((float)GetMonitorWidth(GetCurrentMonitor()) * 0.8f),
                   (int)((float)GetMonitorHeight(GetCurrentMonitor()) * 0.8f));

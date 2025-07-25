@@ -3,7 +3,7 @@ CC_WIN = x86_64-w64-mingw32-gcc
 OBJ_DIR = ./object_files/
 
 C_FLAGS = -Wall -Wextra -Wconversion -std=c2x -fdiagnostics-color=always -pedantic
-DEBUG_FLAG =
+DEBUG_FLAG = -g
 
 LIB_DIR = -L ./lib
 

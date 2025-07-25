@@ -18,12 +18,34 @@ void cam_initializeCamera(Camera2D *cam, int mapWidth, int startHeight) {
 }
 
 void cam_updateCamera(Camera2D *cam, float playerY, int mapWidth) {
+    int windowWidth = 0;
+    int windowHeight = 0;
     if (IsKeyPressed(KEY_F)) {
-        ToggleBorderlessWindowed();
+        if (IsWindowFullscreen()) {
+            ToggleFullscreen();
+        } else {
+            ToggleFullscreen();
+        }
     }
 
-    int windowWidth = GetScreenWidth();
-    int windowHeight = GetScreenHeight();
+    if (IsKeyPressed(KEY_F2) && IsWindowFullscreen()) {
+        int display = GetCurrentMonitor();
+        int monitorCount = GetMonitorCount();
+        if (display == monitorCount-1) {
+            SetWindowMonitor(0);
+        } else {
+            SetWindowMonitor(display++);
+		}
+    }
+
+    if (IsWindowFullscreen()) {
+        int display = GetCurrentMonitor();
+        windowWidth = GetMonitorWidth(display);
+        windowHeight = GetMonitorHeight(display);
+    } else {
+        windowWidth = GetScreenWidth();
+        windowHeight = GetScreenHeight();
+    }
     cam->zoom = (float)windowWidth / (float)mapWidth;
     cam->offset.x = (float)windowWidth / 2.0f;
     cam->offset.y = (float)windowHeight / 2.0f;
